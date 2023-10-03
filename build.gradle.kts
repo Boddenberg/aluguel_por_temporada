@@ -25,7 +25,13 @@ repositories {
 }
 
 dependencies {
+	//dependencia webmvc
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	//dependencias de banco de dados
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("mysql:mysql-connector-java:8.0.28")
+
+	//dependencias deserializadoras
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	compileOnly("org.projectlombok:lombok")
