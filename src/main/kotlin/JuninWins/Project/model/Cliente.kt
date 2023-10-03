@@ -10,6 +10,7 @@ data class Cliente(
     @Id
     val id: Long,
     val nome: String,
+    val sobrenome: String,
     val email: String,
     val telefone: String,
     val dataNascimento: String,
