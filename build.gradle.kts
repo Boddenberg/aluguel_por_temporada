@@ -29,8 +29,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	//dependencias de banco de dados
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("mysql:mysql-connector-java:8.0.28")
-
+	implementation("org.springframework.boot:spring-boot-docker-compose")
+	implementation ("com.mysql:mysql-connector-j:8.1.0")
 	//dependencias deserializadoras
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")

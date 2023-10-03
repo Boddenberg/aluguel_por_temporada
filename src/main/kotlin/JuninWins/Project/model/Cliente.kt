@@ -1,13 +1,13 @@
 package JuninWins.Project.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import lombok.Data
 
 @Data
 @Entity
 @Table(name = "tb_cliente")
 data class Cliente(
+    @Id
     val id: Long,
     val nome: String,
     val email: String,
