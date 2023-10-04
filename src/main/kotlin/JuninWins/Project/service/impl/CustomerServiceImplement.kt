@@ -14,20 +14,20 @@ class CustomerServiceImplement (val customerRepository : CustomerRepository) : C
        return customerRepository.save(customer)
     }
 
-    override fun findById(id: String) : Cliente {
-        return customerRepository.findById(id).get()
+    override fun findById(cpf: String) : Cliente {
+        return customerRepository.findById(cpf).get()
     }
 
-    override fun update(id: String, newCustomer: Cliente): Cliente {
-        val currentCustomer = customerRepository.findById(id)
-            .orElseThrow { NoSuchElementException("Customer not found with ID $id") }
+    override fun update(cpf: String, newCustomer: Cliente): Cliente {
+        val currentCustomer = customerRepository.findById(cpf)
+            .orElseThrow { NoSuchElementException("Customer not found with ID $cpf") }
 
         modelMapper.map(newCustomer, currentCustomer)
 
         return customerRepository.save(currentCustomer)
     }
-    override fun deleteById(id: String) {
-        customerRepository.deleteById(id)
+    override fun deleteById(cpf: String) {
+        customerRepository.deleteById(cpf)
     }
     private fun updatedCustomer(currentCustomer: Cliente?, novoCliente: Cliente) {
         currentCustomer?.apply {

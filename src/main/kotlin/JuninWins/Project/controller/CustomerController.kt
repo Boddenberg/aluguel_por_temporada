@@ -16,17 +16,17 @@ class CustomerController (val customerService: CustomerService) {
     }
 
     @GetMapping("/search/{id}")
-    fun findCustomer(@PathVariable(name = "id") idCustomer: String): ResponseEntity<Cliente> {
-        return ResponseEntity.ok(customerService.findById(idCustomer))
+    fun findCustomer(@PathVariable(name = "id") cpfCustomer: String): ResponseEntity<Cliente> {
+        return ResponseEntity.ok(customerService.findById(cpfCustomer))
     }
 
     @PutMapping("/update/{id}")
     fun updateCustomer(
-        @PathVariable(name = "id") idCustomer: String,
+        @PathVariable(name = "id") cpfCustomer: String,
         @RequestBody updatedCliente: Cliente
     ): ResponseEntity<Cliente> {
         try {
-            val updatedCustomer = customerService.update(idCustomer, updatedCliente)
+            val updatedCustomer = customerService.update(cpfCustomer, updatedCliente)
             return ResponseEntity.ok(updatedCustomer)
         } catch (e: NoSuchElementException) {
             return ResponseEntity.notFound().build()
