@@ -2,29 +2,27 @@ package JuninWins.Project.controller
 
 import JuninWins.Project.model.Cliente
 import JuninWins.Project.service.CustomerService
-import org.modelmapper.ModelMapper
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("customers")
 class CustomerController (val customerService: CustomerService) {
 
-    @PostMapping("/register/customer")
-    fun saveCustomer(@RequestBody cliente: Cliente): ResponseEntity<Cliente> {
+    @PostMapping("/register")
+    fun saveCustomer(@RequestBody @Valid cliente: Cliente): ResponseEntity<Cliente> {
         return ResponseEntity.ok(customerService.save(cliente))
     }
 
-    @GetMapping("/search/customer/{id}")
-    fun findCustomer(@PathVariable(name = "id") idCustomer: Long): ResponseEntity<Cliente> {
+    @GetMapping("/search/{id}")
+    fun findCustomer(@PathVariable(name = "id") idCustomer: String): ResponseEntity<Cliente> {
         return ResponseEntity.ok(customerService.findById(idCustomer))
     }
 
-
-    private val modelMapper = ModelMapper()
-
-    @PutMapping("/update/customer/{id}")
+    @PutMapping("/update/{id}")
     fun updateCustomer(
-        @PathVariable(name = "id") idCustomer: Long,
+        @PathVariable(name = "id") idCustomer: String,
         @RequestBody updatedCliente: Cliente
     ): ResponseEntity<Cliente> {
         try {

@@ -6,10 +6,10 @@ interface CustomerService {
 
     fun save(customer : Cliente) : Cliente
 
-    fun findById(id : Long) : Cliente
+    fun findById(id : String) : Cliente
 
-    fun update(id : Long, newCustomer : Cliente) : Cliente
+    fun update(id : String, newCustomer : Cliente) : Cliente
 
-    fun deleteById(id : Long)
+    fun deleteById(id : String)
 
 }
