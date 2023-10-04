@@ -39,6 +39,7 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.modelmapper:modelmapper:2.4.4")
 }
 
 tasks.withType<KotlinCompile> {
