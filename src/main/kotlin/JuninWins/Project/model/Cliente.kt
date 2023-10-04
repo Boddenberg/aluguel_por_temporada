@@ -21,5 +21,5 @@ data class Cliente(
     @JoinColumn(name = "endereco_id")
     val endereco: Endereco
 ) {
-    constructor() : this(0, "", "", "", "", "", false, Endereco())
+    constructor() : this(0, "","", "", "", "", "", false, Endereco())
 }

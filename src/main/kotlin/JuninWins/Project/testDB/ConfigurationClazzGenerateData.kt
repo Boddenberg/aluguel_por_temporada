@@ -16,6 +16,7 @@ class ConfigurationClazzGenerateData(val clienteRepository: ClienteRepository) {
             Cliente(
                 1,
                 "nome- teste",
+                "sobrenome- teste",
                 "teste@gmail.com",
                 "55-55555-5555",
                 "10/08/1999",
