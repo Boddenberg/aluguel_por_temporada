@@ -8,7 +8,7 @@ interface CustomerService {
 
     fun findById(id : Long) : Cliente
 
-    fun update(id : Long, novoCliente : Cliente) : Cliente
+    fun update(id : Long, newCustomer : Cliente) : Cliente
 
     fun deleteById(id : Long)
 
