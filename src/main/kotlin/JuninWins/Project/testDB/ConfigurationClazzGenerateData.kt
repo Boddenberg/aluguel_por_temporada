@@ -2,13 +2,13 @@ package JuninWins.Project.testDB
 
 import JuninWins.Project.model.Cliente
 import JuninWins.Project.model.Endereco
-import JuninWins.Project.repository.ClienteRepository
+import JuninWins.Project.repository.CustomerRepository
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class ConfigurationClazzGenerateData(val clienteRepository: ClienteRepository) {
+class ConfigurationClazzGenerateData(val clienteRepository: CustomerRepository) {
     val logger = LoggerFactory.getLogger("data")
     @PostConstruct
     fun loadData() {

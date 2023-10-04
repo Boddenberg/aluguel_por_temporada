@@ -10,16 +10,16 @@ data class Cliente(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
-    val nome: String,
-    val sobrenome: String,
-    val email: String,
-    val telefone: String,
-    val dataNascimento: String,
-    val cpf: String,
-    val responsavel: Boolean,
+    var nome: String,
+    var sobrenome: String,
+    var email: String,
+    var telefone: String,
+    var dataNascimento: String,
+    var cpf: String,
+    var responsavel: Boolean,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
-    val endereco: Endereco
+    var endereco: Endereco
 ) {
     constructor() : this(0, "","", "", "", "", "", false, Endereco())
 }

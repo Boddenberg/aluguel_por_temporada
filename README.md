@@ -26,6 +26,9 @@ Acesse a base criada via compose
 use db;
 ```
 
+docker-compose up = inicia o docker
+
+
 ### MySQLCommands - db
 
 * showdatabases; = mostra as bases de dados que estão no mysql
@@ -33,3 +36,4 @@ use db;
 * create table; = cria uma tabela / ex: create table clientes(id int primary key, nome varchar (255));
 * show tables; = mostra as tabelas existentes
 * describe tb_name; = descreve a tabela
+* select * from tb_name; = mostra os dados que estão na tabela
