@@ -4,7 +4,12 @@ import JuninWins.Project.model.Cliente
 import JuninWins.Project.repository.CustomerRepository
 import JuninWins.Project.service.CustomerService
 import org.modelmapper.ModelMapper
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.util.*
+import kotlin.NoSuchElementException
 
 @Service
 class CustomerServiceImplement (val customerRepository : CustomerRepository) : CustomerService {
@@ -14,21 +19,33 @@ class CustomerServiceImplement (val customerRepository : CustomerRepository) : C
        return customerRepository.save(customer)
     }
 
-    override fun findById(cpf: String) : Cliente {
-        return customerRepository.findById(cpf).get()
+    override fun findGuestByCPF(cpf: String) : Cliente {
+        return findByCPF(cpf)
     }
 
     override fun update(cpf: String, newCustomer: Cliente): Cliente {
-        val currentCustomer = customerRepository.findById(cpf)
-            .orElseThrow { NoSuchElementException("Customer not found with ID $cpf") }
+        val currentCustomer = findByCPF(cpf)
 
         modelMapper.map(newCustomer, currentCustomer)
 
         return customerRepository.save(currentCustomer)
     }
-    override fun deleteById(cpf: String) {
-        customerRepository.deleteById(cpf)
+
+    override fun deleteById(cpf: String): ResponseEntity<String> {
+        val guest = customerRepository.findById(cpf)
+
+        if (guest.isPresent) {
+            customerRepository.deleteById(cpf)
+            return ResponseEntity.ok("Hóspede excluído com sucesso!")
+        }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CPF não encontrado")
     }
+
+    private fun findByCPF(cpf: String): Cliente {
+        return customerRepository.findById(cpf).orElseThrow { Exception("CPF não encontrado!")}
+
+    }
+
     private fun updatedCustomer(currentCustomer: Cliente?, novoCliente: Cliente) {
         currentCustomer?.apply {
             nome = novoCliente.nome

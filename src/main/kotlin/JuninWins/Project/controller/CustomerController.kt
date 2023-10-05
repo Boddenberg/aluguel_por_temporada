@@ -15,14 +15,14 @@ class CustomerController (val customerService: CustomerService) {
         return ResponseEntity.ok(customerService.save(cliente))
     }
 
-    @GetMapping("/search/{id}")
-    fun findCustomer(@PathVariable(name = "id") cpfCustomer: String): ResponseEntity<Cliente> {
-        return ResponseEntity.ok(customerService.findById(cpfCustomer))
+    @GetMapping("/search/{cpf}")
+    fun findCustomer(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Cliente> {
+        return ResponseEntity.ok(customerService.findGuestByCPF(cpfCustomer))
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{cpf}")
     fun updateCustomer(
-        @PathVariable(name = "id") cpfCustomer: String,
+        @PathVariable(name = "cpf") cpfCustomer: String,
         @RequestBody updatedCliente: Cliente
     ): ResponseEntity<Cliente> {
         try {
@@ -32,6 +32,14 @@ class CustomerController (val customerService: CustomerService) {
             return ResponseEntity.notFound().build()
         }
     }
+
+    @DeleteMapping("/delete/{cpf}")
+    fun deleteCustomer(
+        @PathVariable(name = "cpf") cpfCustomer: String) : ResponseEntity<String> {
+
+            return customerService.deleteById(cpfCustomer)
+
+   }
 }
     /*
     * TODO: Terminar CRUD
