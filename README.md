@@ -17,7 +17,7 @@
 ## Como testar aplicação
 
 ### Endpoints
-> certifique-se de antes de executar a aplicação estar com o ambiente docker em execução caso contrário irá persistir os dados
+> certifique-se de antes de executar a aplicação estar com o ambiente docker em execução caso contrário nao irá persistir os dados
 - /customer : rota comum
   - register[POST] : cria um usuário
 ```shell

@@ -20,7 +20,6 @@ CREATE TABLE tb_cliente (
     endereco_id BIGINT,
     FOREIGN KEY (endereco_id) REFERENCES endereco(id)
 );
-
 -- comando para ter um dado de teste para fazer obtenção
 INSERT INTO endereco (id, logradouro, numero, complemento, bairro, cidade, estado, cep)
 VALUES (1, 'logradouro', '300', 'esquina', 'bairro', 'SP', 'SP', '3124124-22');
