@@ -1,4 +1,4 @@
-CREATE TABLE endereco (
+CREATE TABLE tb_endereco (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     logradouro VARCHAR(255) NOT NULL,
     numero VARCHAR(255) NOT NULL,
@@ -15,13 +15,41 @@ CREATE TABLE tb_cliente (
     sobrenome VARCHAR(255),
     email VARCHAR(255),
     telefone VARCHAR(255),
-    data_nascimento VARCHAR(10),
+    data_nascimento VARCHAR(255),
     responsavel BOOLEAN,
     endereco_id BIGINT,
-    FOREIGN KEY (endereco_id) REFERENCES endereco(id)
+    FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
 );
--- comando para ter um dado de teste para fazer obtenção
-INSERT INTO endereco (id, logradouro, numero, complemento, bairro, cidade, estado, cep)
+
+CREATE TABLE tb_hospedagem (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tipo VARCHAR(50) NOT NULL,
+    localizacao VARCHAR(255),
+    capacidade INT NOT NULL,
+    preco_por_noite DECIMAL(10, 2) NOT NULL,
+    endereco_id BIGINT,
+    FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
+);
+
+CREATE TABLE tb_reserva (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    cliente_cpf VARCHAR(14) NOT NULL,
+    hospedagem_id INT NOT NULL,
+    data_inicio DATE NOT NULL,
+    data_fim DATE NOT NULL,
+    status VARCHAR(50)  NOT NULL,
+    FOREIGN KEY (cliente_cpf) REFERENCES tb_cliente(cpf),
+    FOREIGN KEY (hospedagem_id) REFERENCES tb_hospedagem(id)
+);
+-- comando para ter um dado de teste para fazer obtenção --STR_TO_DATE('10/08/1999', '%d/%m/%Y')
+INSERT INTO tb_endereco (id, logradouro, numero, complemento, bairro, cidade, estado, cep)
 VALUES (1, 'logradouro', '300', 'esquina', 'bairro', 'SP', 'SP', '3124124-22');
+
 INSERT INTO tb_cliente (cpf, nome, sobrenome, email, telefone, data_nascimento, responsavel, endereco_id)
 VALUES ('666-666-666-66', 'nome- teste', 'sobrenome- teste', 'teste@gmail.com', '55-55555-5555', '10/08/1999', true, 1);
+
+INSERT INTO tb_hospedagem (tipo, localizacao, capacidade, preco_por_noite, endereco_id)
+VALUES('Casa', 'Perto da Praia', 6, 250.00, 1);
+
+INSERT INTO tb_reserva (cliente_cpf, hospedagem_id, data_inicio, data_fim, status)
+VALUES('666-666-666-66', 1, '2023-05-10', '2023-05-17', 'CONCLUIDA');

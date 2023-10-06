@@ -1,5 +1,10 @@
 # dream_project 🚀
 
+### Desenho da solução e suas integrações
+- primeira fase:
+![img.png](img.png)
+
+
 ## Tecnologias aplicadas
 
 * kotlin 1.8.22 com java 17
@@ -74,6 +79,61 @@ retorno:
 	}
 }
 ```
+
+- /bookings : rota comum
+  - [GET] : busca todos as reservas cadastradas no banco de dados
+```shell
+curl --request GET \
+  --url http://localhost:8080/bookings
+```
+- Exemplo de resposta
+```json
+[
+	{
+		"id": 1,
+		"cliente": {
+			"cpf": "666-666-666-66",
+			"nome": "nome- teste",
+			"sobrenome": "sobrenome- teste",
+			"email": "teste@gmail.com",
+			"telefone": "55-55555-5555",
+			"dataNascimento": "10/08/1999",
+			"responsavel": true,
+			"endereco": {
+				"id": 1,
+				"logradouro": "logradouro",
+				"numero": "300",
+				"complemento": "esquina",
+				"bairro": "bairro",
+				"cidade": "SP",
+				"estado": "SP",
+				"cep": "3124124-22"
+			}
+		},
+		"hospedagem": {
+			"id": 1,
+			"tipo": "Casa",
+			"localizacao": "Perto da Praia",
+			"capacidade": 6,
+			"precoPorNoite": 250.0,
+			"endereco": {
+				"id": 1,
+				"logradouro": "logradouro",
+				"numero": "300",
+				"complemento": "esquina",
+				"bairro": "bairro",
+				"cidade": "SP",
+				"estado": "SP",
+				"cep": "3124124-22"
+			}
+		},
+		"dataInicio": "2023-05-10",
+		"dataFim": "2023-05-17",
+		"status": "CONCLUIDA"
+	}
+]
+```
+
 ## DockerCommands
 
 * docker-compose up = inicia o docker

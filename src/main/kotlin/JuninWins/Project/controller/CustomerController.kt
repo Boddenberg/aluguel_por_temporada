@@ -25,11 +25,11 @@ class CustomerController (val customerService: CustomerService) {
         @PathVariable(name = "cpf") cpfCustomer: String,
         @RequestBody updatedCliente: Cliente
     ): ResponseEntity<Cliente> {
-        try {
+        return try {
             val updatedCustomer = customerService.update(cpfCustomer, updatedCliente)
-            return ResponseEntity.ok(updatedCustomer)
+            ResponseEntity.ok(updatedCustomer)
         } catch (e: NoSuchElementException) {
-            return ResponseEntity.notFound().build()
+            ResponseEntity.notFound().build()
         }
     }
 
@@ -42,10 +42,11 @@ class CustomerController (val customerService: CustomerService) {
    }
 }
     /*
+    * TODO: relacionar restante das models às tabelas [OK]
+    *
     * TODO: Terminar CRUD
     * TODO: Validações de models
     * TODO: Tratamento de exceções
-    * TODO: relacionar restante das models às tabelas
     * TODO: Começar regras de negócio
     * TODO: Rever tratamento de exceções da service!!
     */

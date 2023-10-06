@@ -9,7 +9,10 @@ import org.springframework.format.annotation.DateTimeFormat
 @Table(name = "tb_cliente")
 data class Cliente(
     @Id
-    @Column(name = "cpf", unique = true) // Adicione a anotação @Column com unique = true para garantir a unicidade do CPF
+    @Column(
+        name = "cpf",
+        unique = true
+    )
     @CPF
     var cpf: String,
     @Column(name = "nome")
@@ -30,5 +33,5 @@ data class Cliente(
     @JoinColumn(name = "endereco_id")
     var endereco: Endereco
 ) {
-    constructor() : this("", "", "", "", "", "", false, Endereco()) // Remova o campo "id" do construtor
+    constructor() : this("", "", "", "", "", "", false, Endereco())
 }

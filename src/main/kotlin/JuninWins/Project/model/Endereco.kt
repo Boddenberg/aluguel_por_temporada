@@ -3,6 +3,7 @@ package JuninWins.Project.model
 import jakarta.persistence.*
 
 @Entity
+@Table(name = "tb_endereco")
 data class Endereco(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +15,6 @@ data class Endereco(
     val cidade: String,
     val estado: String,
     val cep: String
-){
+) {
     constructor() : this(null, "", "", null, "", "", "", "")
 }
