@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("customers")
 class CustomerController (val customerService: CustomerService) {
 
-    @PostMapping("/register")
+    @PostMapping("/register/guest")
     fun saveCustomer(@RequestBody @Valid cliente: Cliente): ResponseEntity<Cliente> {
         return ResponseEntity.ok(customerService.save(cliente))
     }
@@ -23,14 +23,14 @@ class CustomerController (val customerService: CustomerService) {
     @PutMapping("/update/{cpf}")
     fun updateCustomer(
         @PathVariable(name = "cpf") cpfCustomer: String,
-        @RequestBody updatedCliente: Cliente
+        @RequestBody updatedCustomer: Cliente
     ): ResponseEntity<Cliente> {
         return try {
-            val updatedCustomer = customerService.update(cpfCustomer, updatedCliente)
+            val newUpdatedCustomer = customerService.update(cpfCustomer, updatedCustomer)
             ResponseEntity.ok(updatedCustomer)
         } catch (e: NoSuchElementException) {
             ResponseEntity.notFound().build()
-        }
+        }//TODO: Se tentar alterar CPF devolver exception "CPF não pode ser alterado"
     }
 
     @DeleteMapping("/delete/{cpf}")

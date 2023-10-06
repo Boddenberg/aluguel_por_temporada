@@ -1,10 +1,11 @@
 package JuninWins.Project.model
 
+import JuninWins.Project.enums.AccommodationEnum
 import jakarta.persistence.*
 
 @Entity
 @Table(name = "tb_hospedagem")
-data class Hospedagem(
+data class Accommodation(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,6 @@
 package JuninWins.Project.model
 
-import JuninWins.Project.enums.StatusReserva
+import JuninWins.Project.enums.StatusReservaEnum
 import jakarta.persistence.*
 import java.time.LocalDate
 
@@ -16,14 +16,14 @@ data class Reserva(
     val cliente: Cliente,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "hospedagem_id")
-    val hospedagem: Hospedagem,
+    val hospedagem: Accommodation,
     @Column(name = "data_inicio")
     val dataInicio: LocalDate,
     @Column(name = "data_fim")
     val dataFim: LocalDate,
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    val status: StatusReserva
+    val status: StatusReservaEnum
 ) {
-    constructor() : this(0, Cliente(), Hospedagem(), LocalDate.now(), LocalDate.now(), StatusReserva.PENDENTE)
+    constructor() : this(0, Cliente(), Accommodation(), LocalDate.now(), LocalDate.now(), StatusReservaEnum.PENDENTE)
 }

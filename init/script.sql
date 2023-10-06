@@ -17,6 +17,7 @@ CREATE TABLE tb_cliente (
     telefone VARCHAR(255),
     data_nascimento VARCHAR(255),
     responsavel BOOLEAN,
+    anfitriao BOOLEAN,
     endereco_id BIGINT,
     FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
 );
@@ -45,8 +46,8 @@ CREATE TABLE tb_reserva (
 INSERT INTO tb_endereco (id, logradouro, numero, complemento, bairro, cidade, estado, cep)
 VALUES (1, 'logradouro', '300', 'esquina', 'bairro', 'SP', 'SP', '3124124-22');
 
-INSERT INTO tb_cliente (cpf, nome, sobrenome, email, telefone, data_nascimento, responsavel, endereco_id)
-VALUES ('666-666-666-66', 'nome- teste', 'sobrenome- teste', 'teste@gmail.com', '55-55555-5555', '10/08/1999', true, 1);
+INSERT INTO tb_cliente (cpf, nome, sobrenome, email, telefone, data_nascimento, responsavel, anfitriao, endereco_id)
+VALUES ('666-666-666-66', 'nome- teste', 'sobrenome- teste', 'teste@gmail.com', '55-55555-5555', '10/08/1999', true, true, 1);
 
 INSERT INTO tb_hospedagem (tipo, localizacao, capacidade, preco_por_noite, endereco_id)
 VALUES('Casa', 'Perto da Praia', 6, 250.00, 1);

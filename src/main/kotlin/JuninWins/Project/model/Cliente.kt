@@ -29,9 +29,11 @@ data class Cliente(
     var dataNascimento: String,
     @Column(name = "responsavel")
     var responsavel: Boolean,
+    @Column(name = "anfitriao")
+    var anfitriao: Boolean,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
     var endereco: Endereco
 ) {
-    constructor() : this("", "", "", "", "", "", false, Endereco())
+    constructor() : this("", "", "", "", "", "", false, false, Endereco())
 }

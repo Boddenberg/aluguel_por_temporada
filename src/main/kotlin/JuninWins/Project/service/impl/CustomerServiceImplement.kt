@@ -5,11 +5,8 @@ import JuninWins.Project.repository.CustomerRepository
 import JuninWins.Project.service.CustomerService
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import java.util.*
-import kotlin.NoSuchElementException
 
 @Service
 class CustomerServiceImplement (val customerRepository : CustomerRepository) : CustomerService {
