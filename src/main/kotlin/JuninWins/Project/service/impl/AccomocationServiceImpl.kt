@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
-class AccomocationServiceImplement (val accomodationRepository: AccommodationRepository) : AccommodationService{
+class AccomocationServiceImpl (val accomodationRepository: AccommodationRepository) : AccommodationService{
 
     private val modelMapper = ModelMapper()
 
@@ -35,7 +35,7 @@ class AccomocationServiceImplement (val accomodationRepository: AccommodationRep
 
         if (accommodation.isPresent) {
             accomodationRepository.deleteById(id)
-            return ResponseEntity.ok("Acomodação excluída com sucesso!")
+            return ResponseEntity.ok("Accommodation excluded with success!")
         } //TODO: Validação para excluir acomodação apenas se não tiver reservas atreladas a ela.
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Accomodation not found")
     }

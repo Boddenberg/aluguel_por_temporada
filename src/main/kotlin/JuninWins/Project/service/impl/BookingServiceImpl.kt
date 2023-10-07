@@ -44,4 +44,15 @@ class BookingServiceImpl (val bookingRepository: BookingRepository) : BookingSer
         return bookingRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
 
+
+    /*
+           TODO's:
+            Reservas não podem ser excluídas. Reservas podem ser apenas canceladas de acordo com a política de cancelamento.
+            Resevas só podem ser atualizadas se as datas estiverem livres.
+            Data de check-in não pode ser posterior a de check-out
+            Reservas são de no mínimo 1 dia. Do horário de check-in ao horário de check-out.
+            Cobrar preço por hóspede e preço base.
+     */
+
+
 }

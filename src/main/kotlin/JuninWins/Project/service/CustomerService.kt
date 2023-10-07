@@ -1,15 +1,15 @@
 package JuninWins.Project.service
 
-import JuninWins.Project.model.Cliente
+import JuninWins.Project.model.Guest
 import org.springframework.http.ResponseEntity
 
 interface CustomerService {
 
-    fun save(customer : Cliente) : Cliente
+    fun save(customer : Guest) : Guest
 
-    fun findGuestByCPF(cpf : String) : Cliente
+    fun findGuestByCPF(cpf : String) : Guest
 
-    fun update(cpf : String, newCustomer : Cliente) : Cliente
+    fun update(cpf : String, newCustomer : Guest) : Guest
 
     fun deleteById(cpf : String) : ResponseEntity<String>
 

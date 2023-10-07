@@ -12,19 +12,25 @@ data class Booking(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
     @OneToOne(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "cliente_cpf")
-    val cliente: Cliente,
-    @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "hospedagem_id")
-    val hospedagem: Accommodation,
+    val accommodation: Accommodation,
     @Column(name = "data_inicio")
-    val dataInicio: LocalDate,
+    val startDate: LocalDate,
     @Column(name = "data_fim")
-    val dataFim: LocalDate,
+    val endDate: LocalDate,
+    @OneToOne(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "cliente_cpf")
+    val guest: Guest,
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     val status: StatusReservaEnum
 ) {
-    constructor(CPFGuest: String, AccommodationId: Long, dataInicio: LocalDate, dataFim: LocalDate, status: StatusReservaEnum) :
-            this(0, Cliente(), Accommodation(), dataInicio, dataFim, status) {
+    constructor(CPFGuest: String, AccommodationId: Long, startDate: LocalDate, endDate: LocalDate, status: StatusReservaEnum) :
+            this(0, Accommodation(), startDate, endDate, Guest(), status) {
     }}
+
+/*
+    O preço final da reserva substitui o preço base da hospedagem.
+    O preço visível para o hóspede é apenas o preço da RESERVA.
+
+ */

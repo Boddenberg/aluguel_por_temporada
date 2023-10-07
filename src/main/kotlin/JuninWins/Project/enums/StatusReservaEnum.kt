@@ -1,10 +1,11 @@
 package JuninWins.Project.enums
 
 enum class StatusReservaEnum(val descricao: String) {
-    PENDENTE("Pendente"),
-    CONFIRMADA("Confirmada"),
-    CANCELADA("Cancelada"),
-    CONCLUIDA("Concluída");
+    PENDING("Reserva pendente"),
+    CONFIRMED("Reserva confirmada"),
+    IN_PROGRESS("Reserva em andamento"),
+    CANCELED("Reserva cancelada"),
+    CONCLUDED("Reserva concluída");
 
     companion object {
         fun fromDescricao(descricao: String): StatusReservaEnum? =

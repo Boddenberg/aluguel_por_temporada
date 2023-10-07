@@ -1,6 +1,6 @@
 package JuninWins.Project.service.impl
 
-import JuninWins.Project.model.Cliente
+import JuninWins.Project.model.Guest
 import JuninWins.Project.repository.CustomerRepository
 import JuninWins.Project.service.CustomerService
 import org.modelmapper.ModelMapper
@@ -9,18 +9,18 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
-class CustomerServiceImplement (val customerRepository : CustomerRepository) : CustomerService {
+class CustomerServiceImpl (val customerRepository : CustomerRepository) : CustomerService {
 
     private val modelMapper = ModelMapper()
-    override fun save(customer: Cliente) : Cliente {
+    override fun save(customer: Guest) : Guest {
        return customerRepository.save(customer)
     }
 
-    override fun findGuestByCPF(cpf: String) : Cliente {
+    override fun findGuestByCPF(cpf: String) : Guest {
         return findByCPF(cpf)
     }
 
-    override fun update(cpf: String, newCustomer: Cliente): Cliente {
+    override fun update(cpf: String, newCustomer: Guest): Guest {
         val currentCustomer = findByCPF(cpf)
 
         modelMapper.map(newCustomer, currentCustomer)
@@ -38,21 +38,21 @@ class CustomerServiceImplement (val customerRepository : CustomerRepository) : C
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Guest CPF not found!!")
     }
 
-    private fun findByCPF(cpf: String): Cliente {
+    private fun findByCPF(cpf: String): Guest {
         return customerRepository.findById(cpf).orElseThrow { Exception("Guest CPF not found!")}
 
     }
 
-    private fun updatedCustomer(currentCustomer: Cliente?, novoCliente: Cliente) {
+    private fun updatedCustomer(currentCustomer: Guest?, novoCliente: Guest) {
         currentCustomer?.apply {
-            nome = novoCliente.nome
-            sobrenome = novoCliente.sobrenome
+            name = novoCliente.name
+            lastName = novoCliente.lastName
             email = novoCliente.email
-            telefone = novoCliente.telefone
-            dataNascimento = novoCliente.dataNascimento
+            phoneNumber = novoCliente.phoneNumber
+            birthDate = novoCliente.birthDate
             cpf = novoCliente.cpf
-            responsavel = novoCliente.responsavel
-            endereco = novoCliente.endereco
+            responsible = novoCliente.responsible
+            address = novoCliente.address
         }
     }
 
