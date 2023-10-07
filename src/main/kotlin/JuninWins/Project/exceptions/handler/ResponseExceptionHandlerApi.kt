@@ -1,6 +1,7 @@
 package JuninWins.Project.exceptions.handler
 
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
+import JuninWins.Project.exceptions.BookingNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -38,6 +39,26 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
             status = httpStatus,
             message = exception.message,
             _links = mapOf("self" to Link(request.getDescription(false))),
+            timestamp = timeStamp,
+            path = request.getDescription(false)
+        )
+        return ResponseEntity.status(httpStatus).body(errorResponse)
+    }
+
+    @ExceptionHandler(BookingNotFoundException::class)
+    fun handlingResponseForBookingIdNotFoundException(
+        exception: BookingNotFoundException,
+        request: WebRequest
+    ): ResponseEntity<ResponseExceptionHandlerApi.ErrorResponse> {
+        val instant = Instant.now()
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+            .withZone(ZoneId.systemDefault())
+        val timeStamp = formatter.format(instant)
+        val httpStatus = HttpStatus.NOT_FOUND.value()
+        val errorResponse = ResponseExceptionHandlerApi.ErrorResponse(
+            status = httpStatus,
+            message = exception.message,
+            _links = mapOf("self" to ResponseExceptionHandlerApi.Link(request.getDescription(false))),
             timestamp = timeStamp,
             path = request.getDescription(false)
         )

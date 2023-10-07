@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "tb_reserva")
-data class Reserva(
+data class Booking(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +25,6 @@ data class Reserva(
     @Enumerated(EnumType.STRING)
     val status: StatusReservaEnum
 ) {
-    constructor() : this(0, Cliente(), Accommodation(), LocalDate.now(), LocalDate.now(), StatusReservaEnum.PENDENTE)
-}
+    constructor(CPFGuest: String, AccommodationId: Long, dataInicio: LocalDate, dataFim: LocalDate, status: StatusReservaEnum) :
+            this(0, Cliente(), Accommodation(), dataInicio, dataFim, status) {
+    }}

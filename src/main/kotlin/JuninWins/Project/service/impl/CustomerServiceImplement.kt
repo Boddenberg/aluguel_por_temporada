@@ -33,13 +33,13 @@ class CustomerServiceImplement (val customerRepository : CustomerRepository) : C
 
         if (guest.isPresent) {
             customerRepository.deleteById(cpf)
-            return ResponseEntity.ok("Hóspede excluído com sucesso!")
+            return ResponseEntity.ok("Guest deleted with success!")
         }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CPF não encontrado")
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Guest CPF not found!!")
     }
 
     private fun findByCPF(cpf: String): Cliente {
-        return customerRepository.findById(cpf).orElseThrow { Exception("CPF não encontrado!")}
+        return customerRepository.findById(cpf).orElseThrow { Exception("Guest CPF not found!")}
 
     }
 
