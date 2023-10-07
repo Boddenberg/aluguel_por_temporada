@@ -2,8 +2,11 @@
 
 ### Desenho da solução e suas integrações
 - primeira fase:
-![img.png](img.png)
+![img.png](assets/img.png)
+- 
+#### Diagrama da tabela
 
+![Untitled.svg](assets/Diagrama-banco-de-dados.svg)
 
 ## Tecnologias aplicadas
 
