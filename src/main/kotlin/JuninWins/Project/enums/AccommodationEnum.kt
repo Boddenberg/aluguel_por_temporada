@@ -1,11 +1,11 @@
 package JuninWins.Project.enums
 
 enum class AccommodationEnum (val descricao: String) {
-    CASA("Casa"),
-    APARTAMENTO("Apartamento"),
-    POUSADA("Pousada"),
+    HOUSE("Casa"),
+    APARTMENT("Apartamento"),
+    INN("Pousada"),
     HOTEL("Hotel"),
-    FAZENDA("Hotel Fazenda");
+    FAZEND_HOTEL("Hotel Fazenda");
 
     companion object {
         fun fromDescricao(descricao: String): AccommodationEnum? =

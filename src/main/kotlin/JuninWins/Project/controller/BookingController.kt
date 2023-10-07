@@ -12,6 +12,12 @@ class BookingController(val bookingRepository: BookingRepository) {
     @GetMapping
     fun getAllBookings() = bookingRepository.findAll()
 
+    /*
 
+
+
+
+
+     */
 
 }

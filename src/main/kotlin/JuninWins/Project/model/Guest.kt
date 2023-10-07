@@ -7,7 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat
 
 @Entity
 @Table(name = "tb_cliente")
-data class Cliente(
+data class Guest(
     @Id
     @Column(
         name = "cpf",
@@ -16,24 +16,24 @@ data class Cliente(
     @CPF
     var cpf: String,
     @Column(name = "nome")
-    var nome: String,
+    var name: String,
     @Column(name = "sobrenome")
-    var sobrenome: String,
+    var lastName: String,
     @Email
     @Column(name = "email")
     var email: String,
     @Column(name = "telefone")
-    var telefone: String,
+    var phoneNumber: String,
     @DateTimeFormat(pattern = "dd/mm/yyyy")
     @Column(name = "data_nascimento")
-    var dataNascimento: String,
+    var birthDate: String,
     @Column(name = "responsavel")
-    var responsavel: Boolean,
+    var responsible: Boolean,
     @Column(name = "anfitriao")
-    var anfitriao: Boolean,
+    var host: Boolean,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
-    var endereco: Endereco
+    var address: Address
 ) {
-    constructor() : this("", "", "", "", "", "", false, false, Endereco())
+    constructor() : this("", "", "", "", "", "", false, false, Address())
 }
