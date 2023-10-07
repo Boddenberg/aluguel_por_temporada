@@ -27,7 +27,7 @@ class CustomerController (val customerService: CustomerService) {
     ): ResponseEntity<Cliente> {
         return try {
             val newUpdatedCustomer = customerService.update(cpfCustomer, updatedCustomer)
-            ResponseEntity.ok(updatedCustomer)
+            ResponseEntity.ok(newUpdatedCustomer)
         } catch (e: NoSuchElementException) {
             ResponseEntity.notFound().build()
         }//TODO: Se tentar alterar CPF devolver exception "CPF não pode ser alterado"
@@ -35,11 +35,8 @@ class CustomerController (val customerService: CustomerService) {
 
     @DeleteMapping("/delete/{cpf}")
     fun deleteCustomer(
-        @PathVariable(name = "cpf") cpfCustomer: String) : ResponseEntity<String> {
-
-            return customerService.deleteById(cpfCustomer)
-
-   }
+        @PathVariable(name = "cpf") cpfCustomer: String)
+    : ResponseEntity<String> = customerService.deleteById(cpfCustomer)
 }
     /*
     * TODO: relacionar restante das models às tabelas [OK]

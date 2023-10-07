@@ -25,21 +25,22 @@ repositories {
 }
 
 dependencies {
-	//dependencia webmvc
+	//dependencias web
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation ("org.springframework.boot:spring-boot-starter-hateoas")
 	//dependencias de banco de dados
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-docker-compose")
 	implementation ("com.mysql:mysql-connector-j:8.1.0")
 	//dependencias deserializadoras
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.modelmapper:modelmapper:2.4.4")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	compileOnly("org.projectlombok:lombok")
 	implementation("org.hibernate:hibernate-validator:8.0.0.Final")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	implementation("org.modelmapper:modelmapper:2.4.4")
 }
 
 tasks.withType<KotlinCompile> {

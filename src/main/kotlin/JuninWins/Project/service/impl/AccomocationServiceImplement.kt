@@ -1,5 +1,6 @@
 package JuninWins.Project.service.impl
 
+import JuninWins.Project.exceptions.AccommodationIdNotFoundException
 import JuninWins.Project.model.Accommodation
 import JuninWins.Project.repository.AccommodationRepository
 import JuninWins.Project.service.AccommodationService
@@ -41,8 +42,6 @@ class AccomocationServiceImplement (val accomodationRepository: AccommodationRep
 
 
     private fun findById(id: String): Accommodation {
-        return accomodationRepository.findById(id).orElseThrow { Exception("Accomodation with ID $id not found!")}
-
+        return accomodationRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
-
 }
