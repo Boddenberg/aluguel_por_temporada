@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BookingServiceImpl (val bookingRepository: BookingRepository,
@@ -20,11 +21,14 @@ class BookingServiceImpl (val bookingRepository: BookingRepository,
 
     private val modelMapper = ModelMapper()
 
+
+
     override fun save(booking: BookingRequestDTO, cpf: String, id: Long): Booking {
-        var guest = guestService.findGuestByCPF(cpf)
-        var accommodation = accommodationService.findAccomodationById(id)
-        var booking = Booking(guest, accommodation, booking.startDate, booking.endDate, StatusReservaEnum.CANCELED)
-        return bookingRepository.save(booking)
+        val guest = guestService.findGuestByCPF(cpf)
+        val accommodation = accommodationService.findAccomodationById(id)
+        val newBooking = Booking(accommodation, booking.startDate, booking.endDate, guest, StatusReservaEnum.CANCELED)
+
+        return bookingRepository.save(newBooking)
     }
 
     override fun findBookingById(id: Long): Booking {
@@ -63,6 +67,8 @@ class BookingServiceImpl (val bookingRepository: BookingRepository,
             Data de check-in não pode ser posterior a de check-out
             Reservas são de no mínimo 1 dia. Do horário de check-in ao horário de check-out.
             Cobrar preço por hóspede e preço base.
+
+
      */
 
 
