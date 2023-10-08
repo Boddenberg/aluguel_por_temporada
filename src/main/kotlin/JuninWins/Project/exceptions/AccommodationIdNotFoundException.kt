@@ -1,3 +1,3 @@
 package JuninWins.Project.exceptions
 
-class AccommodationIdNotFoundException(id: String) : RuntimeException("Accomodation with ID $id not found!")
+class AccommodationIdNotFoundException(id: Long) : RuntimeException("Accomodation with ID $id not found!")

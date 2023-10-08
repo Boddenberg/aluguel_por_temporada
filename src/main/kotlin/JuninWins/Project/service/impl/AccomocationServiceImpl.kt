@@ -18,11 +18,11 @@ class AccomocationServiceImpl (val accomodationRepository: AccommodationReposito
         return accomodationRepository.save(accomocation)
     }
 
-    override fun findAccomodationById(id: String): Accommodation {
+    override fun findAccomodationById(id: Long): Accommodation {
         return findById(id)
     }
 
-    override fun update(id: String, newAccomodation: Accommodation): Accommodation {
+    override fun update(id: Long, newAccomodation: Accommodation): Accommodation {
         val currentAccommodation = findById(id)
 
         modelMapper.map(newAccomodation, currentAccommodation)
@@ -30,7 +30,7 @@ class AccomocationServiceImpl (val accomodationRepository: AccommodationReposito
         return accomodationRepository.save(currentAccommodation)
     }
 
-    override fun deleteById(id: String): ResponseEntity<String> {
+    override fun deleteById(id: Long): ResponseEntity<String> {
         val accommodation = accomodationRepository.findById(id)
 
         if (accommodation.isPresent) {
@@ -41,7 +41,7 @@ class AccomocationServiceImpl (val accomodationRepository: AccommodationReposito
     }
 
 
-    private fun findById(id: String): Accommodation {
+    private fun findById(id: Long): Accommodation {
         return accomodationRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
 }

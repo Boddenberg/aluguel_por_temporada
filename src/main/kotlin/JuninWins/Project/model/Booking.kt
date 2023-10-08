@@ -10,7 +10,7 @@ data class Booking(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long?,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "hospedagem_id")
     val accommodation: Accommodation,
@@ -25,9 +25,16 @@ data class Booking(
     @Enumerated(EnumType.STRING)
     val status: StatusReservaEnum
 ) {
-    constructor(CPFGuest: String, AccommodationId: Long, startDate: LocalDate, endDate: LocalDate, status: StatusReservaEnum) :
+    constructor(CPFGuest: Guest, AccommodationId: Accommodation, startDate: LocalDate, endDate: LocalDate, status: StatusReservaEnum) :
             this(0, Accommodation(), startDate, endDate, Guest(), status) {
-    }}
+    }
+
+    constructor() : this(null, Accommodation(), LocalDate.now(), LocalDate.now(), Guest(), StatusReservaEnum.PENDING)
+
+
+}
+
+
 
 /*
     O preço final da reserva substitui o preço base da hospedagem.

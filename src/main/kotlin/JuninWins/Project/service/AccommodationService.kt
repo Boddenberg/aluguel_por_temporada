@@ -7,10 +7,10 @@ interface AccommodationService {
 
     fun save(accomocation : Accommodation) : Accommodation
 
-    fun findAccomodationById(id : String) : Accommodation
+    fun findAccomodationById(id : Long) : Accommodation
 
-    fun update(id : String, newAccomodation: Accommodation) : Accommodation
+    fun update(id : Long, newAccomodation: Accommodation) : Accommodation
 
-    fun deleteById(id : String) : ResponseEntity<String>
+    fun deleteById(id : Long) : ResponseEntity<String>
 
 }

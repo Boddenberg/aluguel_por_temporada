@@ -3,7 +3,7 @@ package JuninWins.Project.service
 import JuninWins.Project.model.Guest
 import org.springframework.http.ResponseEntity
 
-interface CustomerService {
+interface GuestService {
 
     fun save(customer : Guest) : Guest
 

@@ -7,14 +7,16 @@ import jakarta.persistence.*
 data class Address(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
-    val street: String,
-    val number: String,
-    val complement: String?,
-    val neighborhood: String,
-    val city: String,
-    val state: String,
-    val zipCode: String
+    val id: Long? = null, // Adicione um ID para o endereço
+    val logradouro: String,
+    val numero: String,
+    val complemento: String?,
+    val bairro: String,
+    val cidade: String,
+    val estado: String,
+    val cep: String
 ) {
-    constructor() : this(null, "", "", null, "", "", "", "")
+    constructor() : this(0, "", "", null, "", "", "", "")
+
+
 }

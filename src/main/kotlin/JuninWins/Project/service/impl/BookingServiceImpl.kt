@@ -1,26 +1,37 @@
 package JuninWins.Project.service.impl
 
+import JuninWins.Project.DTO.BookingRequestDTO
+import JuninWins.Project.enums.StatusReservaEnum
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
 import JuninWins.Project.model.Booking
 import JuninWins.Project.repository.BookingRepository
+import JuninWins.Project.service.AccommodationService
 import JuninWins.Project.service.BookingService
+import JuninWins.Project.service.GuestService
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Service
 
-class BookingServiceImpl (val bookingRepository: BookingRepository) : BookingService {
+@Service
+class BookingServiceImpl (val bookingRepository: BookingRepository,
+                          val guestService: GuestService,
+                          val accommodationService: AccommodationService) : BookingService {
 
     private val modelMapper = ModelMapper()
 
-    override fun save(booking: Booking): Booking {
+    override fun save(booking: BookingRequestDTO, cpf: String, id: Long): Booking {
+        var guest = guestService.findGuestByCPF(cpf)
+        var accommodation = accommodationService.findAccomodationById(id)
+        var booking = Booking(guest, accommodation, booking.startDate, booking.endDate, StatusReservaEnum.CANCELED)
         return bookingRepository.save(booking)
     }
 
-    override fun findBookingById(id: String): Booking {
+    override fun findBookingById(id: Long): Booking {
         return findById(id)
     }
 
-    override fun update(id: String, newBooking: Booking): Booking {
+    override fun update(id: Long, newBooking: Booking): Booking {
         val currentBooking = findById(id)
 
         modelMapper.map(newBooking, currentBooking)
@@ -29,7 +40,7 @@ class BookingServiceImpl (val bookingRepository: BookingRepository) : BookingSer
 
     }
 
-    override fun deleteById(id: String): ResponseEntity<String> {
+    override fun deleteById(id: Long): ResponseEntity<String> {
             val booking = bookingRepository.findById(id)
 
         if (booking.isPresent) {
@@ -40,7 +51,7 @@ class BookingServiceImpl (val bookingRepository: BookingRepository) : BookingSer
     }
 
 
-    private fun findById(id: String): Booking {
+    private fun findById(id: Long): Booking {
         return bookingRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
 

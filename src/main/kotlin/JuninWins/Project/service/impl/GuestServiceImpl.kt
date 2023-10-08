@@ -1,15 +1,15 @@
 package JuninWins.Project.service.impl
 
 import JuninWins.Project.model.Guest
-import JuninWins.Project.repository.CustomerRepository
-import JuninWins.Project.service.CustomerService
+import JuninWins.Project.repository.GuestRepository
+import JuninWins.Project.service.GuestService
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
-class CustomerServiceImpl (val customerRepository : CustomerRepository) : CustomerService {
+class GuestServiceImpl (val customerRepository : GuestRepository) : GuestService {
 
     private val modelMapper = ModelMapper()
     override fun save(customer: Guest) : Guest {

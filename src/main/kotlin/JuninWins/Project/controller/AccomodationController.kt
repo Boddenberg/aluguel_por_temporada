@@ -15,12 +15,12 @@ class AccomodationController (val accommodationService: AccommodationService) {
     }
 
     @GetMapping("/search/accommodation/{id}")
-    fun findAccommodation(@PathVariable(name = "id") idAccommodation: String) : ResponseEntity<Accommodation> {
+    fun findAccommodation(@PathVariable(name = "id") idAccommodation: Long) : ResponseEntity<Accommodation> {
         return  ResponseEntity.ok(accommodationService.findAccomodationById(idAccommodation))
     }//TODO: Quando busca por ID não existente está voltando um stacktrace gigantesco
 
     @PutMapping("/update/accommodation/{id}")
-    fun updateAccommodation(@PathVariable(name = "id") idAccommodation: String,
+    fun updateAccommodation(@PathVariable(name = "id") idAccommodation: Long,
     @RequestBody updatedAccommodation: Accommodation) : ResponseEntity<Accommodation>{
         return try {
             val newUpdatedAccommodation = accommodationService.update(idAccommodation, updatedAccommodation)
@@ -32,7 +32,7 @@ class AccomodationController (val accommodationService: AccommodationService) {
 
     @DeleteMapping("/delete/accommodation/{id}")
     fun deleteAccommodation(
-        @PathVariable(name = "id") idAccommodation: String) : ResponseEntity<String> {
+        @PathVariable(name = "id") idAccommodation: Long) : ResponseEntity<String> {
 
         return accommodationService.deleteById(idAccommodation)
 

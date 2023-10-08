@@ -1,23 +1,24 @@
 package JuninWins.Project.controller
 
 import JuninWins.Project.model.Guest
-import JuninWins.Project.service.CustomerService
+import JuninWins.Project.service.GuestService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("customers")
-class CustomerController (val customerService: CustomerService) {
+class CustomerController (val customerService: GuestService) {
 
-    @PostMapping("/register/guest")
-    fun saveCustomer(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
-        return ResponseEntity.ok(customerService.save(cliente))
-    }
 
     @GetMapping("/search/{cpf}")
     fun findCustomer(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
         return ResponseEntity.ok(customerService.findGuestByCPF(cpfCustomer))
+    }
+
+    @PostMapping("/register/guest")
+    fun saveCustomer(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
+        return ResponseEntity.ok(customerService.save(cliente))
     }
 
     @PutMapping("/update/{cpf}")
