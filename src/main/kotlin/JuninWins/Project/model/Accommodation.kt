@@ -25,7 +25,7 @@ data class Accommodation(
     val address: Address,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "politica_desconto_id") // Adicionando a coluna de referência à política de desconto
-    val discountPolicy: DiscountPolicy? // Adicione um campo para a política de desconto
+    var discountPolicy: DiscountPolicy? // Adicione um campo para a política de desconto
 ) {
     constructor() : this(0, "", "", 0, Double.MIN_VALUE, Address(), null)
 }

@@ -2,6 +2,7 @@ package JuninWins.Project.service.impl
 
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
 import JuninWins.Project.model.Accommodation
+import JuninWins.Project.model.DiscountPolicy
 import JuninWins.Project.repository.AccommodationRepository
 import JuninWins.Project.service.AccommodationService
 import org.modelmapper.ModelMapper
@@ -24,7 +25,9 @@ class AccomocationServiceImpl (val accomodationRepository: AccommodationReposito
 
     override fun update(id: Long, newAccomodation: Accommodation): Accommodation {
         val currentAccommodation = findById(id)
-
+        if(currentAccommodation.discountPolicy == null && newAccomodation.discountPolicy != null) {
+            currentAccommodation.discountPolicy = modelMapper.map(newAccomodation.discountPolicy, DiscountPolicy::class.java)
+        }
         modelMapper.map(newAccomodation, currentAccommodation)
 
         return accomodationRepository.save(currentAccommodation)
