@@ -11,6 +11,5 @@ enum class DiscountPolicyTypeEnum (val descricao: String) {
         fun fromDescricao(descricao: String): StatusReservaEnum? =
             StatusReservaEnum.values().find { it.descricao == descricao }
     }
-
     override fun toString(): String = descricao
 }
