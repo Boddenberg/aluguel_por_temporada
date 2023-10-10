@@ -49,16 +49,16 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
     fun handlingResponseForBookingIdNotFoundException(
         exception: BookingNotFoundException,
         request: WebRequest
-    ): ResponseEntity<ResponseExceptionHandlerApi.ErrorResponse> {
+    ): ResponseEntity<ErrorResponse> {
         val instant = Instant.now()
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
             .withZone(ZoneId.systemDefault())
         val timeStamp = formatter.format(instant)
         val httpStatus = HttpStatus.NOT_FOUND.value()
-        val errorResponse = ResponseExceptionHandlerApi.ErrorResponse(
+        val errorResponse = ErrorResponse(
             status = httpStatus,
             message = exception.message,
-            _links = mapOf("self" to ResponseExceptionHandlerApi.Link(request.getDescription(false))),
+            _links = mapOf("self" to Link(request.getDescription(false))),
             timestamp = timeStamp,
             path = request.getDescription(false)
         )
