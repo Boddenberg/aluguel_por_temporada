@@ -1,20 +1,11 @@
 # dream_project 🚀
 
-### Desenho da solução e suas integrações
-- primeira fase:
-![img.png](assets/img.png)
-- 
-#### Diagrama da tabela
-
-![Untitled.svg](assets/img_1.png)
-
 ## Tecnologias aplicadas
 
 * kotlin 1.8.22 com java 17
 * spring framework versão 3.x.x
-    * starter web mvc
 * JPA
-  * Mysql
+* Mysql
 * Lombok
 * spring-docker-compose
 * ... mais coisas ( ao infinito e além ) 🚀

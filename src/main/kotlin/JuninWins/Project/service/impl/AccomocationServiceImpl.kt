@@ -6,7 +6,6 @@ import JuninWins.Project.model.DiscountPolicy
 import JuninWins.Project.repository.AccommodationRepository
 import JuninWins.Project.service.AccommodationService
 import org.modelmapper.ModelMapper
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
@@ -35,12 +34,11 @@ class AccomocationServiceImpl (val accomodationRepository: AccommodationReposito
 
     override fun deleteById(id: Long): ResponseEntity<String> {
         val accommodation = accomodationRepository.findById(id)
-
         if (accommodation.isPresent) {
             accomodationRepository.deleteById(id)
-            return ResponseEntity.ok("Accommodation excluded with success!")
-        } //TODO: Validação para excluir acomodação apenas se não tiver reservas atreladas a ela.
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Accomodation not found")
+            return ResponseEntity.status(200).body("Accommodation excluded with success!")
+        }
+        throw AccommodationIdNotFoundException(id)
     }
 
 
