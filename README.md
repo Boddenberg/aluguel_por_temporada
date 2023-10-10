@@ -6,7 +6,7 @@
 - 
 #### Diagrama da tabela
 
-![Untitled.svg](assets/Diagrama-banco-de-dados.svg)
+![Untitled.svg](assets/img_1.png)
 
 ## Tecnologias aplicadas
 
@@ -137,6 +137,146 @@ curl --request GET \
 ]
 ```
 
+- criando uma hospedagem com politica de preçou ou nem uma
+
+```shell
+curl --request POST \
+  --url http://localhost:8080/accommodations/register/accommodation \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/8.2.0' \
+  --data '{
+	"type": "Casa feia",
+	"localization": "Perto da Praia",
+	"capacity": 6,
+	"basePrice": 250.0,
+	"address": {
+		"logradouro": "logradouro",
+		"numero": "300",
+		"complemento": "esquina",
+		"bairro": "bairro",
+		"cidade": "SP",
+		"estado": "SP",
+		"cep": "3124124-22"
+	}
+}'
+```
+resposta
+
+```json
+{
+	"id": 3,
+	"type": "Casa feia",
+	"localization": "Perto da Praia",
+	"capacity": 6,
+	"basePrice": 250.0,
+	"address": {
+		"id": 3,
+		"logradouro": "logradouro",
+		"numero": "300",
+		"complemento": "esquina",
+		"bairro": "bairro",
+		"cidade": "SP",
+		"estado": "SP",
+		"cep": "3124124-22"
+	},
+	"discountPolicy": null
+}
+```
+
+- agora vamos incluir uma politica de preco a hospedagem
+
+```shell
+curl --request PUT \
+  --url http://localhost:8080/accommodations/update/accommodation/2 \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/8.2.0' \
+  --data '{
+	"type": "Casa",
+	"localization": "Perto da Praia",
+	"capacity": 6,
+	"basePrice": 250.0,
+	"address": {
+		"id": 1,
+		"logradouro": "logradouro",
+		"numero": "300",
+		"complemento": "esquina",
+		"bairro": "bairro",
+		"cidade": "SP",
+		"estado": "SP",
+		"cep": "3124124-22"
+	},
+	"discountPolicy": [{
+		"policyType" : "seila1",
+		"discountPercentage": 55.21
+	}]
+}'
+```
+- exemplo de resposta
+
+```json
+{
+	"id": 3,
+	"type": "Casa feia",
+	"localization": "Perto da Praia",
+	"capacity": 6,
+	"basePrice": 250.0,
+	"address": {
+		"id": 3,
+		"logradouro": "logradouro",
+		"numero": "300",
+		"complemento": "esquina",
+		"bairro": "bairro",
+		"cidade": "SP",
+		"estado": "SP",
+		"cep": "3124124-22"
+	},
+	"discountPolicy": [
+		{
+			"id": 7,
+			"policyType": "seila1",
+			"discountPercentage": 55.21,
+			"accommodationId": null
+		}
+	]
+}
+```
+
+- exemplo de find by id
+
+```shell
+curl --request GET \
+  --url http://localhost:8080/accommodations/search/accommodation/2 \
+  --header 'User-Agent: insomnia/8.2.0'
+```
+- exemplo de resposta
+
+```json
+{
+	"id": 2,
+	"type": "Casa feia",
+	"localization": "Perto da Praia",
+	"capacity": 6,
+	"basePrice": 250.0,
+	"address": {
+		"id": 3,
+		"logradouro": "logradouro",
+		"numero": "300",
+		"complemento": "esquina",
+		"bairro": "bairro",
+		"cidade": "SP",
+		"estado": "SP",
+		"cep": "3124124-22"
+	},
+	"discountPolicy": [
+		{
+			"id": 7,
+			"policyType": "seila1",
+			"discountPercentage": 55.21,
+			"accommodationId": 3
+		}
+	]
+}
+```
 ## DockerCommands
 
 * docker-compose up = inicia o docker

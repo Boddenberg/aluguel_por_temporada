@@ -25,7 +25,8 @@ CREATE TABLE tb_cliente (
 CREATE TABLE tb_politica_desconto (
     id INT PRIMARY KEY AUTO_INCREMENT,
     tipo_politica VARCHAR(50),
-    desconto DECIMAL(5, 2)
+    desconto DECIMAL(5, 2),
+    hospedagem_id INT
 );
 
 CREATE TABLE tb_hospedagem (
@@ -36,8 +37,7 @@ CREATE TABLE tb_hospedagem (
     preco_por_noite DECIMAL(10, 2) NOT NULL,
     endereco_id BIGINT,
     politica_desconto_id INT,
-    FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id),
-    FOREIGN KEY (politica_desconto_id) REFERENCES tb_politica_desconto(id)
+    FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
 );
 
 CREATE TABLE tb_reserva (
@@ -51,9 +51,7 @@ CREATE TABLE tb_reserva (
     FOREIGN KEY (hospedagem_id) REFERENCES tb_hospedagem(id)
 );
 
-
-
--- comando para ter um dado de teste para fazer obtenção --STR_TO_DATE('10/08/1999', '%d/%m/%Y')
+-- comando para ter um dado de teste para fazer obtenção
 INSERT INTO tb_endereco (id, logradouro, numero, complemento, bairro, cidade, estado, cep)
 VALUES (1, 'logradouro', '300', 'esquina', 'bairro', 'SP', 'SP', '3124124-22');
 

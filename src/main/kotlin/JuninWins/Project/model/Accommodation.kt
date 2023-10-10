@@ -1,5 +1,6 @@
 package JuninWins.Project.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import jakarta.persistence.*
 
@@ -7,6 +8,7 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "tb_hospedagem")
 @JsonPropertyOrder("id", "type", "localization", "capacity", "basePrice", "address", "discountPolicy", "guest")
+@JsonIgnoreProperties
 data class Accommodation(
     @Id
     @Column(name = "id")
@@ -23,9 +25,9 @@ data class Accommodation(
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
     val address: Address,
-    @OneToOne(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "politica_desconto_id") // Adicionando a coluna de referência à política de desconto
-    var discountPolicy: DiscountPolicy? // Adicione um campo para a política de desconto
+    @OneToMany(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "hospedagem_id") // Adicionando a coluna de referência à política de desconto
+    var discountPolicy: List<DiscountPolicy>? // Adicione um campo para a política de desconto
 ) {
     constructor() : this(0, "", "", 0, Double.MIN_VALUE, Address(), null)
 }

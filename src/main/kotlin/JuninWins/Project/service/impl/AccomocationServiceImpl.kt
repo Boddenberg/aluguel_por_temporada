@@ -26,7 +26,7 @@ class AccomocationServiceImpl (val accomodationRepository: AccommodationReposito
     override fun update(id: Long, newAccomodation: Accommodation): Accommodation {
         val currentAccommodation = findById(id)
         if(currentAccommodation.discountPolicy == null && newAccomodation.discountPolicy != null) {
-            currentAccommodation.discountPolicy = modelMapper.map(newAccomodation.discountPolicy, DiscountPolicy::class.java)
+            currentAccommodation.discountPolicy = listOf(modelMapper.map(newAccomodation.discountPolicy, DiscountPolicy::class.java))
         }
         modelMapper.map(newAccomodation, currentAccommodation)
 

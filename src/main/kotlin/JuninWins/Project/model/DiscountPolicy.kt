@@ -1,10 +1,8 @@
 package JuninWins.Project.model
 
-import JuninWins.Project.enums.DiscountPolicyTypeEnum
 import jakarta.persistence.*
 
 
-@Embeddable
 @Entity
 @Table(name = "tb_politica_desconto")
 data class DiscountPolicy(
@@ -15,7 +13,9 @@ data class DiscountPolicy(
     @Column(name = "tipo_politica")
     val policyType: String? = null, // Pode ser 'semanal', 'feriado', etc.
     @Column(name = "desconto")
-    val discountPercentage: Double? = null
+    val discountPercentage: Double? = null,
+    @Column(name = "hospedagem_id")
+    val accommodationId: Int? = null
 ) {
-    constructor() : this(0, "", 0.0)
+    constructor() : this(0, "", 0.0, 0)
 }
