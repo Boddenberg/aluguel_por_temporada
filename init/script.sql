@@ -40,6 +40,14 @@ CREATE TABLE tb_hospedagem (
     FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
 );
 
+CREATE TABLE tb_hospedagem__discount_policy (
+    accommodation_id INT NOT NULL,
+    _discount_policy_id INT NOT NULL,
+    FOREIGN KEY (accommodation_id) REFERENCES tb_hospedagem (id),
+    FOREIGN KEY (_discount_policy_id) REFERENCES tb_politica_desconto (id)
+);
+
+
 CREATE TABLE tb_reserva (
     id INT PRIMARY KEY AUTO_INCREMENT,
     cliente_cpf VARCHAR(14) NOT NULL,
