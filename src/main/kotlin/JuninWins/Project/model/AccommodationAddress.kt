@@ -12,6 +12,4 @@ class AccommodationAddress (
     val cep: String
 ) {
     constructor() : this(0, "", "", null, "", "", "", "")
-
-
 }

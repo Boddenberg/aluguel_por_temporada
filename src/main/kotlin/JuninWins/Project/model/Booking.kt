@@ -21,6 +21,10 @@ data class Booking(
     val startDate: LocalDate,
     @Column(name = "data_fim")
     val endDate: LocalDate,
+    @Column(name = "duracao_reserva")
+    var bookingDuration: Int,
+    @Column(name = "total_price")
+    val totalPrice: Double,
     @OneToOne
     @JoinColumn(name = "cliente_cpf")
     val guest: Guest,
@@ -34,9 +38,11 @@ data class Booking(
         accommodation: Accommodation,
         startDate: LocalDate,
         endDate: LocalDate,
+        bookingDuration: Int,
+        totalPrice: Double,
         guest: Guest,
         status: StatusReservaEnum
-    ) : this(0, accommodation, startDate, endDate, guest, status)
+    ) : this(0, accommodation, startDate, endDate, bookingDuration, totalPrice, guest, status)
 }
 
 /*
