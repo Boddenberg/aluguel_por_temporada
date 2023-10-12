@@ -12,7 +12,7 @@ import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @Service
 class BookingServiceImpl (val bookingRepository: BookingRepository,
@@ -22,11 +22,17 @@ class BookingServiceImpl (val bookingRepository: BookingRepository,
     private val modelMapper = ModelMapper()
 
 
-
     override fun save(booking: BookingRequestDTO, cpf: String, id: Long): Booking {
         val guest = guestService.findGuestByCPF(cpf)
         val accommodation = accommodationService.findAccomodationById(id)
-        val newBooking = Booking(accommodation, booking.startDate, booking.endDate, guest, StatusReservaEnum.CANCELED)
+        val newBooking = Booking(
+            accommodation,
+            booking.startDate,
+            booking.endDate,
+            calculateBookingDurationDays(booking.startDate, booking.endDate),
+            calculateBookingTotalPrice (accommodation.basePrice, calculateBookingDurationDays(booking.startDate, booking.endDate), id),
+        guest,
+        StatusReservaEnum.CANCELED)
 
         return bookingRepository.save(newBooking)
     }
@@ -45,13 +51,13 @@ class BookingServiceImpl (val bookingRepository: BookingRepository,
     }
 
     override fun deleteById(id: Long): ResponseEntity<String> {
-            val booking = bookingRepository.findById(id)
+        val booking = bookingRepository.findById(id)
 
         if (booking.isPresent) {
             bookingRepository.deleteById(id)
             return ResponseEntity.ok("Booking deleted with success!")
         }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking ID not found")
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking ID not found")
     }
 
 
@@ -59,8 +65,38 @@ class BookingServiceImpl (val bookingRepository: BookingRepository,
         return bookingRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
 
+    private fun calculateBookingDurationDays(startDate: LocalDate, endDate: LocalDate): Int {
+        return endDate.until(startDate).days
+    }
 
-    /*
+    private fun calculateBookingTotalPrice(precoBase: Double, duracaoReserva: Int, id: Long): Double {
+        val accommodation = accommodationService.findAccomodationById(id)
+
+        var totalPrice = precoBase * duracaoReserva
+
+        for (discountPolicy in accommodation._discountPolicy) {
+            when (discountPolicy.policyType) {
+                "semanal" -> {
+                    if (discountPolicy.discountPercentage != 0.0) {
+                        totalPrice *= (1.0 - discountPolicy.discountPercentage / 100.0)
+                    }
+                }
+                // refatorar para acrescentar outras políticas, tipo a quinzenal e a mensal
+            }
+        }
+
+        return if (totalPrice != precoBase * duracaoReserva) {
+            totalPrice
+        } else {
+            precoBase * duracaoReserva
+        }
+    }
+
+
+
+}
+
+        /*
            TODO's:
             Reservas não podem ser excluídas. Reservas podem ser apenas canceladas de acordo com a política de cancelamento.
             Resevas só podem ser atualizadas se as datas estiverem livres.
@@ -72,4 +108,3 @@ class BookingServiceImpl (val bookingRepository: BookingRepository,
      */
 
 
-}
