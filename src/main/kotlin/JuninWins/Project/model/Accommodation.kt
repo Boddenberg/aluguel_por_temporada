@@ -9,27 +9,29 @@ import jakarta.persistence.*
 @Table(name = "tb_hospedagem")
 @JsonPropertyOrder("id", "type", "localization", "capacity", "basePrice", "address", "discountPolicy", "guest")
 @JsonIgnoreProperties
-data class Accommodation(
+class Accommodation(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long?,
     @Column(name = "tipo")
-    val type: String, // se é uma casa, apartamento, cabana, pousada, cabana, iglu, etc
+    var type: String, // se é uma casa, apartamento, cabana, pousada, cabana, iglu, etc
     @Column(name = "localizacao")
-    val localization: String?,
+    var localization: String?,
     @Column(name = "capacidade")
-    val capacity: Int = 0, // até quantas pessoas podem se hospedar na acomodação
+    var capacity: Int = 0, // até quantas pessoas podem se hospedar na acomodação
     @Column(name = "preco_por_noite")
-    val basePrice: Double, // como implementar desconto? tipo desconto para reservas de 7 dias+, 30 dias+ e aumento de preço quando for feriado e tal....?
+    var basePrice: Double, // como implementar desconto? tipo desconto para reservas de 7 dias+, 30 dias+ e aumento de preço quando for feriado e tal....?
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
-    val address: Address,
-    @OneToMany(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "hospedagem_id") // Adicionando a coluna de referência à política de desconto
-    var discountPolicy: List<DiscountPolicy>? // Adicione um campo para a política de desconto
+    var address: Address
 ) {
-    constructor() : this(0, "", "", 0, Double.MIN_VALUE, Address(), null)
+    @OneToMany(cascade = [CascadeType.ALL])
+    var _discountPolicy: List<DiscountPolicy> = ArrayList() // Adicione um campo para a política de desconto
+
+    fun addDiscountPolicy(discountPolicy: DiscountPolicy) {
+        _discountPolicy += discountPolicy
+    }
 }
 /*
     O que compõe o preço:

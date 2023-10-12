@@ -25,8 +25,7 @@ CREATE TABLE tb_cliente (
 CREATE TABLE tb_politica_desconto (
     id INT PRIMARY KEY AUTO_INCREMENT,
     tipo_politica VARCHAR(50),
-    desconto DECIMAL(5, 2),
-    hospedagem_id INT
+    desconto DECIMAL(5, 2)
 );
 
 CREATE TABLE tb_hospedagem (
@@ -36,8 +35,14 @@ CREATE TABLE tb_hospedagem (
     capacidade INT NOT NULL,
     preco_por_noite DECIMAL(10, 2) NOT NULL,
     endereco_id BIGINT,
-    politica_desconto_id INT,
     FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
+);
+
+CREATE TABLE tb_hospedagem__discount_policy (
+    accommodation_id INT NOT NULL,
+    _discount_policy_id INT NOT NULL,
+    FOREIGN KEY (accommodation_id) REFERENCES tb_hospedagem (id),
+    FOREIGN KEY (_discount_policy_id) REFERENCES tb_politica_desconto (id)
 );
 
 CREATE TABLE tb_reserva (

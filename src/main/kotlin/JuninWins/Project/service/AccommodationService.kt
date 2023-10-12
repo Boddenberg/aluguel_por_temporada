@@ -1,6 +1,7 @@
 package JuninWins.Project.service
 
 import JuninWins.Project.model.Accommodation
+import JuninWins.Project.model.DiscountPolicy
 import org.springframework.http.ResponseEntity
 
 interface AccommodationService {
@@ -13,4 +14,7 @@ interface AccommodationService {
 
     fun deleteById(id : Long) : ResponseEntity<String>
 
+    fun insertPolicyOnAccommodation(id: Long, discountPolicy: DiscountPolicy): Accommodation
+
+    fun updatedPolicyOnAccommodation(idAccommodation: Long, idPolicy: Long, discountPolicy: DiscountPolicy): List<DiscountPolicy>
 }
