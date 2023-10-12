@@ -136,9 +136,9 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --header 'User-Agent: insomnia/8.2.0' \
   --data '{
-	"type": "Casa feia",
+	"type": "Casa feia 2",
 	"localization": "Perto da Praia",
-	"capacity": 6,
+	"capacity": 9,
 	"basePrice": 250.0,
 	"address": {
 		"logradouro": "logradouro",
@@ -155,118 +155,95 @@ resposta
 
 ```json
 {
-	"id": 3,
-	"type": "Casa feia",
-	"localization": "Perto da Praia",
-	"capacity": 6,
-	"basePrice": 250.0,
-	"address": {
-		"id": 3,
-		"logradouro": "logradouro",
-		"numero": "300",
-		"complemento": "esquina",
-		"bairro": "bairro",
-		"cidade": "SP",
-		"estado": "SP",
-		"cep": "3124124-22"
-	},
-	"discountPolicy": null
+  "id": 2,
+  "type": "Casa feia 2",
+  "localization": "Perto da Praia",
+  "capacity": 9,
+  "basePrice": 250.0,
+  "address": {
+    "id": 2,
+    "logradouro": "logradouro",
+    "numero": "300",
+    "complemento": "esquina",
+    "bairro": "bairro",
+    "cidade": "SP",
+    "estado": "SP",
+    "cep": "3124124-22"
+  },
+  "_discountPolicy": []
 }
 ```
 
 - agora vamos incluir uma politica de preco a hospedagem
 
 ```shell
-curl --request PUT \
-  --url http://localhost:8080/accommodations/update/accommodation/2 \
+curl --request PATCH \
+  --url http://localhost:8080/accommodations/insert/policy/2 \
   --header 'Content-Type: application/json' \
   --header 'User-Agent: insomnia/8.2.0' \
+  --data '		{
+			"policyType": "seila teste accommodation 2",
+			"discountPercentage": 22.12
+		}'
+```
+- exemplo de resposta
+
+```json
+{
+  "id": 2,
+  "type": "Casa feia 2",
+  "localization": "Perto da Praia",
+  "capacity": 9,
+  "basePrice": 250.0,
+  "address": {
+    "id": 2,
+    "logradouro": "logradouro",
+    "numero": "300",
+    "complemento": "esquina",
+    "bairro": "bairro",
+    "cidade": "SP",
+    "estado": "SP",
+    "cep": "3124124-22"
+  },
+  "_discountPolicy": [
+    {
+      "policyType": "seila teste accommodation blabla",
+      "discountPercentage": 22.12,
+      "id": 1
+    },
+    {
+      "policyType": "seila teste accommodation 2",
+      "discountPercentage": 22.12,
+      "id": 2
+    }
+  ]
+}
+```
+
+- exemplo de atualizacao da politica
+
+```shell
+curl --request PUT \
+  --url http://localhost:8080/accommodations/update/policy \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/8.2.0' \
+  --header 'idAccommodation: 2' \
+  --header 'idPolicy: 1' \
   --data '{
-	"type": "Casa",
-	"localization": "Perto da Praia",
-	"capacity": 6,
-	"basePrice": 250.0,
-	"address": {
-		"id": 1,
-		"logradouro": "logradouro",
-		"numero": "300",
-		"complemento": "esquina",
-		"bairro": "bairro",
-		"cidade": "SP",
-		"estado": "SP",
-		"cep": "3124124-22"
-	},
-	"discountPolicy": [{
-		"policyType" : "seila1",
-		"discountPercentage": 55.21
-	}]
+	"policyType": "seila teste accommodation blabla",
+	"discountPercentage": 22.12
 }'
 ```
 - exemplo de resposta
 
 ```json
-{
-	"id": 3,
-	"type": "Casa feia",
-	"localization": "Perto da Praia",
-	"capacity": 6,
-	"basePrice": 250.0,
-	"address": {
-		"id": 3,
-		"logradouro": "logradouro",
-		"numero": "300",
-		"complemento": "esquina",
-		"bairro": "bairro",
-		"cidade": "SP",
-		"estado": "SP",
-		"cep": "3124124-22"
-	},
-	"discountPolicy": [
-		{
-			"id": 7,
-			"policyType": "seila1",
-			"discountPercentage": 55.21,
-			"accommodationId": null
-		}
-	]
-}
-```
-
-- exemplo de find by id
-
-```shell
-curl --request GET \
-  --url http://localhost:8080/accommodations/search/accommodation/2 \
-  --header 'User-Agent: insomnia/8.2.0'
-```
-- exemplo de resposta
-
-```json
-{
-	"id": 2,
-	"type": "Casa feia",
-	"localization": "Perto da Praia",
-	"capacity": 6,
-	"basePrice": 250.0,
-	"address": {
-		"id": 3,
-		"logradouro": "logradouro",
-		"numero": "300",
-		"complemento": "esquina",
-		"bairro": "bairro",
-		"cidade": "SP",
-		"estado": "SP",
-		"cep": "3124124-22"
-	},
-	"discountPolicy": [
-		{
-			"id": 7,
-			"policyType": "seila1",
-			"discountPercentage": 55.21,
-			"accommodationId": 3
-		}
-	]
-}
+[
+  {
+    "policyType": "seila teste accommodation blabla",
+    "discountPercentage": 22.12,
+    "id": 1
+  }
+]
 ```
 ## DockerCommands
 
