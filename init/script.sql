@@ -60,16 +60,3 @@ CREATE TABLE tb_reserva (
     FOREIGN KEY (cliente_cpf) REFERENCES tb_cliente(cpf),
     FOREIGN KEY (hospedagem_id) REFERENCES tb_hospedagem(id)
 );
-
--- comando para ter um dado de teste para fazer obtenção
-INSERT INTO tb_endereco (id, logradouro, numero, complemento, bairro, cidade, estado, cep)
-VALUES (1, 'logradouro', '300', 'esquina', 'bairro', 'SP', 'SP', '3124124-22');
-
-INSERT INTO tb_cliente (cpf, nome, sobrenome, email, telefone, data_nascimento, responsavel, anfitriao, endereco_id)
-VALUES ('666-666-666-66', 'nome- teste', 'sobrenome- teste', 'teste@gmail.com', '55-55555-5555', '10/08/1999', true, true, 1);
-
-INSERT INTO tb_hospedagem (tipo, localizacao, capacidade, preco_por_noite, endereco_id)
-VALUES('Casa', 'Perto da Praia', 6, 250.00, 1);
-
-INSERT INTO tb_reserva (cliente_cpf, hospedagem_id, data_inicio, data_fim, status)
-VALUES('666-666-666-66', 1, '2023-05-10', '2023-05-17', 'CONCLUIDA');

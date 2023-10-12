@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 @Entity
 @Table(name = "tb_reserva")
-@JsonPropertyOrder("id", "startDate", "endDate", "status", "guest", "accommodation")
+@JsonPropertyOrder("id", "startDate", "endDate", "status", "bookingDuration", "totalPrice", "guest", "accommodation")
 data class Booking(
     @Id
     @Column(name = "id")
@@ -23,7 +23,7 @@ data class Booking(
     val endDate: LocalDate,
     @Column(name = "duracao_reserva")
     var bookingDuration: Int,
-    @Column(name = "total_price")
+    @Column(name = "preco_total")
     val totalPrice: Double,
     @OneToOne
     @JoinColumn(name = "cliente_cpf")

@@ -66,9 +66,10 @@ class BookingServiceImpl (val bookingRepository: BookingRepository,
     }
 
     private fun calculateBookingDurationDays(startDate: LocalDate, endDate: LocalDate): Int {
-        return endDate.until(startDate).days
+        return startDate.until(endDate).days
     }
 
+    //TODO: Implementar lógica
     private fun calculateBookingTotalPrice(precoBase: Double, duracaoReserva: Int, id: Long): Double {
         val accommodation = accommodationService.findAccomodationById(id)
 
