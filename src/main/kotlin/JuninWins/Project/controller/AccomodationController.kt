@@ -43,7 +43,13 @@ class AccommodationController(val accommodationService: AccommodationService) {
         @RequestHeader(name = "idPolicy") idPolicy: Long,
         @RequestBody discountPolicy: DiscountPolicy
     ): ResponseEntity<List<DiscountPolicy>> {
-        return ResponseEntity.ok(accommodationService.updatedPolicyOnAccommodation(idAccommodation,idPolicy, discountPolicy))
+        return ResponseEntity.ok(
+            accommodationService.updatedPolicyOnAccommodation(
+                idAccommodation,
+                idPolicy,
+                discountPolicy
+            )
+        )
     }
 
     @DeleteMapping("/delete/policy")

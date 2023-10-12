@@ -7,10 +7,10 @@ import jakarta.persistence.*
 @Table(name = "tb_politica_desconto")
 class DiscountPolicy(
     @Column(name = "tipo_politica")
-    var policyType: String, // Pode ser 'semanal', 'feriado', etc.
+    var policyType: String, // usar DiscountPolicyTypeEnum
     @Column(name = "desconto")
     val discountPercentage: Double
-){
+) {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
