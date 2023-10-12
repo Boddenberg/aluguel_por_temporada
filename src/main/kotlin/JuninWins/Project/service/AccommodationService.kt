@@ -17,4 +17,6 @@ interface AccommodationService {
     fun insertPolicyOnAccommodation(id: Long, discountPolicy: DiscountPolicy): Accommodation
 
     fun updatedPolicyOnAccommodation(idAccommodation: Long, idPolicy: Long, discountPolicy: DiscountPolicy): List<DiscountPolicy>
+
+    fun deletePolicyById(id : Long) : ResponseEntity<String>
 }
