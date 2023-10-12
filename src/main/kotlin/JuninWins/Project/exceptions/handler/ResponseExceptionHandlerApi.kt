@@ -2,6 +2,7 @@ package JuninWins.Project.exceptions.handler
 
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
 import JuninWins.Project.exceptions.BookingNotFoundException
+import JuninWins.Project.exceptions.PolicySizeThresholdException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -18,6 +19,8 @@ import java.time.format.DateTimeFormatter
 @ControllerAdvice
 class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
 
+    val baseURL = "http://localhost:8080"
+    val patternTimeStamp = "dd/MM/yyyy HH:mm:ss"
     /**
      * Manipula exceções do tipo AccommodationIdNotFoundException e retorna uma resposta formatada no padrão JSON HAL.
      *
@@ -31,14 +34,16 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
             .withZone(ZoneId.systemDefault())
         val timeStamp = formatter.format(instant)
         val httpStatus = HttpStatus.NOT_FOUND.value()
         val errorResponse = ErrorResponse(
             status = httpStatus,
             message = exception.message,
-            _links = mapOf("self" to Link(request.getDescription(false))),
+            _links = mapOf(
+                "self" to Link("$baseURL/register/accommodation", "create accommodation", "POST")
+            ),
             timestamp = timeStamp,
             path = request.getDescription(false)
         )
@@ -51,19 +56,45 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
+        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
             .withZone(ZoneId.systemDefault())
         val timeStamp = formatter.format(instant)
         val httpStatus = HttpStatus.NOT_FOUND.value()
         val errorResponse = ErrorResponse(
             status = httpStatus,
             message = exception.message,
-            _links = mapOf("self" to Link(request.getDescription(false))),
+            _links = mapOf(
+                "self" to Link("$baseURL/accommodations/", "return accommodation with ID", "GET")
+            ),
             timestamp = timeStamp,
             path = request.getDescription(false)
         )
         return ResponseEntity.status(httpStatus).body(errorResponse)
     }
+
+    @ExceptionHandler(PolicySizeThresholdException::class)
+    fun handlingResponseForPolicySizeThresholdException(
+        exception: PolicySizeThresholdException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val instant = Instant.now()
+        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
+            .withZone(ZoneId.systemDefault())
+        val timeStamp = formatter.format(instant)
+        val httpStatus = HttpStatus.BAD_REQUEST.value()
+        val errorResponse = ErrorResponse(
+            status = httpStatus,
+            message = exception.message,
+            _links = mapOf(
+                "update" to Link("$baseURL/update/policy", "update policy on accommodation", "PUT"),
+                "delete" to Link("$baseURL/delete/policy", "delete policy on accommodation", "DELETE")
+            ),
+            timestamp = timeStamp,
+            path = request.getDescription(false)
+        )
+        return ResponseEntity.status(httpStatus).body(errorResponse)
+    }
+
 
     /**
      * Data class para representar uma resposta de erro formatada no padrão JSON HAL.
@@ -85,7 +116,10 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
     /**
      * Data class para representar um link em uma resposta JSON HAL.
      *
-     * @param href A URL do link.
+     * @param href        A URL do link.
+     * @param description A descrição do link.
+     * @param method      O método HTTP associado ao link.
      */
-    data class Link(val href: String)
+    data class Link(val href: String, val description: String?, val method: String?)
+
 }

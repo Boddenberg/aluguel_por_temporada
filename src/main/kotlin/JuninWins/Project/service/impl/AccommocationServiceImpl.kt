@@ -1,6 +1,8 @@
 package JuninWins.Project.service.impl
 
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
+import JuninWins.Project.exceptions.PolicyIdNotFoundException
+import JuninWins.Project.exceptions.PolicySizeThresholdException
 import JuninWins.Project.model.Accommodation
 import JuninWins.Project.model.DiscountPolicy
 import JuninWins.Project.repository.AccommodationRepository
@@ -47,6 +49,10 @@ class AccommocationServiceImpl (val accommodationRepository: AccommodationReposi
 
     override fun insertPolicyOnAccommodation(id: Long, discountPolicy: DiscountPolicy): Accommodation {
         var accommodation = findById(id)
+        val limitPolicy = 3
+        if (accommodation._discountPolicy.size > limitPolicy) {
+            throw PolicySizeThresholdException()
+        }
         accommodation.addDiscountPolicy(discountPolicy)
         return accommodationRepository.save(accommodation)
     }
@@ -57,14 +63,24 @@ class AccommocationServiceImpl (val accommodationRepository: AccommodationReposi
         discountPolicy: DiscountPolicy
     ): List<DiscountPolicy> {
         val accommodation = findById(idAccommodation)
-        for (policy in accommodation._discountPolicy.reversed()) {
+        val accommodationPolicies = accommodation._discountPolicy
+        for (policy in accommodationPolicies.reversed()) {
             if (policy.id == idPolicy) {
                 policy.policyType = discountPolicy.policyType
                 policy.discountPercentage - discountPolicy.discountPercentage
             }
         }
-        accommodation._discountPolicy.forEach(discountPolicyRepository::save)
-        return accommodation._discountPolicy
+        accommodationPolicies.forEach(discountPolicyRepository::save)
+        return accommodationPolicies
+    }
+
+    override fun deletePolicyById(id: Long): ResponseEntity<String> {
+        val policyOptional = discountPolicyRepository.findById(id)
+        if (policyOptional.isPresent) {
+            discountPolicyRepository.deleteById(id)
+            return ResponseEntity.ok("Policy excluded with success!")
+        }
+        throw PolicyIdNotFoundException(id)
     }
 
     private fun findById(id: Long): Accommodation {

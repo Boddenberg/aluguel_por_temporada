@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("accommodations")
-class AccomodationController(val accommodationService: AccommodationService) {
+class AccommodationController(val accommodationService: AccommodationService) {
 
     @PostMapping("register/accommodation")
     fun saveAccommodation(@RequestBody accommodation: Accommodation): ResponseEntity<Accommodation> {
@@ -44,6 +44,13 @@ class AccomodationController(val accommodationService: AccommodationService) {
         @RequestBody discountPolicy: DiscountPolicy
     ): ResponseEntity<List<DiscountPolicy>> {
         return ResponseEntity.ok(accommodationService.updatedPolicyOnAccommodation(idAccommodation,idPolicy, discountPolicy))
+    }
+
+    @DeleteMapping("/delete/policy")
+    fun deletePolicyRuleOnAccommodation(
+        @RequestHeader(name = "idPolicy") idPolicy: Long
+    ) {
+        accommodationService.deletePolicyById(idPolicy)
     }
 
     @DeleteMapping("/delete/accommodation/{id}")
