@@ -4,11 +4,13 @@ import JuninWins.Project.model.Guest
 import JuninWins.Project.service.GuestService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("customers")
-class CustomerController(val customerService: GuestService) {
+@Validated
+class CustomerController (val customerService: GuestService) {
 
 
     @GetMapping("/search/{cpf}")

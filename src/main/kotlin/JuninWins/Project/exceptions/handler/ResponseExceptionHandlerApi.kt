@@ -3,8 +3,13 @@ package JuninWins.Project.exceptions.handler
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
 import JuninWins.Project.exceptions.BookingNotFoundException
 import JuninWins.Project.exceptions.PolicySizeThresholdException
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
+import org.springframework.validation.ObjectError
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
@@ -92,6 +97,38 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
             timestamp = timeStamp,
             path = request.getDescription(false)
         )
+        return ResponseEntity.status(httpStatus).body(errorResponse)
+    }
+
+    override fun handleMethodArgumentNotValid(
+        ex: MethodArgumentNotValidException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        val instant = Instant.now()
+        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
+            .withZone(ZoneId.systemDefault())
+        val timeStamp = formatter.format(instant)
+        val httpStatus = HttpStatus.UNPROCESSABLE_ENTITY.value()
+
+        var errors: String = ""
+        for (error: ObjectError in ex.bindingResult.allErrors) {
+            if (error is FieldError) {
+                errors = "${error.defaultMessage}"
+            } else {
+                errors = error.defaultMessage ?: "Validation error"
+            }
+        }
+
+        val errorResponse = ErrorResponse(
+            status = httpStatus,
+            message = errors,
+            _links = mapOf(),
+            timestamp = timeStamp,
+            path = request.getDescription(false)
+        )
+
         return ResponseEntity.status(httpStatus).body(errorResponse)
     }
 

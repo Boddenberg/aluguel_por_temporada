@@ -78,7 +78,7 @@ class AccommocationServiceImpl (val accommodationRepository: AccommodationReposi
         val policyOptional = discountPolicyRepository.findById(id)
         if (policyOptional.isPresent) {
             discountPolicyRepository.deleteById(id)
-            return ResponseEntity.ok("Policy excluded with success!")
+            return ResponseEntity.ok("Policy $id excluded with success!")
         }
         throw PolicyIdNotFoundException(id)
     }

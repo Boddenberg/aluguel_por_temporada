@@ -13,7 +13,7 @@ data class Guest(
         name = "cpf",
         unique = true
     )
-    @CPF
+    @field:CPF
     var cpf: String,
     @Column(name = "nome")
     var name: String,
