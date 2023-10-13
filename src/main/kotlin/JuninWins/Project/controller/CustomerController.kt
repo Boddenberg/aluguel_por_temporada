@@ -38,16 +38,7 @@ class CustomerController (val customerService: GuestService) {
 
     @DeleteMapping("/delete/{cpf}")
     fun deleteCustomer(
-        @PathVariable(name = "cpf") cpfCustomer: String)
-    : ResponseEntity<String> = customerService.deleteById(cpfCustomer)
+        @PathVariable(name = "cpf") cpfCustomer: String
+    )
+            : ResponseEntity<String> = customerService.deleteById(cpfCustomer)
 }
-    /*
-    * TODO: relacionar restante das models às tabelas [OK]
-    *
-    * TODO: Terminar CRUD
-    * TODO: Validações de models
-    * TODO: Tratamento de exceções
-    * TODO: Começar regras de negócio
-    * TODO: Rever tratamento de exceções da service!!
-    */
-

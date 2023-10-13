@@ -21,13 +21,13 @@ class Accommodation(
     @Column(name = "capacidade")
     var capacity: Int = 0, // até quantas pessoas podem se hospedar na acomodação
     @Column(name = "preco_por_noite")
-    var basePrice: Double, // como implementar desconto? tipo desconto para reservas de 7 dias+, 30 dias+ e aumento de preço quando for feriado e tal....?
+    var basePrice: Double,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
     var address: Address
 ) {
     @OneToMany(cascade = [CascadeType.ALL])
-    var _discountPolicy: List<DiscountPolicy> = ArrayList() // Adicione um campo para a política de desconto
+    var _discountPolicy: List<DiscountPolicy> = ArrayList()
 
     fun addDiscountPolicy(discountPolicy: DiscountPolicy) {
         _discountPolicy += discountPolicy

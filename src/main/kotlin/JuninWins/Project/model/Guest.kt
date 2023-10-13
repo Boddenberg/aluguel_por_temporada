@@ -34,6 +34,4 @@ data class Guest(
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
     var address: Address
-) {
-    constructor() : this("", "", "", "", "", "", false, false, Address())
-}
+)

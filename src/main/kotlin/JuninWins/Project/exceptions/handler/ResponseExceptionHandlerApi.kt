@@ -69,7 +69,7 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
             status = httpStatus,
             message = exception.message,
             _links = mapOf(
-                "self" to Link("$baseURL/accommodations/", "return accommodation with ID", "GET")
+                "self" to Link("$baseURL/bookings/register/booking", "create booking", "POST")
             ),
             timestamp = timeStamp,
             path = request.getDescription(false)
