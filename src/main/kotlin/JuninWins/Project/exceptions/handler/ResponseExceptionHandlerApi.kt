@@ -2,6 +2,7 @@ package JuninWins.Project.exceptions.handler
 
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
 import JuninWins.Project.exceptions.BookingNotFoundException
+import JuninWins.Project.exceptions.DuplicatePolicyException
 import JuninWins.Project.exceptions.PolicySizeThresholdException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -129,6 +130,26 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
             path = request.getDescription(false)
         )
 
+        return ResponseEntity.status(httpStatus).body(errorResponse)
+    }
+
+    @ExceptionHandler(value = [DuplicatePolicyException::class])
+    fun genericExceptionHandler(
+        exception: RuntimeException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val instant = Instant.now()
+        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
+            .withZone(ZoneId.systemDefault())
+        val timeStamp = formatter.format(instant)
+        val httpStatus = HttpStatus.NOT_IMPLEMENTED.value()
+        val errorResponse = ErrorResponse(
+            status = httpStatus,
+            message = exception.message,
+            _links = mapOf(),
+            timestamp = timeStamp,
+            path = request.getDescription(false)
+        )
         return ResponseEntity.status(httpStatus).body(errorResponse)
     }
 

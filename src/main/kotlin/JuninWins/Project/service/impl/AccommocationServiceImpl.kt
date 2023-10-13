@@ -1,6 +1,7 @@
 package JuninWins.Project.service.impl
 
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
+import JuninWins.Project.exceptions.DuplicatePolicyException
 import JuninWins.Project.exceptions.PolicyIdNotFoundException
 import JuninWins.Project.exceptions.PolicySizeThresholdException
 import JuninWins.Project.model.Accommodation
@@ -47,13 +48,21 @@ class AccommocationServiceImpl (val accommodationRepository: AccommodationReposi
         throw AccommodationIdNotFoundException(id)
     }
 
-    override fun insertPolicyOnAccommodation(id: Long, discountPolicy: DiscountPolicy): Accommodation {
-        var accommodation = findById(id)
+    override fun insertPolicyOnAccommodation(id: Long, newDiscountPolicy: DiscountPolicy): Accommodation {
+        val accommodation = findById(id)
+
+        val policyType = newDiscountPolicy.policyType
+        val policyExists = accommodation._discountPolicy.any { it.policyType == policyType }
+        if (policyExists) {
+            throw DuplicatePolicyException(policyType)
+        }
+
         val limitPolicy = 3
         if (accommodation._discountPolicy.size > limitPolicy) {
             throw PolicySizeThresholdException()
         }
-        accommodation.addDiscountPolicy(discountPolicy)
+
+        accommodation.addDiscountPolicy(newDiscountPolicy)
         return accommodationRepository.save(accommodation)
     }
 
