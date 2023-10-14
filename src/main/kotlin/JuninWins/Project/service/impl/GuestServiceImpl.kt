@@ -1,19 +1,32 @@
 package JuninWins.Project.service.impl
 
+import JuninWins.Project.exceptions.CEPValidationException
+import JuninWins.Project.model.Address
 import JuninWins.Project.model.Guest
 import JuninWins.Project.repository.GuestRepository
 import JuninWins.Project.service.GuestService
+import JuninWins.Project.service.ViaCEPService
+import JuninWins.Project.utils.validateCEP
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Service
-class GuestServiceImpl (val customerRepository : GuestRepository) : GuestService {
+class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
 
     private val modelMapper = ModelMapper()
-    override fun save(customer: Guest) : Guest {
-       return customerRepository.save(customer)
+    override fun save(guest: Guest): Guest {
+        val cepValidationResult = validateCEP(guest.address.cep)
+
+        if (cepValidationResult != null) {
+            throw CEPValidationException(cepValidationResult)
+        }
+
+        return guestRepository.save(guest)
     }
 
     override fun findGuestByCPF(cpf: String) : Guest {
@@ -25,21 +38,21 @@ class GuestServiceImpl (val customerRepository : GuestRepository) : GuestService
 
         modelMapper.map(newCustomer, currentCustomer)
 
-        return customerRepository.save(currentCustomer)
+        return guestRepository.save(currentCustomer)
     }
 
     override fun deleteById(cpf: String): ResponseEntity<String> {
-        val guest = customerRepository.findById(cpf)
+        val guest = guestRepository.findById(cpf)
 
         if (guest.isPresent) {
-            customerRepository.deleteById(cpf)
+            guestRepository.deleteById(cpf)
             return ResponseEntity.ok("Guest deleted with success!")
         }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Guest CPF not found!!")
     }
 
     private fun findByCPF(cpf: String): Guest {
-        return customerRepository.findById(cpf).orElseThrow { Exception("Guest CPF not found!")}
+        return guestRepository.findById(cpf).orElseThrow { Exception("Guest CPF not found!")}
 
     }
 

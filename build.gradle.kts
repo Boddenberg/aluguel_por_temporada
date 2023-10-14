@@ -43,6 +43,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-docker-compose")
 	implementation ("com.mysql:mysql-connector-j:8.1.0")
+	//dependencias de comunicação
+	implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+	implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+	implementation ("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
 	//dependencias deserializadoras
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.modelmapper:modelmapper:2.4.4")

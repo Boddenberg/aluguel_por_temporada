@@ -1,9 +1,6 @@
 package JuninWins.Project.exceptions.handler
 
-import JuninWins.Project.exceptions.AccommodationIdNotFoundException
-import JuninWins.Project.exceptions.BookingNotFoundException
-import JuninWins.Project.exceptions.DuplicatePolicyException
-import JuninWins.Project.exceptions.PolicySizeThresholdException
+import JuninWins.Project.exceptions.*
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -133,7 +130,7 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         return ResponseEntity.status(httpStatus).body(errorResponse)
     }
 
-    @ExceptionHandler(value = [DuplicatePolicyException::class])
+    @ExceptionHandler(value = [DuplicatePolicyException::class, CEPValidationException::class])
     fun genericExceptionHandler(
         exception: RuntimeException,
         request: WebRequest
