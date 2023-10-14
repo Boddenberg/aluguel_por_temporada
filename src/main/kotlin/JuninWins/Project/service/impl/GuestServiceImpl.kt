@@ -15,11 +15,7 @@ class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
 
     private val modelMapper = ModelMapper()
     override fun save(guest: Guest): Guest {
-        val cepValidationResult = validateCEP(guest.address.cep)
-
-        if (cepValidationResult != null) {
-            throw CEPValidationException(cepValidationResult)
-        }
+        validateCepForAddress(guest)
 
         return guestRepository.save(guest)
     }
@@ -28,10 +24,11 @@ class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
         return findByCPF(cpf)
     }
 
-    override fun update(cpf: String, newCustomer: Guest): Guest {
+    override fun update(cpf: String, newGuest: Guest): Guest {
+        validateCepForAddress(newGuest)
         val currentCustomer = findByCPF(cpf)
 
-        modelMapper.map(newCustomer, currentCustomer)
+        modelMapper.map(newGuest, currentCustomer)
 
         return guestRepository.save(currentCustomer)
     }
@@ -49,5 +46,13 @@ class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
     private fun findByCPF(cpf: String): Guest {
         return guestRepository.findById(cpf).orElseThrow { Exception("Guest CPF not found!")}
 
+    }
+
+    private fun validateCepForAddress(guest: Guest) {
+        val cepValidationResult = validateCEP(guest.address.cep)
+
+        if (cepValidationResult != null) {
+            throw CEPValidationException(cepValidationResult)
+        }
     }
 }
