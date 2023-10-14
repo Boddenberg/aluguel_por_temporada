@@ -19,7 +19,7 @@ data class Guest(
     var name: String,
     @Column(name = "sobrenome")
     var lastName: String,
-    @Email
+    @field:Email
     @Column(name = "email")
     var email: String,
     @Column(name = "telefone")
