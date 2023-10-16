@@ -1,9 +1,7 @@
 package JuninWins.Project.service.impl
 
-import JuninWins.Project.exceptions.AccommodationIdNotFoundException
-import JuninWins.Project.exceptions.DuplicatePolicyException
-import JuninWins.Project.exceptions.PolicyIdNotFoundException
-import JuninWins.Project.exceptions.PolicySizeThresholdException
+import JuninWins.Project.enums.DiscountPolicyTypeEnum
+import JuninWins.Project.exceptions.*
 import JuninWins.Project.model.Accommodation
 import JuninWins.Project.model.DiscountPolicy
 import JuninWins.Project.repository.AccommodationRepository
@@ -20,6 +18,10 @@ class AccommocationServiceImpl (val accommodationRepository: AccommodationReposi
     private val modelMapper = ModelMapper()
 
     override fun save(accomocation: Accommodation): Accommodation {
+
+        if (accomocation._discountPolicy.isEmpty()) {
+            accomocation.addDiscountPolicy(DiscountPolicy(DiscountPolicyTypeEnum.NONE.toString(), 0.00))
+        }
         return accommodationRepository.save(accomocation)
     }
 
@@ -57,11 +59,20 @@ class AccommocationServiceImpl (val accommodationRepository: AccommodationReposi
             throw DuplicatePolicyException(policyType)
         }
 
+        val policyTypeEnum = DiscountPolicyTypeEnum.fromDescricao(policyType)
+
+        if (policyTypeEnum == null) {
+            throw PolicyTypeNotFoundException(policyType, DiscountPolicyTypeEnum.values())
+        }
+
         val limitPolicy = 3
-        if (accommodation._discountPolicy.size > limitPolicy) {
+        if (accommodation._discountPolicy.size == limitPolicy) {
             throw PolicySizeThresholdException()
         }
 
+        val updatedDiscountPolicy = accommodation._discountPolicy.filter { it.policyType != DiscountPolicyTypeEnum.NONE.toString() }
+
+        accommodation._discountPolicy = updatedDiscountPolicy
         accommodation.addDiscountPolicy(newDiscountPolicy)
         return accommodationRepository.save(accommodation)
     }

@@ -134,7 +134,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         value = [DuplicatePolicyException::class,
             CEPValidationException::class,
             CPFNotAuthorizeToUpdateException::class,
-            StartDatateIsEqualOrAfterEndDateException::class]
+            StartDatateIsEqualOrAfterEndDateException::class,
+            PolicyTypeNotFoundException::class]
     )
     fun genericExceptionHandler(
         exception: RuntimeException,
