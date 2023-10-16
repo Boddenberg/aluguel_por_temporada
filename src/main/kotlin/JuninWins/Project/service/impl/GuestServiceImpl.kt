@@ -1,6 +1,7 @@
 package JuninWins.Project.service.impl
 
 import JuninWins.Project.exceptions.CEPValidationException
+import JuninWins.Project.exceptions.CPFNotAuthorizeToUpdateException
 import JuninWins.Project.model.Guest
 import JuninWins.Project.repository.GuestRepository
 import JuninWins.Project.service.GuestService
@@ -26,11 +27,15 @@ class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
 
     override fun update(cpf: String, newGuest: Guest): Guest {
         validateCepForAddress(newGuest)
-        val currentCustomer = findByCPF(cpf)
+        val currentGuest = findByCPF(cpf)
 
-        modelMapper.map(newGuest, currentCustomer)
+        if(currentGuest.cpf != newGuest.cpf) {
+            throw CPFNotAuthorizeToUpdateException(currentGuest.cpf)
+        }
 
-        return guestRepository.save(currentCustomer)
+        modelMapper.map(newGuest, currentGuest)
+
+        return guestRepository.save(currentGuest)
     }
 
     override fun deleteById(cpf: String): ResponseEntity<String> {

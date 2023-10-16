@@ -10,35 +10,35 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("customers")
 @Validated
-class CustomerController (val customerService: GuestService) {
+class GuestController (val guestService: GuestService) {
 
 
     @GetMapping("/search/{cpf}")
-    fun findCustomer(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
-        return ResponseEntity.ok(customerService.findGuestByCPF(cpfCustomer))
+    fun findGuest(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.findGuestByCPF(cpfCustomer))
     }
 
     @PostMapping("/register/guest")
-    fun saveCustomer(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
-        return ResponseEntity.ok(customerService.save(cliente))
+    fun saveGuest(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.save(cliente))
     }
 
     @PutMapping("/update/{cpf}")
-    fun updateCustomer(
+    fun updateGuest(
         @PathVariable(name = "cpf") cpfCustomer: String,
         @RequestBody updatedCustomer: Guest
     ): ResponseEntity<Guest> {
         return try {
-            val newUpdatedCustomer = customerService.update(cpfCustomer, updatedCustomer)
+            val newUpdatedCustomer = guestService.update(cpfCustomer, updatedCustomer)
             ResponseEntity.ok(newUpdatedCustomer)
         } catch (e: NoSuchElementException) {
             ResponseEntity.notFound().build()
-        }//TODO: Se tentar alterar CPF devolver exception "CPF não pode ser alterado"
+        }
     }
 
     @DeleteMapping("/delete/{cpf}")
-    fun deleteCustomer(
+    fun deleteGuest(
         @PathVariable(name = "cpf") cpfCustomer: String
     )
-            : ResponseEntity<String> = customerService.deleteById(cpfCustomer)
+            : ResponseEntity<String> = guestService.deleteById(cpfCustomer)
 }
