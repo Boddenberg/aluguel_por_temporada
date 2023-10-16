@@ -1,6 +1,6 @@
 import JuninWins.Project.model.Accommodation
 import JuninWins.Project.model.DiscountPolicy
-import JuninWins.Project.utils.NumberUtils
+import JuninWins.Project.utils.formatDouble
 import java.time.LocalDate
 
 // classses que não precisam manter nenhum estado mutável e são somente baseadas em lógicas e cálculos devem ser objects
@@ -18,7 +18,7 @@ object BookingUtils {
             totalPrice *= (1.0 - appliedDiscountPolicy.discountPercentage / 100.0)
         }
 
-        return NumberUtils.formatDouble(totalPrice)
+        return formatDouble(totalPrice)
     }
 
     private fun findApplicableDiscountPolicy(accommodation: Accommodation, duracaoReserva: Int): DiscountPolicy? {
