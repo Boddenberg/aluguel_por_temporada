@@ -4,6 +4,7 @@ import BookingUtils
 import JuninWins.Project.DTO.BookingRequestDTO
 import JuninWins.Project.enums.StatusReservaEnum
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
+import JuninWins.Project.exceptions.StartDatateIsEqualOrAfterEndDateException
 import JuninWins.Project.model.Booking
 import JuninWins.Project.repository.BookingRepository
 import JuninWins.Project.service.AccommodationService
@@ -24,15 +25,24 @@ class BookingServiceImpl(
     private val modelMapper = ModelMapper()
 
     override fun save(booking: BookingRequestDTO, cpf: String, id: Long): Booking {
+
         val guest = guestService.findGuestByCPF(cpf)
         val accommodation = accommodationService.findAccomodationById(id)
-        val bookingDuration = BookingUtils.calculateBookingDurationDays(booking.startDate, booking.endDate)
+
+        val startDate = booking.startDate
+        val endDate = booking.endDate
+
+        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)){
+            throw StartDatateIsEqualOrAfterEndDateException(startDate.dayOfMonth.toString())
+        }
+
+        val bookingDuration = BookingUtils.calculateBookingDurationDays(startDate, endDate)
         val totalPrice = BookingUtils.calculateBookingTotalPrice(accommodation.basePrice, bookingDuration, accommodation)
 
         val newBooking = Booking(
             accommodation,
-            booking.startDate,
-            booking.endDate,
+            startDate,
+            endDate,
             bookingDuration,
             totalPrice,
             guest,

@@ -130,7 +130,12 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         return ResponseEntity.status(httpStatus).body(errorResponse)
     }
 
-    @ExceptionHandler(value = [DuplicatePolicyException::class, CEPValidationException::class, CPFNotAuthorizeToUpdateException::class])
+    @ExceptionHandler(
+        value = [DuplicatePolicyException::class,
+            CEPValidationException::class,
+            CPFNotAuthorizeToUpdateException::class,
+            StartDatateIsEqualOrAfterEndDateException::class]
+    )
     fun genericExceptionHandler(
         exception: RuntimeException,
         request: WebRequest
