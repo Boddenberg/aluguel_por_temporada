@@ -1,6 +1,9 @@
 package JuninWins.Project.controller
 
+import JuninWins.Project.enums.StatusReservaEnum
+import JuninWins.Project.model.Accommodation
 import JuninWins.Project.model.Booking
+import JuninWins.Project.model.Guest
 import JuninWins.Project.service.BookingService
 import net.bytebuddy.asm.Advice.Local
 import org.junit.Before
@@ -30,23 +33,20 @@ internal class BookingControllerTest {
 
     @Test
     fun test() {
-        var expectedId : Long = 1
-        val bookingMock = bookingMock()
-        whenever(bookingService.findBookingById(expectedId)).thenReturn(bookingMock)
-
+        val expectedId : Long = 1
+        whenever(bookingService.findBookingById(expectedId)).thenReturn(bookingMock())
         val result = bookingController!!.findBooking(expectedId)
 
-        //assertEquals(bookingMock, result)
         assertNotNull(result)
-
-
     }
 
     private fun bookingMock() : Booking {
-
+        val guestMock = mock(Guest::class.java)
+        val accommodationMock = mock(Accommodation::class.java)
+        val statusReservaMock = mock(StatusReservaEnum::class.java)
         val localDate : LocalDate = LocalDate.of(1996, 1, 18)
         val localDateAfter : LocalDate = LocalDate.of(1997, 1, 18)
-        return Booking(any(), localDate, localDateAfter, 1, 1.0, any(), any())
+        return Booking(accommodationMock, localDate, localDateAfter, 1, 1.0, guestMock, statusReservaMock)
 
   }
 
