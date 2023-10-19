@@ -48,9 +48,7 @@ object BookingUtils {
                     return policy
                 }
             }
-            // TODO: Política customizada e mudar políticas para enums
         }
-
         return currentPolicy
     }
 }

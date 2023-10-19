@@ -3,6 +3,7 @@ package JuninWins.Project.service.impl
 import BookingUtils
 import JuninWins.Project.DTO.BookingRequestDTO
 import JuninWins.Project.enums.StatusReservaEnum
+import JuninWins.Project.exceptions.AccommodationDateRangeException
 import JuninWins.Project.exceptions.AccommodationIdNotFoundException
 import JuninWins.Project.exceptions.StartDatateIsEqualOrAfterEndDateException
 import JuninWins.Project.model.Booking
@@ -32,8 +33,15 @@ class BookingServiceImpl(
         val startDate = booking.startDate
         val endDate = booking.endDate
 
-        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)){
+        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
             throw StartDatateIsEqualOrAfterEndDateException(startDate.dayOfMonth.toString())
+        }
+
+        val findByAccommodationAndDateRange =
+            bookingRepository.findByAccommodationAndDateRange(accommodation, startDate, endDate)
+
+        if (findByAccommodationAndDateRange != null) {
+            throw AccommodationDateRangeException(startDate.dayOfMonth.toString(), endDate.dayOfMonth.toString())
         }
 
         val bookingDuration = BookingUtils.calculateBookingDurationDays(startDate, endDate)
@@ -46,7 +54,7 @@ class BookingServiceImpl(
             bookingDuration,
             totalPrice,
             guest,
-            StatusReservaEnum.CANCELED
+            StatusReservaEnum.CONFIRMED
         )
 
         return bookingRepository.save(newBooking)
@@ -77,6 +85,4 @@ class BookingServiceImpl(
     private fun findById(id: Long): Booking {
         return bookingRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
-
-
 }

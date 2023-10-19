@@ -135,7 +135,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
             CEPValidationException::class,
             CPFNotAuthorizeToUpdateException::class,
             StartDatateIsEqualOrAfterEndDateException::class,
-            PolicyTypeNotFoundException::class]
+            PolicyTypeNotFoundException::class,
+            AccommodationDateRangeException::class]
     )
     fun genericExceptionHandler(
         exception: RuntimeException,
@@ -145,7 +146,7 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
             .withZone(ZoneId.systemDefault())
         val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.NOT_IMPLEMENTED.value()
+        val httpStatus = HttpStatus.UNPROCESSABLE_ENTITY.value()
         val errorResponse = ErrorResponse(
             status = httpStatus,
             message = exception.message,
