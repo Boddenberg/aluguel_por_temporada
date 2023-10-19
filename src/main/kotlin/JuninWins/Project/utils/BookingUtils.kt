@@ -25,13 +25,13 @@ object BookingUtils {
         var appliedDiscountPolicy: DiscountPolicy? = null
 
         for (discountPolicy in accommodation._discountPolicy) {
-            appliedDiscountPolicy = applyPolicy(discountPolicy, appliedDiscountPolicy, duracaoReserva)
+            appliedDiscountPolicy = handlePolicy(discountPolicy, appliedDiscountPolicy, duracaoReserva)
         }
 
         return appliedDiscountPolicy
     }
 
-    private fun applyPolicy(policy: DiscountPolicy, currentPolicy: DiscountPolicy?, duracaoReserva: Int): DiscountPolicy? {
+    private fun handlePolicy(policy: DiscountPolicy, currentPolicy: DiscountPolicy?, duracaoReserva: Int): DiscountPolicy? {
         when (policy.policyType) {
             "semanal" -> {
                 if (duracaoReserva > 7 && (currentPolicy == null || currentPolicy.policyType != "quinzenal")) {

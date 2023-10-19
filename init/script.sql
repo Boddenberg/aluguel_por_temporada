@@ -4,8 +4,8 @@ CREATE TABLE tb_endereco (
     numero VARCHAR(255) NOT NULL,
     complemento VARCHAR(255),
     bairro VARCHAR(255) NOT NULL,
-    cidade VARCHAR(255) NOT NULL,
-    estado VARCHAR(255) NOT NULL,
+    localidade VARCHAR(255) NOT NULL,
+    uf VARCHAR(255) NOT NULL,
     cep VARCHAR(10) NOT NULL
 );
 
