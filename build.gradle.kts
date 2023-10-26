@@ -36,12 +36,14 @@ dependencies {
 	//dependencias web
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation ("org.springframework.boot:spring-boot-starter-hateoas")
+	// dependencias de observabilidade
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("io.micrometer:micrometer-registry-prometheus")
 	// dependencias validadoras
-	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	//dependencias de banco de dados
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-docker-compose")
+//	implementation("org.springframework.boot:spring-boot-docker-compose")
 	implementation ("com.mysql:mysql-connector-j:8.1.0")
 	//dependencias de comunicação
 	implementation ("com.squareup.retrofit2:retrofit:2.9.0")
