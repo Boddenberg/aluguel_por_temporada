@@ -7,13 +7,26 @@
 * JPA
 * Mysql
 * Lombok
-* spring-docker-compose
 * ... mais coisas ( ao infinito e além ) 🚀
 
 ## Regra de negócio da api
 ...
 
 ## Como testar aplicação
+
+### escolha o ambiente que irá testar
+- local
+- docker
+
+#### local
+certifique-se de usar a propriedade **spring.profiles.active=dev**
+
+#### docker
+certifique-se de executar o executavel setup-ambiente-docker.bat
+```shell
+.\setup-ambiente-docker.bat
+```
+caso ocorra erros executar os comandos unitariamente que estao no executavel.
 
 ### Endpoints
 > certifique-se de antes de executar a aplicação estar com o ambiente docker em execução caso contrário nao irá persistir os dados
