@@ -2,6 +2,7 @@ package JuninWins.Project.controller
 
 import JuninWins.Project.model.Guest
 import JuninWins.Project.service.GuestService
+import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -19,6 +20,7 @@ class GuestController (val guestService: GuestService) {
     }
 
     @PostMapping("/register/guest")
+    @Operation(summary = "Register a guest")
     fun saveGuest(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.save(cliente))
     }
