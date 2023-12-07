@@ -10,6 +10,9 @@
 * ... mais coisas ( ao infinito e além ) 🚀
 
 ## Regra de negócio da api
+
+como acessar o swagger UI : http://localhost:8080/swagger-ui/index.html
+como acessar a documentação do openDocs: http://localhost:8080/api-docs
 ...
 
 ## Como testar aplicação
