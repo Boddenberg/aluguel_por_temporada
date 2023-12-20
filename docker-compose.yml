@@ -18,3 +18,14 @@ services:
       - ./init/db:/var/lib/postgresql/init
 #      comando para criar as tabelas via SQL
       - ./init:/docker-entrypoint-initdb.d
+  aws:
+    image: 'localstack/localstack'
+    container_name: 'localstack'
+    environment:
+      - SERVICES=sns
+      - DEFAULT_REGION=us-east-2
+      - AWS_DEFAULT_REGION=us-east-2
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    ports:
+      - '4566:4566'

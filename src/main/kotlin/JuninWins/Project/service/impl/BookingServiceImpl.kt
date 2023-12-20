@@ -11,6 +11,7 @@ import JuninWins.Project.repository.BookingRepository
 import JuninWins.Project.service.AccommodationService
 import JuninWins.Project.service.BookingService
 import JuninWins.Project.service.GuestService
+import JuninWins.Project.service.NotificationService
 import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,7 +21,8 @@ import org.springframework.stereotype.Service
 class BookingServiceImpl(
     val bookingRepository: BookingRepository,
     val guestService: GuestService,
-    val accommodationService: AccommodationService
+    val accommodationService: AccommodationService,
+    val notificationService: NotificationService
 ) : BookingService {
 
     private val modelMapper = ModelMapper()
@@ -57,7 +59,9 @@ class BookingServiceImpl(
             StatusReservaEnum.CONFIRMED
         )
 
-        return bookingRepository.save(newBooking)
+        val reservation = bookingRepository.save(newBooking)
+        notificationService.sendSmsMessage(guest.phoneNumber, "Successfully registered booking")
+        return reservation
     }
 
     override fun findBookingById(id: Long): Booking {
