@@ -26,7 +26,7 @@ class BookingServiceImpl(
 ) : BookingService {
 
     private val modelMapper = ModelMapper()
-
+    //TODO: Rever lógica de datas - não está considerando os meses e anos, somente dias. 
     override fun save(booking: BookingRequestDTO, cpf: String, id: Long): Booking {
 
         val guest = guestService.findGuestByCPF(cpf)
