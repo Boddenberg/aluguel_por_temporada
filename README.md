@@ -7,273 +7,15 @@
 * JPA
 * Mysql
 * Lombok
+* AWS SNS
 * ... mais coisas ( ao infinito e além ) 🚀
 
-## Regra de negócio da api
+## doc da api
 
-como acessar o swagger UI : http://localhost:8080/swagger-ui/index.html
-como acessar a documentação do openDocs: http://localhost:8080/api-docs
-...
+- como acessar o swagger UI : http://localhost:8080/swagger-ui/index.html
+- como acessar a documentação do openDocs: http://localhost:8080/api-docs
 
-## Como testar aplicação
-
-### escolha o ambiente que irá testar
-- local
-- docker
-
-#### local
-certifique-se de usar a propriedade **spring.profiles.active=dev**
-
-#### docker
-certifique-se de executar o executavel setup-ambiente-docker.bat
-```shell
-.\setup-ambiente-docker.bat
-```
-caso ocorra erros executar os comandos unitariamente que estao no executavel.
-
-### Endpoints
-> certifique-se de antes de executar a aplicação estar com o ambiente docker em execução caso contrário nao irá persistir os dados
-- /customer : rota comum
-  - register[POST] : cria um usuário
-```shell
-curl --request POST \
-  --url http://localhost:8080/customers/register \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "nome": "João",
-		"sobrenome" : "fulano de tal",
-    "email": "joao@example.com",
-    "telefone": "1234567890",
-    "dataNascimento": "1990-01-01",
-    "cpf": "12345678901",
-    "responsavel": false,
-    "endereco": {
-        "logradouro": "Rua A",
-        "numero": "123",
-        "complemento": null,
-        "bairro": "Bairro A",
-        "cidade": "Cidade A",
-        "estado": "AA",
-        "cep": "12345-678"
-    }
-}'
-```
-- /customer : rota comum
-  - search[GET] : busca um cliente atraves do CPF
-```shell
-curl --request GET \
-  --url http://localhost:8080/customers/search/666-666-666-66
-```
-> recupera cliente criado via SQL em ./init/01.sql
-
-retorno:
-
-```json
-{
-	"cpf": "666-666-666-66",
-	"nome": "nome- teste",
-	"sobrenome": "sobrenome- teste",
-	"email": "teste@gmail.com",
-	"telefone": "55-55555-5555",
-	"dataNascimento": "10/08/1999",
-	"responsavel": true,
-	"endereco": {
-		"id": 1,
-		"logradouro": "logradouro",
-		"numero": "300",
-		"complemento": "esquina",
-		"bairro": "bairro",
-		"cidade": "SP",
-		"estado": "SP",
-		"cep": "3124124-22"
-	}
-}
-```
-
-- /bookings : rota comum
-  - [GET] : busca todos as reservas cadastradas no banco de dados
-```shell
-curl --request GET \
-  --url http://localhost:8080/bookings
-```
-- Exemplo de resposta
-```json
-[
-	{
-		"id": 1,
-		"cliente": {
-			"cpf": "666-666-666-66",
-			"nome": "nome- teste",
-			"sobrenome": "sobrenome- teste",
-			"email": "teste@gmail.com",
-			"telefone": "55-55555-5555",
-			"dataNascimento": "10/08/1999",
-			"responsavel": true,
-			"endereco": {
-				"id": 1,
-				"logradouro": "logradouro",
-				"numero": "300",
-				"complemento": "esquina",
-				"bairro": "bairro",
-				"cidade": "SP",
-				"estado": "SP",
-				"cep": "3124124-22"
-			}
-		},
-		"hospedagem": {
-			"id": 1,
-			"tipo": "Casa",
-			"localizacao": "Perto da Praia",
-			"capacidade": 6,
-			"precoPorNoite": 250.0,
-			"endereco": {
-				"id": 1,
-				"logradouro": "logradouro",
-				"numero": "300",
-				"complemento": "esquina",
-				"bairro": "bairro",
-				"cidade": "SP",
-				"estado": "SP",
-				"cep": "3124124-22"
-			}
-		},
-		"dataInicio": "2023-05-10",
-		"dataFim": "2023-05-17",
-		"status": "CONCLUIDA"
-	}
-]
-```
-
-- criando uma hospedagem com politica de preçou ou nem uma
-
-```shell
-curl --request POST \
-  --url http://localhost:8080/accommodations/register/accommodation \
-  --header 'Content-Type: application/json' \
-  --header 'User-Agent: insomnia/8.2.0' \
-  --data '{
-	"type": "Casa feia 2",
-	"localization": "Perto da Praia",
-	"capacity": 9,
-	"basePrice": 250.0,
-	"address": {
-		"logradouro": "logradouro",
-		"numero": "300",
-		"complemento": "esquina",
-		"bairro": "bairro",
-		"cidade": "SP",
-		"estado": "SP",
-		"cep": "3124124-22"
-	}
-}'
-```
-resposta
-
-```json
-{
-  "id": 2,
-  "type": "Casa feia 2",
-  "localization": "Perto da Praia",
-  "capacity": 9,
-  "basePrice": 250.0,
-  "address": {
-    "id": 2,
-    "logradouro": "logradouro",
-    "numero": "300",
-    "complemento": "esquina",
-    "bairro": "bairro",
-    "cidade": "SP",
-    "estado": "SP",
-    "cep": "3124124-22"
-  },
-  "_discountPolicy": []
-}
-```
-
-- agora vamos incluir uma politica de preco a hospedagem
-
-```shell
-curl --request PATCH \
-  --url http://localhost:8080/accommodations/insert/policy/2 \
-  --header 'Content-Type: application/json' \
-  --header 'User-Agent: insomnia/8.2.0' \
-  --data '		{
-			"policyType": "seila teste accommodation 2",
-			"discountPercentage": 22.12
-		}'
-```
-- exemplo de resposta
-
-```json
-{
-  "id": 2,
-  "type": "Casa feia 2",
-  "localization": "Perto da Praia",
-  "capacity": 9,
-  "basePrice": 250.0,
-  "address": {
-    "id": 2,
-    "logradouro": "logradouro",
-    "numero": "300",
-    "complemento": "esquina",
-    "bairro": "bairro",
-    "cidade": "SP",
-    "estado": "SP",
-    "cep": "3124124-22"
-  },
-  "_discountPolicy": [
-    {
-      "policyType": "seila teste accommodation blabla",
-      "discountPercentage": 22.12,
-      "id": 1
-    },
-    {
-      "policyType": "seila teste accommodation 2",
-      "discountPercentage": 22.12,
-      "id": 2
-    }
-  ]
-}
-```
-
-- exemplo de atualizacao da politica
-
-```shell
-curl --request PUT \
-  --url http://localhost:8080/accommodations/update/policy \
-  --header 'Content-Type: application/json' \
-  --header 'User-Agent: insomnia/8.2.0' \
-  --header 'idAccommodation: 2' \
-  --header 'idPolicy: 1' \
-  --data '{
-	"policyType": "seila teste accommodation blabla",
-	"discountPercentage": 22.12
-}'
-```
-- exemplo de resposta
-
-```json
-[
-  {
-    "policyType": "seila teste accommodation blabla",
-    "discountPercentage": 22.12,
-    "id": 1
-  }
-]
-```
-## DockerCommands
-
-* docker-compose up = inicia o docker
-
-Para acessar a base de dados dentro do container docker
-```shell
-mysql -u root -p 
-```
-Acesse a base criada via compose
-
-```shell
-use db;
-```
++ GithubPages : https://brunodanielpf.github.io/page-swagger-UI-aluguel-por-temporada/
 
 ### MySQLCommands - db
 
@@ -283,3 +25,19 @@ use db;
 * show tables; = mostra as tabelas existentes
 * describe tb_name; = descreve a tabela
 * select * from tb_name; = mostra os dados que estão na tabela
+
+### Observabilidade
+
+A aplicação conta com métricas usando 2 recursos que estão no docker-compose, prometheus e grafana. Ambos estão configurados. Para usar siga os passos abaixo:
+
+com o ambiente e aplicação em execução. 
+> com o container em execução
+
+poderá gerar requisições na aplicação e visualizar as métricas no prometheus e criar dashboards no grafana usando o datasource do prometheus.
+
+abaixo as URLs para acessar os recursos:
+
+- prometheus : http://localhost:9090/
+> ira abrir a plataforma local do prometheus. e usar expressões para consultar as metricas da aplicação voce pode buscar essas metricas em http://host.docker.internal:1234/actuator/prometheus
+- grafana: http://localhost:3000/
+> ira exigir login e senha, a senha e login é, user: admin e senha: admin, repita depois para confirmar e terá acesso a plataforma do grafana localmente. 

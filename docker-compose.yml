@@ -29,3 +29,21 @@ services:
       - DATA_DIR=/tmp/localstack/data
     ports:
       - '4566:4566'
+  prometheus:
+    image: 'prom/prometheus:latest'
+    ports:
+      - '9090:9090'
+    command: '--config.file=/etc/prometheus/config.yml'
+    volumes:
+      - './src/main/resources/prometheus.yml:/etc/prometheus/config.yml'
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - /src/main/resources:/etc/src/main/resources
+    depends_on:
+      - prometheus
