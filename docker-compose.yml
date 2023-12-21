@@ -44,6 +44,8 @@ services:
       - "3000:3000"
     restart: unless-stopped
     volumes:
-      - ./src/main/resources/datasource.yml:/etc/datasource.yml
-      - ./src/main/resources/dashboard.yml:/etc/dashboard.yml
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+#    environment:
+#      - GF_AUTH_ANONYMOUS_ENABLED=true
+#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin

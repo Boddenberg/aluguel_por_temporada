@@ -2,11 +2,11 @@ apiVersion: 1
 
 providers:
   # <string> an unique provider name. Required
-  - name: 'Dashboard'
+  - name: Dashboard aluguel de temporada
     # <int> Org id. Default to 1
     orgId: 1
     # <string> name of the dashboard folder.
-    folder: ''
+    folder: 'dashboard-booking'
     # <string> folder UID. will be automatically generated if not specified
     folderUid: ''
     # <string> provider type. Default to 'file'
@@ -18,7 +18,6 @@ providers:
     # <bool> allow updating provisioned dashboards from the UI
     allowUiUpdates: false
     options:
-      # <string, required> path to dashboard files on disk. Required when using the 'file' type
-      path: /var/lib/grafana/dashboards
+      path: /etc/grafana/provisioning/dashboards/dashboard-booking
       # <bool> use folder names from filesystem to create folders in Grafana
       foldersFromFilesStructure: true
