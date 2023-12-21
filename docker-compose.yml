@@ -44,6 +44,6 @@ services:
       - "3000:3000"
     restart: unless-stopped
     volumes:
-      - /src/main/resources:/etc/src/main/resources
-    depends_on:
-      - prometheus
+      - ./src/main/resources/datasource.yml:/etc/datasource.yml
+      - ./src/main/resources/dashboard.yml:/etc/dashboard.yml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards

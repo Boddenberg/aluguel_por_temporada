@@ -1,8 +1,7 @@
 apiVersion: 1
 datasources:
-  - name: Prometheus DataSorce
+  - name: Prometheus default
     type: prometheus
-    access: proxy
-    url: http://prometheus:9090
+    url: http://host.docker.internal:9090
     isDefault: true
     editable: true
