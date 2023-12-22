@@ -2,12 +2,14 @@ import JuninWins.Project.model.Accommodation
 import JuninWins.Project.model.DiscountPolicy
 import JuninWins.Project.utils.formatDouble
 import java.time.LocalDate
+import java.time.Period
 
 // classses que não precisam manter nenhum estado mutável e são somente baseadas em lógicas e cálculos devem ser objects
 object BookingUtils {
 
     fun calculateBookingDurationDays(startDate: LocalDate, endDate: LocalDate): Int {
-        return startDate.until(endDate).days
+        val period = Period.between(startDate, endDate)
+        return period.days + period.months * 30 + period.years * 365
     }
 
     fun calculateBookingTotalPrice(basePrice: Double, bookingDuration: Int, accommodation: Accommodation): Double {
