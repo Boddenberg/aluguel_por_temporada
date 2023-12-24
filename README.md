@@ -4,10 +4,9 @@
 
 * kotlin 1.8.22 com java 17
 * spring framework versão 3.x.x
-* JPA
 * Mysql
-* Lombok
-* AWS SNS
+* AWS
+* Terraform
 * ... mais coisas ( ao infinito e além ) 🚀
 
 ## doc da api
