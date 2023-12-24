@@ -24,7 +24,7 @@ services:
     environment:
       - SERVICES=sns, s3
       - DEFAULT_REGION=us-east-1
-      - AWS_DEFAULT_REGION=us-east-2
+      - AWS_DEFAULT_REGION=us-east-1
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
 #    volumes:
