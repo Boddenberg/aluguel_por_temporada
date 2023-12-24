@@ -42,13 +42,13 @@ abaixo as URLs para acessar os recursos:
 - grafana: http://localhost:3000/
 > ira exigir login e senha, a senha e login é, user: admin e senha: admin, repita depois para confirmar e terá acesso a plataforma do grafana localmente.
 
-# Recursos da AWS
+# Recursos da AWS com terraform (infra as code)
 
 como criar s3 localmente
 
 + necessario aws cli e docker
-> docker-compose em execução e o container do localstack UP
 
-```shell
-aws s3api create-bucket --bucket bucket-s3-temporada
-```
+A criação dos recursos da aws que a aplicação precisa estão nos módulos terraform. Usando a imagem terraform através das configurações em `infra/terraform` será criado e configurado o ambiente, criando assim os seguintes componentes:
+
++ SNS
++ S3
