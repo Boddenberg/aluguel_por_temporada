@@ -40,4 +40,15 @@ abaixo as URLs para acessar os recursos:
 - prometheus : http://localhost:9090/
 > ira abrir a plataforma local do prometheus. e usar expressões para consultar as metricas da aplicação voce pode buscar essas metricas em http://host.docker.internal:1234/actuator/prometheus
 - grafana: http://localhost:3000/
-> ira exigir login e senha, a senha e login é, user: admin e senha: admin, repita depois para confirmar e terá acesso a plataforma do grafana localmente. 
+> ira exigir login e senha, a senha e login é, user: admin e senha: admin, repita depois para confirmar e terá acesso a plataforma do grafana localmente.
+
+# Recursos da AWS
+
+como criar s3 localmente
+
++ necessario aws cli e docker
+> docker-compose em execução e o container do localstack UP
+
+```shell
+aws s3api create-bucket --bucket bucket-s3-temporada
+```

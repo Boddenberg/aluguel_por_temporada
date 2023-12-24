@@ -22,11 +22,13 @@ services:
     image: 'localstack/localstack'
     container_name: 'localstack'
     environment:
-      - SERVICES=sns
-      - DEFAULT_REGION=us-east-2
+      - SERVICES=sns, s3
+      - DEFAULT_REGION=us-east-1
       - AWS_DEFAULT_REGION=us-east-2
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
+#    volumes:
+#      - ./aws:/etc/localstack/init/ready.d
     ports:
       - '4566:4566'
   prometheus:
@@ -45,7 +47,19 @@ services:
     restart: unless-stopped
     volumes:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-#    environment:
-#      - GF_AUTH_ANONYMOUS_ENABLED=true
-#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - ./grafana/provisioning/dashboards:/var/lib/grafana/provisioning/dashboards
+
+  terraform:
+    image: hashicorp/terraform:1.3.3
+    depends_on:
+      - aws
+    volumes:
+      - ./infra/terraform/:/infra
+    working_dir: /infra
+    entrypoint: >
+      sh -c "
+      terraform init 
+      && terraform fmt 
+      && terraform validate 
+      && terraform plan -out='infra.out' 
+      && terraform apply infra.out"

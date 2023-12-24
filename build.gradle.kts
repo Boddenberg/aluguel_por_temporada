@@ -35,6 +35,7 @@ repositories {
 dependencies {
 	// dependencias AWS
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-sns:3.1.0")
+	implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.0")
 	// documentação
 	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	//dependencias web
