@@ -1,27 +1,19 @@
-name: Detekt Check
+name: Install detekt
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   detekt:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v2
+      - name: Setup detekt
+        id: setup_detekt
+        uses: peter-murray/setup-detekt@v2
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          detekt_version: v0.15
+          add_to_path: false
 
-
-      - name: Print Detekt report
-        run: cat detekt/build/reports/detekt/detekt.html
+      - name: Run detekt
+        run: ${{ steps.setup_detekt.outputs.detekt }} --version
