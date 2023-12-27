@@ -2,6 +2,8 @@ name: Install detekt
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   detekt:
@@ -14,6 +16,10 @@ jobs:
         with:
           detekt_version: v0.15
           add_to_path: false
-
       - name: Run detekt
         run: ${{ steps.setup_detekt.outputs.detekt }} --version
+      - name: "checkout"
+        uses: actions/checkout@v2
+
+      - name: "detekt"
+        uses: natiginfo/action-detekt-all@1.23.4
