@@ -16,8 +16,10 @@ jobs:
         with:
           detekt_version: v1.23.4
           add_to_path: false
+          
       - name: Run detekt
-        run: ${{ steps.setup_detekt.outputs.detekt }} --version
+        run: /opt/hostedtoolcache/detekt-cli/1.23.4/all/detekt-cli-1.23.4/bin/detekt --version
+
       - name: "checkout"
         uses: actions/checkout@v2
 
