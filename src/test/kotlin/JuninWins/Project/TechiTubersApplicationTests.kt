@@ -8,7 +8,6 @@ class TechiTubersApplicationTests {
 
 	@Test
 	fun contextLoads() {
-//        force error for action on github
-		assertEquals("mandioca", "limao")
+		assertEquals("mandioca", "mandioca")
 	}
 }
