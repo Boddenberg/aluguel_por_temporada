@@ -1,13 +1,14 @@
 package JuninWins.Project
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+//@SpringBootTest
 class TechiTubersApplicationTests {
 
 	@Test
 	fun contextLoads() {
+//        force error for action on github
+		assertEquals("mandioca", "limao")
 	}
-
 }
