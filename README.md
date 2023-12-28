@@ -16,15 +16,6 @@
 
 + GithubPages : https://brunodanielpf.github.io/page-swagger-UI-aluguel-por-temporada/
 
-### MySQLCommands - db
-
-* showdatabases; = mostra as bases de dados que estão no mysql
-* use db; = seleciona o banco de dados
-* create table; = cria uma tabela / ex: create table clientes(id int primary key, nome varchar (255));
-* show tables; = mostra as tabelas existentes
-* describe tb_name; = descreve a tabela
-* select * from tb_name; = mostra os dados que estão na tabela
-
 ### Observabilidade
 
 A aplicação conta com métricas usando 2 recursos que estão no docker-compose, prometheus e grafana. Ambos estão configurados. Para usar siga os passos abaixo:
@@ -62,3 +53,10 @@ sudo yum install java-17
 #transfere arquivo jar para  a instancia
 scp -i <diretorio-chave-ssh>/ec2keypair.pem target/pizzaweb-0.0.1-SNAPSHOT.jar <endereco-instancia-ec2>:~
 ```
+
+* showdatabases; = mostra as bases de dados que estão no mysql
+* use db; = seleciona o banco de dados
+* create table; = cria uma tabela / ex: create table clientes(id int primary key, nome varchar (255));
+* show tables; = mostra as tabelas existentes
+* describe tb_name; = descreve a tabela
+* select * from tb_name; = mostra os dados que estão na tabela
