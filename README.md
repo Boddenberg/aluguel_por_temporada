@@ -51,3 +51,14 @@ A criação dos recursos da aws que a aplicação precisa estão nos módulos te
 
 + SNS
 + S3
+
+##### anotações
+
+```shell
+#prepara as dependencias da maquina linux
+sudo yum update
+#instala a jdk para executar o jar
+sudo yum install java-17
+#transfere arquivo jar para  a instancia
+scp -i <diretorio-chave-ssh>/ec2keypair.pem target/pizzaweb-0.0.1-SNAPSHOT.jar <endereco-instancia-ec2>:~
+```

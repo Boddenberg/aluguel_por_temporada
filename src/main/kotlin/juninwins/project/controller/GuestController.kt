@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*
 class GuestController (val guestService: GuestService) {
 
 
+    @GetMapping("/test")
+    fun test() = "Hello World"
     @GetMapping("/search/{cpf}")
     fun findGuest(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.findGuestByCPF(cpfCustomer))
