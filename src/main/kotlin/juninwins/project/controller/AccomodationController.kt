@@ -1,8 +1,11 @@
 package juninwins.project.controller
 
-import juninwins.project.model.Accommodation
+import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.DiscountPolicy
+import juninwins.project.model.accommodation.GuestAccommodations
 import juninwins.project.service.AccommodationService
+import org.hibernate.validator.constraints.br.CPF
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -10,9 +13,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("accommodations")
 class AccommodationController(val accommodationService: AccommodationService) {
 
-    @PostMapping("register/accommodation")
-    fun saveAccommodation(@RequestBody accommodation: Accommodation): ResponseEntity<Accommodation> {
-        return ResponseEntity.status(201).body(accommodationService.save(accommodation))
+    @PostMapping("register/accommodation/{cpf}")
+    fun saveAccommodation(@RequestBody accommodation: Accommodation,
+                          @PathVariable cpf : String): ResponseEntity<GuestAccommodations> {
+        return ResponseEntity.status(HttpStatus.CREATED).body(accommodationService.save(accommodation, cpf))
     }
 
     @GetMapping("/search/accommodation/{id}")

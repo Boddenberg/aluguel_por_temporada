@@ -1,4 +1,4 @@
-import juninwins.project.model.Accommodation
+import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.DiscountPolicy
 import juninwins.project.utils.formatDouble
 import java.time.LocalDate

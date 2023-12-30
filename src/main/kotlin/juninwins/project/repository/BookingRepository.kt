@@ -1,6 +1,6 @@
 package juninwins.project.repository
 
-import juninwins.project.model.Accommodation
+import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.Booking
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query

@@ -157,6 +157,30 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         return ResponseEntity.status(httpStatus).body(errorResponse)
     }
 
+    @ExceptionHandler(
+            value = [GuestAlreadyRegisteredException::class]
+    )
+    fun genericExceptionHandlerOK(
+            exception: RuntimeException,
+            request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val instant = Instant.now()
+        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
+                .withZone(ZoneId.systemDefault())
+        val timeStamp = formatter.format(instant)
+        val httpStatus = HttpStatus.CONFLICT.value()
+        val errorResponse = ErrorResponse(
+                status = httpStatus,
+                message = exception.message,
+                _links = mapOf(),
+                timestamp = timeStamp,
+                path = request.getDescription(false)
+        )
+        return ResponseEntity.status(httpStatus).body(errorResponse)
+    }
+
+
+
 
     /**
      * Data class para representar uma resposta de erro formatada no padrão JSON HAL.
