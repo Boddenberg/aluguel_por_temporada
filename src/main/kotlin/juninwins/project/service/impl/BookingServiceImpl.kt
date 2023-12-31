@@ -5,9 +5,12 @@ import juninwins.project.DTO.BookingRequestDTO
 import juninwins.project.enums.StatusReservaEnum
 import juninwins.project.exceptions.AccommodationDateRangeException
 import juninwins.project.exceptions.AccommodationIdNotFoundException
+import juninwins.project.exceptions.SameGuestAndHostException
 import juninwins.project.exceptions.StartDatateIsEqualOrAfterEndDateException
 import juninwins.project.model.Booking
+import juninwins.project.model.GuestAccommodations
 import juninwins.project.repository.BookingRepository
+import juninwins.project.repository.GuestAccommodationsRepository
 import juninwins.project.service.AccommodationService
 import juninwins.project.service.BookingService
 import juninwins.project.service.GuestService
@@ -16,21 +19,32 @@ import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.services.sns.model.NotFoundException
+import java.util.*
 
 @Service
 class BookingServiceImpl(
     val bookingRepository: BookingRepository,
     val guestService: GuestService,
     val accommodationService: AccommodationService,
-    val notificationService: NotificationService
+    val notificationService: NotificationService,
+        val guestAccommodationsRepository: GuestAccommodationsRepository
 ) : BookingService {
 
     private val modelMapper = ModelMapper()
 
-    override fun save(booking: BookingRequestDTO, cpf: String, id: Long): Booking {
+    override fun save(booking: BookingRequestDTO, hostCPF: String, guestCPF: String, idAccommodation: Long): Booking {
 
-        val guest = guestService.findGuestByCPF(cpf)
-        val accommodation = accommodationService.findAccomodationById(id)
+        if (hostCPF == guestCPF) {
+            throw SameGuestAndHostException()
+        }
+
+        val guest = guestService.findGuestByCPF(guestCPF)
+        val host = guestService.findGuestByCPF(hostCPF)
+
+        val currentHost = guestAccommodationsRepository.findByGuest(host).get()
+        val currentAccommodation = currentHost.accommodations.find { it.id == idAccommodation }
+                ?: throw AccommodationIdNotFoundException(idAccommodation)
 
         val startDate = booking.startDate
         val endDate = booking.endDate
@@ -40,29 +54,30 @@ class BookingServiceImpl(
         }
 
         val findByAccommodationAndDateRange =
-            bookingRepository.findByAccommodationAndDateRange(accommodation, startDate, endDate)
+                bookingRepository.findByAccommodationAndDateRange(currentAccommodation, startDate, endDate)
 
         if (findByAccommodationAndDateRange != null) {
             throw AccommodationDateRangeException(startDate.dayOfMonth.toString(), endDate.dayOfMonth.toString())
         }
 
         val bookingDuration = BookingUtils.calculateBookingDurationDays(startDate, endDate)
-        val totalPrice = BookingUtils.calculateBookingTotalPrice(accommodation.basePrice, bookingDuration, accommodation)
+        val totalPrice = BookingUtils.calculateBookingTotalPrice(currentAccommodation.basePrice, bookingDuration, currentAccommodation)
 
         val newBooking = Booking(
-            accommodation,
-            startDate,
-            endDate,
-            bookingDuration,
-            totalPrice,
-            guest,
-            StatusReservaEnum.CONFIRMED
+                accommodation = currentAccommodation,
+                startDate = startDate,
+                endDate = endDate,
+                bookingDuration = bookingDuration,
+                totalPrice = totalPrice,
+                guest = guest,
+                host = host,
+                status = StatusReservaEnum.CONFIRMED
         )
 
-        val reservation = bookingRepository.save(newBooking)
-        notificationService.sendSmsMessage(guest.phoneNumber, "Successfully registered booking")
-        return reservation
+        return bookingRepository.save(newBooking)
     }
+
+
 
     override fun findBookingById(id: Long): Booking {
         return findById(id)

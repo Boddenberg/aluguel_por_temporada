@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 @Entity
 @Table(name = "tb_reserva")
-@JsonPropertyOrder("id", "startDate", "endDate", "status", "bookingDuration", "totalPrice", "guest", "accommodation")
+@JsonPropertyOrder("id", "startDate", "endDate", "status", "bookingDuration", "totalPrice", "guest", "host", "accommodation")
 data class Booking(
     @Id
     @Column(name = "id")
@@ -28,6 +28,9 @@ data class Booking(
     @OneToOne
     @JoinColumn(name = "cliente_cpf")
     val guest: Guest,
+    @OneToOne
+    @JoinColumn(name = "anfitriao_cpf")
+    val host: Guest,
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     val status: StatusReservaEnum
@@ -41,8 +44,9 @@ data class Booking(
         bookingDuration: Int,
         totalPrice: Double,
         guest: Guest,
+        host: Guest,
         status: StatusReservaEnum
-    ) : this(0, accommodation, startDate, endDate, bookingDuration, totalPrice, guest, status)
+    ) : this(0, accommodation, startDate, endDate, bookingDuration, totalPrice, guest, host, status)
 }
 
 /*
