@@ -19,8 +19,10 @@ class BookingController(val bookingService: BookingService) {
     fun saveBooking(
         @RequestBody booking: BookingRequestDTO,
         @RequestHeader(name = "AccommodationId") id: Long,
-        @RequestHeader(name = "GuestCPF") cpf: String
+        @RequestHeader(name = "HostCPF") hostCPF: String,
+        @RequestHeader(name = "GuestCPF") guestCPF : String
     ): ResponseEntity<Booking> {
-        return ResponseEntity.ok(bookingService.save(booking, cpf, id))
+        return ResponseEntity.ok(bookingService.save(booking, hostCPF, guestCPF, id))
     }
+
 }

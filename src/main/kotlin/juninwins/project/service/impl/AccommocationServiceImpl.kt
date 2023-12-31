@@ -118,6 +118,13 @@ class AccommocationServiceImpl(
         throw PolicyIdNotFoundException(id)
     }
 
+    override fun rateAccommodation(id: Long): ResponseEntity<String> {
+
+
+
+        TODO("Not yet implemented")
+    }
+
     private fun findById(id: Long): Accommodation {
         return accommodationRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }

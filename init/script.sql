@@ -50,6 +50,7 @@ CREATE TABLE tb_hospedagem__discount_policy (
 CREATE TABLE tb_reserva (
     id INT PRIMARY KEY AUTO_INCREMENT,
     cliente_cpf VARCHAR(14) NOT NULL,
+    anfitriao_cpf VARCHAR(14) NOT NULL,
     hospedagem_id INT NOT NULL,
     data_inicio DATE NOT NULL,
     data_fim DATE NOT NULL,
@@ -57,6 +58,7 @@ CREATE TABLE tb_reserva (
     preco_total DECIMAL(10, 2) NOT NULL,
     status VARCHAR(50)  NOT NULL,
     FOREIGN KEY (cliente_cpf) REFERENCES tb_cliente(cpf),
+    FOREIGN KEY (anfitriao_cpf) REFERENCES tb_cliente(cpf),
     FOREIGN KEY (hospedagem_id) REFERENCES tb_hospedagem(id)
 );
 

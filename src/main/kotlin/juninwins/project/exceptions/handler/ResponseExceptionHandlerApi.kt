@@ -183,7 +183,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(
             value = [
-                GuestResponsibilityException::class]
+                GuestResponsibilityException::class,
+                SameGuestAndHostException::class]
     )
     fun exceptionHandlerUnauthorized(
             exception: RuntimeException,

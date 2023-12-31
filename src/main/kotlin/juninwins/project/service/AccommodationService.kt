@@ -20,4 +20,7 @@ interface AccommodationService {
     fun updatedPolicyOnAccommodation(idAccommodation: Long, idPolicy: Long, discountPolicy: DiscountPolicy): List<DiscountPolicy>
 
     fun deletePolicyById(id : Long) : ResponseEntity<String>
+
+    fun rateAccommodation(id : Long) : ResponseEntity<String>
+
 }

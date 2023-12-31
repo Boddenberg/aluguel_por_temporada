@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity
 
 interface BookingService {
 
-    fun save(booking: BookingRequestDTO, cpf: String, id: Long) : Booking
+    fun save(booking: BookingRequestDTO, hostCPF: String, guestCPF: String, idAccommodation: Long) : Booking
 
     fun findBookingById(id: Long) : Booking
 
