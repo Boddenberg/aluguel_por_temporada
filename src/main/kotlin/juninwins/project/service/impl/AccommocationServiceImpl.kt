@@ -4,6 +4,7 @@ import juninwins.project.enums.DiscountPolicyTypeEnum
 import juninwins.project.exceptions.*
 import juninwins.project.model.Accommodation
 import juninwins.project.model.DiscountPolicy
+import juninwins.project.model.Guest
 import juninwins.project.model.GuestAccommodations
 import juninwins.project.repository.AccommodationRepository
 import juninwins.project.repository.DiscountPolicyRepository
@@ -23,22 +24,20 @@ class AccommocationServiceImpl(
 
     override fun save(accommodation: Accommodation, cpf: String): GuestAccommodations {
 
-        if (accommodation._discountPolicy.isEmpty()) {
-            accommodation.addDiscountPolicy(DiscountPolicy(DiscountPolicyTypeEnum.NONE.toString(), 0.00))
-        }
-
         val currentGuest = guestService.findGuestByCPF(cpf)
 
-        if (!currentGuest.host) {
-            currentGuest.host = true
-        }
+        checkGuestResponsibility(currentGuest)
+        ensureDiscountPolicy(accommodation)
+        ensureGuestIsHost(currentGuest)
 
-        val currentGuestAccommodations = guestAccommodationsRepository.findByGuest(currentGuest)
-            .orElse(GuestAccommodations(null, currentGuest, mutableListOf()))
-        currentGuestAccommodations.accommodations.add(accommodation)
+        val guestAccommodations = getOrCreateGuestAccommodations(currentGuest)
+        guestAccommodations.accommodations.add(accommodation)
 
-        return guestAccommodationsRepository.save(currentGuestAccommodations)
+        return guestAccommodationsRepository.save(guestAccommodations)
     }
+
+
+
 
     override fun findAccomodationById(id: Long): Accommodation {
         return findById(id)
@@ -122,4 +121,28 @@ class AccommocationServiceImpl(
     private fun findById(id: Long): Accommodation {
         return accommodationRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
+
+    private fun checkGuestResponsibility(guest: Guest) {
+        if (!guest.responsible) {
+            throw GuestResponsibilityException()
+        }
+    }
+
+    private fun ensureDiscountPolicy(accommodation: Accommodation) {
+        if (accommodation._discountPolicy.isEmpty()) {
+            accommodation.addDiscountPolicy(DiscountPolicy(DiscountPolicyTypeEnum.NONE.toString(), 0.00))
+        }
+    }
+
+    private fun ensureGuestIsHost(guest: Guest) {
+        if (!guest.host) {
+            guest.host = true
+        }
+    }
+
+    private fun getOrCreateGuestAccommodations(guest: Guest): GuestAccommodations {
+        return guestAccommodationsRepository.findByGuest(guest)
+                .orElse(GuestAccommodations(null, guest, mutableListOf()))
+    }
+
 }
