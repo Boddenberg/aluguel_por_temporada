@@ -47,7 +47,6 @@ CREATE TABLE tb_hospedagem__discount_policy (
     FOREIGN KEY (_discount_policy_id) REFERENCES tb_politica_desconto (id)
 );
 
-
 CREATE TABLE tb_reserva (
     id INT PRIMARY KEY AUTO_INCREMENT,
     cliente_cpf VARCHAR(14) NOT NULL,
@@ -59,4 +58,18 @@ CREATE TABLE tb_reserva (
     status VARCHAR(50)  NOT NULL,
     FOREIGN KEY (cliente_cpf) REFERENCES tb_cliente(cpf),
     FOREIGN KEY (hospedagem_id) REFERENCES tb_hospedagem(id)
+);
+
+CREATE TABLE tb_cliente_hospedagem (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    cliente_cpf VARCHAR(14) NOT NULL,
+    FOREIGN KEY (cliente_cpf) REFERENCES tb_cliente(cpf)
+);
+
+CREATE TABLE tb_cliente_hospedagem_accommodations (
+    guest_accommodations_id INT,
+    accommodations_id INT,
+    PRIMARY KEY (guest_accommodations_id, accommodations_id),
+    FOREIGN KEY (guest_accommodations_id) REFERENCES tb_cliente_hospedagem(id),
+    FOREIGN KEY (accommodations_id) REFERENCES tb_hospedagem(id)
 );

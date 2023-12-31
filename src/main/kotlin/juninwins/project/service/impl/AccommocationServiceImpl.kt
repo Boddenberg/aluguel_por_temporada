@@ -4,25 +4,40 @@ import juninwins.project.enums.DiscountPolicyTypeEnum
 import juninwins.project.exceptions.*
 import juninwins.project.model.Accommodation
 import juninwins.project.model.DiscountPolicy
+import juninwins.project.model.GuestAccommodations
 import juninwins.project.repository.AccommodationRepository
 import juninwins.project.repository.DiscountPolicyRepository
+import juninwins.project.repository.GuestAccommodationsRepository
 import juninwins.project.service.AccommodationService
-import org.modelmapper.ModelMapper
+import juninwins.project.service.GuestService
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 @Service
-class AccommocationServiceImpl (val accommodationRepository: AccommodationRepository,
-                                val discountPolicyRepository: DiscountPolicyRepository) : AccommodationService{
+class AccommocationServiceImpl(
+    val accommodationRepository: AccommodationRepository,
+    val discountPolicyRepository: DiscountPolicyRepository,
+    val guestService: GuestService,
+    val guestAccommodationsRepository: GuestAccommodationsRepository
+) : AccommodationService {
 
-    private val modelMapper = ModelMapper()
+    override fun save(accommodation: Accommodation, cpf: String): GuestAccommodations {
 
-    override fun save(accomocation: Accommodation): Accommodation {
-
-        if (accomocation._discountPolicy.isEmpty()) {
-            accomocation.addDiscountPolicy(DiscountPolicy(DiscountPolicyTypeEnum.NONE.toString(), 0.00))
+        if (accommodation._discountPolicy.isEmpty()) {
+            accommodation.addDiscountPolicy(DiscountPolicy(DiscountPolicyTypeEnum.NONE.toString(), 0.00))
         }
-        return accommodationRepository.save(accomocation)
+
+        val currentGuest = guestService.findGuestByCPF(cpf)
+
+        if (!currentGuest.host) {
+            currentGuest.host = true
+        }
+
+        val currentGuestAccommodations = guestAccommodationsRepository.findByGuest(currentGuest)
+            .orElse(GuestAccommodations(null, currentGuest, mutableListOf()))
+        currentGuestAccommodations.accommodations.add(accommodation)
+
+        return guestAccommodationsRepository.save(currentGuestAccommodations)
     }
 
     override fun findAccomodationById(id: Long): Accommodation {
@@ -70,7 +85,8 @@ class AccommocationServiceImpl (val accommodationRepository: AccommodationReposi
             throw PolicySizeThresholdException()
         }
 
-        val updatedDiscountPolicy = accommodation._discountPolicy.filter { it.policyType != DiscountPolicyTypeEnum.NONE.toString() }
+        val updatedDiscountPolicy =
+            accommodation._discountPolicy.filter { it.policyType != DiscountPolicyTypeEnum.NONE.toString() }
 
         accommodation._discountPolicy = updatedDiscountPolicy
         accommodation.addDiscountPolicy(newDiscountPolicy)
