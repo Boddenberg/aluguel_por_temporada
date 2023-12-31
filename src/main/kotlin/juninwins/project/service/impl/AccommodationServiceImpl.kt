@@ -13,6 +13,7 @@ import juninwins.project.service.GuestService
 import org.modelmapper.ModelMapper
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AccommodationServiceImpl (val accommodationRepository: AccommodationRepository,
@@ -22,18 +23,29 @@ class AccommodationServiceImpl (val accommodationRepository: AccommodationReposi
 
     private val modelMapper = ModelMapper()
 
-    override fun save(accommodation: Accommodation, cpf : String): GuestAccommodations {
+    @Transactional
+    override fun save(accommodation: Accommodation, cpf: String): GuestAccommodations {
 
         if (accommodation._discountPolicy.isEmpty()) {
             accommodation.addDiscountPolicy(DiscountPolicy(DiscountPolicyTypeEnum.NONE.toString(), 0.00))
         }
 
+        accommodationRepository.save(accommodation)
+
+
         val currentGuest = guestService.findGuestByCPF(cpf)
 
-        return guestAccommodationsRepository.save(GuestAccommodations(cpf, currentGuest, listOf(accommodation)))
+        if (!currentGuest.host){
+            currentGuest.host = true
+        }
+
+        val existingAccommodations = guestAccommodationsRepository.findAccommodationsByGuestCpf(cpf).toMutableList()
+        existingAccommodations.add(accommodation)
+
+        return guestAccommodationsRepository.save(GuestAccommodations(cpf, currentGuest, existingAccommodations))
     }
 
-    override fun findAccomodationById(id: Long): Accommodation {
+    override fun findAccommodationById(id: Long): Accommodation {
         return findById(id)
     }
 

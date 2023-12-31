@@ -28,7 +28,7 @@ data class Guest(
     @Column(name = "data_nascimento")
     var birthDate: String,
     @Column(name = "responsavel")
-    var responsible: Boolean,
+    var responsible: Boolean = false,
     @Column(name = "anfitriao")
     var host: Boolean,
     @OneToOne(cascade = [CascadeType.ALL])

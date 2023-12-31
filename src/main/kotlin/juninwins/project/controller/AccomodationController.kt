@@ -4,7 +4,6 @@ import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.DiscountPolicy
 import juninwins.project.model.accommodation.GuestAccommodations
 import juninwins.project.service.AccommodationService
-import org.hibernate.validator.constraints.br.CPF
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,7 +20,7 @@ class AccommodationController(val accommodationService: AccommodationService) {
 
     @GetMapping("/search/accommodation/{id}")
     fun findAccommodation(@PathVariable(name = "id") idAccommodation: Long): ResponseEntity<Accommodation> {
-        return ResponseEntity.ok(accommodationService.findAccomodationById(idAccommodation))
+        return ResponseEntity.ok(accommodationService.findAccommodationById(idAccommodation))
     }
 
     @PutMapping("/update/accommodation/{id}")

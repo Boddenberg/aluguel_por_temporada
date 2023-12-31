@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity
 interface AccommodationService {
 
     fun save(accommodation: Accommodation, cpf : String): GuestAccommodations
-    fun findAccomodationById(id : Long) : Accommodation
+    fun findAccommodationById(id : Long) : Accommodation
 
     fun update(id : Long, newAccomodation: Accommodation) : Accommodation
 

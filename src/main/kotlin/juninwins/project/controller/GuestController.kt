@@ -4,6 +4,7 @@ import juninwins.project.model.Guest
 import juninwins.project.service.GuestService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
+import juninwins.project.model.accommodation.GuestAccommodations
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -20,7 +21,10 @@ class GuestController (val guestService: GuestService) {
     fun findGuest(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.findGuestByCPF(cpfCustomer))
     }
-
+    @GetMapping("/search/guest/accommodations/{cpf}")
+    fun findGuestAccommodations(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<GuestAccommodations> {
+        return ResponseEntity.ok(guestService.findGuestAccommodationsByCPF(cpfCustomer))
+    }
     @PostMapping("/register/guest")
     @Operation(summary = "Register a guest")
     fun saveGuest(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
@@ -43,6 +47,5 @@ class GuestController (val guestService: GuestService) {
     @DeleteMapping("/delete/{cpf}")
     fun deleteGuest(
         @PathVariable(name = "cpf") cpfCustomer: String
-    )
-            : ResponseEntity<String> = guestService.deleteById(cpfCustomer)
+    ) : ResponseEntity<String> = guestService.deleteById(cpfCustomer)
 }

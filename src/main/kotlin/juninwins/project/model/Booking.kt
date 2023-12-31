@@ -12,26 +12,26 @@ import juninwins.project.model.accommodation.Accommodation
 @JsonPropertyOrder("id", "startDate", "endDate", "status", "bookingDuration", "totalPrice", "guest", "accommodation")
 data class Booking(
         @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
-        @OneToOne
-    @JoinColumn(name = "hospedagem_id")
-    val accommodation: Accommodation,
+        @Column(name = "id")
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Long,
+        @OneToOne(cascade = [CascadeType.ALL])
+        @JoinColumn(name = "hospedagem_id")
+        val accommodation: Accommodation,
         @Column(name = "data_inicio")
-    val startDate: LocalDate,
+        val startDate: LocalDate,
         @Column(name = "data_fim")
-    val endDate: LocalDate,
+        val endDate: LocalDate,
         @Column(name = "duracao_reserva")
-    var bookingDuration: Int,
+        var bookingDuration: Int,
         @Column(name = "preco_total")
-    val totalPrice: Double,
-        @OneToOne
-    @JoinColumn(name = "cliente_cpf")
-    val guest: Guest,
+        val totalPrice: Double,
+        @OneToOne(cascade = [CascadeType.ALL])
+        @JoinColumn(name = "cliente_cpf")
+        val guest: Guest,
         @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    val status: StatusReservaEnum
+        @Enumerated(EnumType.STRING)
+        val status: StatusReservaEnum
 ) {
     // Construtores e outras propriedades...
 

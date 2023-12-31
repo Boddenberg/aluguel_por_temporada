@@ -12,7 +12,7 @@ import juninwins.project.model.Guest
 @JsonPropertyOrder("id", "type", "localization", "capacity", "basePrice", "address", "discountPolicy")
 @JsonIgnoreProperties
 class Accommodation(
-        @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?,

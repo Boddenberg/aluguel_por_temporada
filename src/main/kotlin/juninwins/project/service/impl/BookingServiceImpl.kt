@@ -30,7 +30,7 @@ class BookingServiceImpl(
     override fun save(booking: BookingRequestDTO, cpf: String, id: Long): Booking {
 
         val guest = guestService.findGuestByCPF(cpf)
-        val accommodation = accommodationService.findAccomodationById(id)
+        val accommodation = accommodationService.findAccommodationById(id)
 
         val startDate = booking.startDate
         val endDate = booking.endDate
@@ -49,19 +49,18 @@ class BookingServiceImpl(
         val bookingDuration = BookingUtils.calculateBookingDurationDays(startDate, endDate)
         val totalPrice = BookingUtils.calculateBookingTotalPrice(accommodation.basePrice, bookingDuration, accommodation)
 
-        val newBooking = Booking(
-            accommodation,
-            startDate,
-            endDate,
-            bookingDuration,
-            totalPrice,
-            guest,
-            StatusReservaEnum.CONFIRMED
-        )
+                return bookingRepository.save(Booking(
+                accommodation,
+                startDate,
+                endDate,
+                bookingDuration,
+                totalPrice,
+                guest,
+                StatusReservaEnum.CONFIRMED
+        ))
 
-        val reservation = bookingRepository.save(newBooking)
-        notificationService.sendSmsMessage(guest.phoneNumber, "Successfully registered booking")
-        return reservation
+    //    notificationService.sendSmsMessage(guest.phoneNumber, "Successfully registered booking")
+
     }
 
     override fun findBookingById(id: Long): Booking {
