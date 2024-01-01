@@ -19,21 +19,25 @@ data class Booking(
         @OneToOne
     @JoinColumn(name = "hospedagem_id")
     val accommodation: Accommodation,
-        @Column(name = "data_inicio")
+    @Column(name = "data_inicio")
     val startDate: LocalDate,
-        @Column(name = "data_fim")
+    @Column(name = "data_fim")
     val endDate: LocalDate,
-        @Column(name = "duracao_reserva")
+    @Column(name = "duracao_reserva")
     var bookingDuration: Int,
-        @Column(name = "preco_total")
+    @Column(name = "preco_total")
     val totalPrice: Double,
-        @OneToOne
+    @Column(name = "preco_total")
+    val reviwedByGuest: Boolean? = false,
+    @Column(name = "preco_total")
+    val reviwedByHost: Boolean? = false,
+    @OneToOne
     @JoinColumn(name = "cliente_cpf")
     val guest: Guest,
-        @OneToOne
+    @OneToOne
     @JoinColumn(name = "anfitriao_cpf")
     val host: Guest,
-        @Column(name = "status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     val status: StatusReservaEnum
 ) {
@@ -45,10 +49,12 @@ data class Booking(
             endDate: LocalDate,
             bookingDuration: Int,
             totalPrice: Double,
+            reviwedByGuest : Boolean? = false,
+            reviwedByHost : Boolean? = false,
             guest: Guest,
             host: Guest,
             status: StatusReservaEnum
-    ) : this(0, accommodation, startDate, endDate, bookingDuration, totalPrice, guest, host, status)
+    ) : this(0, accommodation, startDate, endDate, bookingDuration, totalPrice, reviwedByGuest, reviwedByHost, guest, host, status)
 }
 
 /*

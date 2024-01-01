@@ -1,6 +1,6 @@
 package juninwins.project.utils
 
-import juninwins.project.model.guest.guestAddress
+import juninwins.project.model.guest.GuestAddress
 import juninwins.project.service.ViaCEPService
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -13,7 +13,7 @@ fun validateCEP(cep: String): String? {
         .build()
 
     val service = retrofit.create(ViaCEPService::class.java)
-    val call: Call<guestAddress> = service.getAddress(cep)
+    val call: Call<GuestAddress> = service.getAddress(cep)
 
     try {
         val response = call.execute()

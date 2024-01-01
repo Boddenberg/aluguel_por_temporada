@@ -2,7 +2,7 @@ package juninwins.project.model.guest
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
-import juninwins.project.model.guest.guestAddress
+import juninwins.project.model.review.ReviewByHost
 import org.springframework.format.annotation.DateTimeFormat
 
 @Entity
@@ -32,6 +32,9 @@ data class Guest(
     @Column(name = "anfitriao")
     var host: Boolean,
     @OneToOne(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "endereco_id")
-    var address: guestAddress
+    @JoinColumn(name = "review_id")
+    var reviews: ReviewByHost,
+    @OneToOne(cascade = [CascadeType.ALL])
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    var address: GuestAddress
 )

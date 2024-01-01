@@ -4,7 +4,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "tb_endereco_guest")
-data class guestAddress(
+data class GuestAddress(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null, // Adicione um ID para o endereço
