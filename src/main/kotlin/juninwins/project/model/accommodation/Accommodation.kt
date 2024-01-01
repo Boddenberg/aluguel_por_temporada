@@ -1,8 +1,9 @@
-package juninwins.project.model
+package juninwins.project.model.accommodation
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import jakarta.persistence.*
+import juninwins.project.model.guest.guestAddress
 
 
 @Entity
@@ -24,7 +25,7 @@ class Accommodation(
     var basePrice: Double,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
-    var address: Address
+    var address: guestAddress
 ) {
     @OneToMany(cascade = [CascadeType.ALL])
     var _discountPolicy: List<DiscountPolicy> = ArrayList()

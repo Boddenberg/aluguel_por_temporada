@@ -1,8 +1,8 @@
 package juninwins.project.controller
 
-import juninwins.project.model.Accommodation
-import juninwins.project.model.DiscountPolicy
-import juninwins.project.model.GuestAccommodations
+import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.accommodation.DiscountPolicy
+import juninwins.project.model.guest.GuestAccommodations
 import juninwins.project.service.AccommodationService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

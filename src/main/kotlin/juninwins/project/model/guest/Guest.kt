@@ -1,8 +1,8 @@
-package juninwins.project.model
+package juninwins.project.model.guest
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
-import org.hibernate.validator.constraints.br.CPF
+import juninwins.project.model.guest.guestAddress
 import org.springframework.format.annotation.DateTimeFormat
 
 @Entity
@@ -33,5 +33,5 @@ data class Guest(
     var host: Boolean,
     @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id")
-    var address: Address
+    var address: guestAddress
 )

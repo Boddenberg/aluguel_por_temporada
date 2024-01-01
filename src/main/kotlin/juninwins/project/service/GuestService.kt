@@ -1,6 +1,6 @@
 package juninwins.project.service
 
-import juninwins.project.model.Guest
+import juninwins.project.model.guest.Guest
 import org.springframework.http.ResponseEntity
 
 interface GuestService {

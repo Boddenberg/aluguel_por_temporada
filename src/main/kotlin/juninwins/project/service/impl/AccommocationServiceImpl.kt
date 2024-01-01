@@ -2,10 +2,10 @@ package juninwins.project.service.impl
 
 import juninwins.project.enums.DiscountPolicyTypeEnum
 import juninwins.project.exceptions.*
-import juninwins.project.model.Accommodation
-import juninwins.project.model.DiscountPolicy
-import juninwins.project.model.Guest
-import juninwins.project.model.GuestAccommodations
+import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.accommodation.DiscountPolicy
+import juninwins.project.model.guest.Guest
+import juninwins.project.model.guest.GuestAccommodations
 import juninwins.project.repository.AccommodationRepository
 import juninwins.project.repository.DiscountPolicyRepository
 import juninwins.project.repository.GuestAccommodationsRepository

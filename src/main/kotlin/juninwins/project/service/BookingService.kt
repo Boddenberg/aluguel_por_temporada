@@ -1,7 +1,7 @@
 package juninwins.project.service
 
 import juninwins.project.DTO.BookingRequestDTO
-import juninwins.project.model.Booking
+import juninwins.project.model.booking.Booking
 import org.springframework.http.ResponseEntity
 
 interface BookingService {

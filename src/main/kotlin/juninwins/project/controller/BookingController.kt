@@ -1,7 +1,7 @@
 package juninwins.project.controller
 
 import juninwins.project.DTO.BookingRequestDTO
-import juninwins.project.model.Booking
+import juninwins.project.model.booking.Booking
 import juninwins.project.service.BookingService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*

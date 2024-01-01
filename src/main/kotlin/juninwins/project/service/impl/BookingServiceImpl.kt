@@ -7,8 +7,7 @@ import juninwins.project.exceptions.AccommodationDateRangeException
 import juninwins.project.exceptions.AccommodationIdNotFoundException
 import juninwins.project.exceptions.SameGuestAndHostException
 import juninwins.project.exceptions.StartDatateIsEqualOrAfterEndDateException
-import juninwins.project.model.Booking
-import juninwins.project.model.GuestAccommodations
+import juninwins.project.model.booking.Booking
 import juninwins.project.repository.BookingRepository
 import juninwins.project.repository.GuestAccommodationsRepository
 import juninwins.project.service.AccommodationService
@@ -19,8 +18,6 @@ import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.services.sns.model.NotFoundException
-import java.util.*
 
 @Service
 class BookingServiceImpl(

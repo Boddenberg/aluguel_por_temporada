@@ -28,7 +28,7 @@ services:
       - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
 #    volumes:
-#      - ./aws:/etc/localstack/init/ready.d
+      - ./aws:/etc/localstack/init/ready.d
     ports:
       - '4566:4566'
   prometheus:

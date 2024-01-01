@@ -1,6 +1,6 @@
 package juninwins.project.controller
 
-import juninwins.project.model.Guest
+import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid

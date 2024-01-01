@@ -33,6 +33,7 @@ repositories {
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	// dependencias AWS
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-sns:3.1.0")
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.0")

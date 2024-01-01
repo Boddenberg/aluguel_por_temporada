@@ -3,7 +3,7 @@ package juninwins.project.service.impl
 import juninwins.project.exceptions.CEPValidationException
 import juninwins.project.exceptions.CPFNotAuthorizeToUpdateException
 import juninwins.project.exceptions.GuestAlreadyRegisteredException
-import juninwins.project.model.Guest
+import juninwins.project.model.guest.Guest
 import juninwins.project.repository.GuestRepository
 import juninwins.project.service.GuestService
 import juninwins.project.utils.validateCEP
