@@ -42,7 +42,7 @@ data class Booking(
         val status: StatusReservaEnum,
         @Column(name = "review_status")
         @Enumerated(EnumType.STRING)
-        val reviewStatus: StatusReservaEnum? = null
+        val reviewStatus: StatusReservaEnum?
 ) {
 
     constructor(

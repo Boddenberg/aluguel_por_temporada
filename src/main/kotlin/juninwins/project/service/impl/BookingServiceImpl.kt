@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class BookingServiceImpl(
@@ -60,22 +61,35 @@ class BookingServiceImpl(
         val bookingDuration = BookingUtils.calculateBookingDurationDays(startDate, endDate)
         val totalPrice = BookingUtils.calculateBookingTotalPrice(currentAccommodation.basePrice, bookingDuration, currentAccommodation)
 
-        val newBooking = Booking(
-                accommodation = currentAccommodation,
-                startDate = startDate,
-                endDate = endDate,
-                bookingDuration = bookingDuration,
-                totalPrice = totalPrice,
-                guest = guest,
-                host = host,
-                status = StatusReservaEnum.CONFIRMED,
-                reviewStatus = null
-        )
+        if (endDate.isBefore(LocalDate.now())) {
+            val concludedBooking = Booking(
+                    accommodation = currentAccommodation,
+                    startDate = startDate,
+                    endDate = endDate,
+                    bookingDuration = bookingDuration,
+                    totalPrice = totalPrice,
+                    guest = guest,
+                    host = host,
+                    status = StatusReservaEnum.CONCLUDED,
+                    reviewStatus = StatusReservaEnum.READY_TO_REVIEW
+            )
+            return bookingRepository.save(concludedBooking)
+        } else {
+            val confirmedBooking = Booking(
+                    accommodation = currentAccommodation,
+                    startDate = startDate,
+                    endDate = endDate,
+                    bookingDuration = bookingDuration,
+                    totalPrice = totalPrice,
+                    guest = guest,
+                    host = host,
+                    status = StatusReservaEnum.CONFIRMED,
+                    reviewStatus = StatusReservaEnum.NOT_READY_TO_REVIEW
+            )
+            return bookingRepository.save(confirmedBooking)
+        }
 
-        return bookingRepository.save(newBooking)
     }
-
-
 
     override fun findBookingById(id: Long): Booking {
         return findById(id)

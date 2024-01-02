@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import jakarta.persistence.*
 import juninwins.project.model.review.ReviewByGuest
+import juninwins.project.model.review.ReviewByHost
 
 
 @Entity
@@ -23,9 +24,9 @@ class Accommodation(
     var capacity: Int = 0, // até quantas pessoas podem se hospedar na acomodação
         @Column(name = "preco_por_noite")
     var basePrice: Double,
-        @OneToOne(cascade = [CascadeType.ALL])
+        @OneToMany(cascade = [CascadeType.ALL])
     @JoinColumn(name = "review_id", referencedColumnName = "id")
-    var reviews: ReviewByGuest? = null,
+        var reviews: MutableList<ReviewByGuest>? = mutableListOf(),
         @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     var address: AccommodationAddress

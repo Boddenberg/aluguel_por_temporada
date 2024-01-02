@@ -159,7 +159,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(
             value = [
-                GuestAlreadyRegisteredException::class
+                GuestAlreadyRegisteredException::class,
+                BookingNotConcludedException::class
                 ]
     )
     fun exceptionHandlerConflict(

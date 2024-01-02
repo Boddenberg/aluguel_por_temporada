@@ -6,7 +6,8 @@ enum class StatusReservaEnum(val descricao: String) {
     IN_PROGRESS("Reserva em andamento"),
     CANCELED("Reserva cancelada"),
     CONCLUDED("Reserva concluída"),
-    READY_TO_REVIEW("Pronta para avaliação");
+    READY_TO_REVIEW("Pronta para avaliação"),
+    NOT_READY_TO_REVIEW("Pronta para avaliação");
 
     companion object {
         fun fromDescricao(descricao: String): StatusReservaEnum? =

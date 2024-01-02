@@ -12,6 +12,12 @@ data class ReviewByGuest (
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long? = null,
 
+        @Column(name = "made_by_cpf")
+        var madeByCPF: String? = null,
+
+        @Column(name = "made_by_name")
+        var madeByName: String? = null,
+
         @Column(name = "cleaning_score")
         val cleaningScore: Int,
 

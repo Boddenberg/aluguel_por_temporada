@@ -12,7 +12,7 @@ interface GuestService {
 
     fun findGuestByCPF(cpf : String) : Guest
 
-    fun reviewAccommodation(hostCPF : String, idAccommodation : Long, review : ReviewByGuest) : Accommodation
+    fun reviewAccommodation(hostCPF : String, guestCPF : String, idBooking: Long, idAccommodation : Long, review : ReviewByGuest) : Accommodation
 
     fun update(cpf : String, newCustomer : Guest) : Guest
 
