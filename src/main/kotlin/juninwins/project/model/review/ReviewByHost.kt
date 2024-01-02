@@ -15,24 +15,24 @@ class ReviewByHost(
 
         // Scores
         @Column(name = "cleaning_score")
-        val cleaningScore: Int,
+        val cleaningScore: Int?,
 
         @Column(name = "cleaning_comment")
-        val cleaningComment: String,
+        val cleaningComment: String?,
 
         @Column(name = "rules_score")
-        val rulesScore: Int,
+        val rulesScore: Int?,
 
         @Column(name = "rules_comment")
-        val rulesComment: String,
+        val rulesComment: String?,
 
         @Column(name = "general_comment")
-        val generalComment: String,
+        val generalComment: String?,
 
         @Column(name = "booking_date")
-        val bookingDate : String,
+        val bookingDate : String?,
 
         @Column(name = "submission_date")
-        val submissionDate: LocalDate = LocalDate.now()
+        val submissionDate: LocalDate? = LocalDate.now()
 
 )

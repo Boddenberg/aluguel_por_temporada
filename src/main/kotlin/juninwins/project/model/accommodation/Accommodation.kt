@@ -24,7 +24,7 @@ class Accommodation(
         @Column(name = "preco_por_noite")
     var basePrice: Double,
         @OneToOne(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "review_id")
+    @JoinColumn(name = "review_id", referencedColumnName = "id")
     var reviews: ReviewByGuest? = null,
         @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")

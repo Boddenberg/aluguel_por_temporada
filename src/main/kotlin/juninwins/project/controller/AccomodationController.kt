@@ -2,7 +2,7 @@ package juninwins.project.controller
 
 import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.accommodation.DiscountPolicy
-import juninwins.project.model.guest.GuestAccommodations
+import juninwins.project.model.guest.HostAccommodations
 import juninwins.project.service.AccommodationService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,7 +14,7 @@ class AccommodationController(val accommodationService: AccommodationService) {
 
     @PostMapping("register/accommodation/{cpf}")
     fun saveAccommodation(@PathVariable cpf : String, @RequestBody accommodation: Accommodation)
-    : ResponseEntity<GuestAccommodations> {
+    : ResponseEntity<HostAccommodations> {
         return ResponseEntity.status(HttpStatus.CREATED).body(accommodationService.save(accommodation, cpf))
     }
 

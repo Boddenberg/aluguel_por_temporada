@@ -3,7 +3,12 @@ package juninwins.project.service.impl
 import juninwins.project.exceptions.CEPValidationException
 import juninwins.project.exceptions.CPFNotAuthorizeToUpdateException
 import juninwins.project.exceptions.GuestAlreadyRegisteredException
+import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.guest.Guest
+import juninwins.project.model.review.ReviewByGuest
+import juninwins.project.model.review.ReviewByHost
+import juninwins.project.repository.AccommodationRepository
+import juninwins.project.repository.HostAccommodationsRepository
 import juninwins.project.repository.GuestRepository
 import juninwins.project.service.GuestService
 import juninwins.project.utils.validateCEP
@@ -16,7 +21,9 @@ import java.time.Period
 import java.time.format.DateTimeFormatter
 
 @Service
-class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
+class GuestServiceImpl (val guestRepository : GuestRepository,
+        val accommodationRepository: AccommodationRepository,
+        val hostAccommodationsRepository: HostAccommodationsRepository) : GuestService {
 
     private val modelMapper = ModelMapper()
 
@@ -29,6 +36,28 @@ class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
     override fun findGuestByCPF(cpf: String) : Guest {
         return findByCPF(cpf)
     }
+
+    override fun reviewAccommodation(hostCPF: String, idAccommodation: Long, review: ReviewByGuest): Accommodation {
+        val currentHost = findByCPF(hostCPF)
+
+        val currentHostAccommodation = hostAccommodationsRepository.findByGuest(currentHost)
+
+        val x = currentHostAccommodation.get()
+
+        x.accommodations.forEach { accommodation ->
+            run {
+                if (accommodation.id == idAccommodation) {
+                    accommodation.reviews = review
+                    hostAccommodationsRepository.save(x)
+                    return accommodation
+                }
+            }
+        }
+
+        throw Exception("Acomodação não encontrada")
+
+    }
+
 
     override fun update(cpf: String, newCustomer: Guest): Guest {
         validateCepForAddress(newCustomer)

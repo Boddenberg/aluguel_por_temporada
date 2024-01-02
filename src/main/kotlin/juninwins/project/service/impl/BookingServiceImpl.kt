@@ -9,7 +9,7 @@ import juninwins.project.exceptions.SameGuestAndHostException
 import juninwins.project.exceptions.StartDatateIsEqualOrAfterEndDateException
 import juninwins.project.model.booking.Booking
 import juninwins.project.repository.BookingRepository
-import juninwins.project.repository.GuestAccommodationsRepository
+import juninwins.project.repository.HostAccommodationsRepository
 import juninwins.project.service.AccommodationService
 import juninwins.project.service.BookingService
 import juninwins.project.service.GuestService
@@ -25,7 +25,7 @@ class BookingServiceImpl(
     val guestService: GuestService,
     val accommodationService: AccommodationService,
     val notificationService: NotificationService,
-        val guestAccommodationsRepository: GuestAccommodationsRepository
+        val guestAccommodationsRepository: HostAccommodationsRepository
 ) : BookingService {
 
     private val modelMapper = ModelMapper()
@@ -68,7 +68,8 @@ class BookingServiceImpl(
                 totalPrice = totalPrice,
                 guest = guest,
                 host = host,
-                status = StatusReservaEnum.CONFIRMED
+                status = StatusReservaEnum.CONFIRMED,
+                reviewStatus = null
         )
 
         return bookingRepository.save(newBooking)

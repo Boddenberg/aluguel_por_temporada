@@ -5,11 +5,12 @@ enum class StatusReservaEnum(val descricao: String) {
     CONFIRMED("Reserva confirmada"),
     IN_PROGRESS("Reserva em andamento"),
     CANCELED("Reserva cancelada"),
-    CONCLUDED("Reserva concluída");
+    CONCLUDED("Reserva concluída"),
+    READY_TO_REVIEW("Pronta para avaliação");
 
     companion object {
         fun fromDescricao(descricao: String): StatusReservaEnum? =
-            values().find { it.descricao == descricao }
+                values().find { it.descricao == descricao }
     }
 
     override fun toString(): String = descricao

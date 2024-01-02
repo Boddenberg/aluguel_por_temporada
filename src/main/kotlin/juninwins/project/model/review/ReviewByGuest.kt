@@ -8,11 +8,12 @@ import java.time.LocalDate
 data class ReviewByGuest (
 
         @Id
+        @Column(name = "id")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long? = null,
 
-        @Column(name = "cleanliness_score")
-        val cleanlinessScore: Int,
+        @Column(name = "cleaning_score")
+        val cleaningScore: Int,
 
         @Column(name = "cleaning_comment")
         val cleaningComment: String,

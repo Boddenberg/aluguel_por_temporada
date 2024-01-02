@@ -5,7 +5,7 @@ import juninwins.project.model.accommodation.Accommodation
 
 @Entity
 @Table(name = "tb_cliente_hospedagem")
-data class GuestAccommodations(
+data class HostAccommodations(
         @Id
     @Column(
         name = "id",
