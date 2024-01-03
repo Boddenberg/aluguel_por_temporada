@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.review.ReviewByGuest
+import juninwins.project.model.review.ReviewByHost
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -29,7 +30,15 @@ class GuestController (val guestService: GuestService) {
                             @PathVariable(name = "idBooking") idBooking: Long,
                             @PathVariable(name = "idAccommodation") idAccommodation: Long,
                             @RequestBody review: ReviewByGuest) : ResponseEntity<Accommodation> {
-        return ResponseEntity.ok(guestService.reviewAccommodation(hostCPF, guestCPF, idBooking, idAccommodation, review))
+        return ResponseEntity.ok(guestService.reviewAccommodationByGuest(hostCPF, guestCPF, idBooking, idAccommodation, review))
+    }
+
+    @PostMapping("/save/review/guest/{hostCPF}/{guestCPF}/{idBooking}")
+    fun reviewGuest(@PathVariable(name = "hostCPF") hostCPF: String,
+                    @PathVariable(name = "guestCPF") guestCPF : String,
+                    @PathVariable(name = "idBooking") idBooking: Long,
+                    @RequestBody review: ReviewByHost) : ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.reviewGuestByHost(hostCPF, guestCPF, idBooking, review))
     }
 
     @PostMapping("/register/guest")

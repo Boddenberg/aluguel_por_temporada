@@ -14,9 +14,9 @@ class ReviewByHost(
         val id: Long? = null,
 
         @Column(name = "made_by_cpf")
-        val madeByCPF: String?,
+        var madeByCPF: String?,
         @Column(name = "made_by_name")
-        val madeByName: String?,
+        var madeByName: String?,
         @Column(name = "cleaning_score")
         val cleaningScore: Int?,
 

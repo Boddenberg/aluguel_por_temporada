@@ -30,7 +30,7 @@ data class Booking(
         @Column(name = "reviewed_by_guest")
         var reviwedByGuest: Boolean? = false,
         @Column(name = "reviewed_by_host")
-        val reviwedByHost: Boolean = false,
+        var reviwedByHost: Boolean? = false,
         @OneToOne
         @JoinColumn(name = "cliente_cpf")
         val guest: Guest,

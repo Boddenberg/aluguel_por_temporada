@@ -5,7 +5,9 @@ import juninwins.project.exceptions.*
 import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.booking.Booking
 import juninwins.project.model.guest.Guest
+import juninwins.project.model.guest.HostAccommodations
 import juninwins.project.model.review.ReviewByGuest
+import juninwins.project.model.review.ReviewByHost
 import juninwins.project.repository.AccommodationRepository
 import juninwins.project.repository.BookingRepository
 import juninwins.project.repository.HostAccommodationsRepository
@@ -30,7 +32,7 @@ class GuestServiceImpl (val guestRepository : GuestRepository,
 
     override fun save(customer: Guest): Guest {
         validateCepForAddress(customer)
-        checkIfGuestExists(customer)
+        checkIfGuestAlreadyExists(customer)
         checkAndSetGuestResponsibility(customer)
         return guestRepository.save(customer)
     }
@@ -38,14 +40,15 @@ class GuestServiceImpl (val guestRepository : GuestRepository,
         return findByCPF(cpf)
     }
 
-    override fun reviewAccommodation(hostCPF: String, guestCPF : String, idBooking: Long, idAccommodation: Long, review: ReviewByGuest): Accommodation {
+    override fun reviewAccommodationByGuest(hostCPF: String, guestCPF : String, idBooking: Long, idAccommodation: Long, review: ReviewByGuest): Accommodation {
         val currentHost = findByCPF(hostCPF)
         val currentGuest = findByCPF(guestCPF)
+        val currentBooking = findBookingById(idBooking)
+
         val currentHostAccommodation = hostAccommodationsRepository.findByGuest(currentHost)
-        val currentBooking = bookingRepository.findById(idBooking).get()
         val currentAccommodation = currentHostAccommodation.get()
 
-        validateBookingForReview(currentBooking)
+        validateBookingForGuestReview(currentBooking)
 
             review.madeByCPF = currentGuest.cpf
             review.madeByName = currentGuest.name
@@ -62,7 +65,36 @@ class GuestServiceImpl (val guestRepository : GuestRepository,
         throw Exception("Acomodação não encontrada")
     }
 
-    private fun validateBookingForReview(booking: Booking) {
+    override fun reviewGuestByHost(hostCPF: String, guestCPF: String, idBooking: Long, review: ReviewByHost): Guest {
+        val currentHost = findByCPF(hostCPF)
+        val currentGuest = findByCPF(guestCPF)
+        val currentBooking = findBookingById(idBooking)
+        val currentHostAccommodation = findHostAccommodationsById(currentHost)
+
+        validateBookingForHostReview(currentBooking)
+
+        return if (currentGuest.cpf != currentHostAccommodation.guest.cpf) {
+            review.madeByCPF = currentHost.cpf
+            review.madeByName = currentHost.name
+            currentBooking.reviwedByHost = true
+            val existingReviews = currentGuest.reviews ?: mutableListOf()
+            existingReviews.add(review)
+            currentGuest.reviews = existingReviews
+            guestRepository.save(currentGuest)
+        } else {
+            throw Exception("Guest should review an accommodation")
+        }
+    }
+
+    private fun validateBookingForHostReview(booking: Booking) {
+        if (booking.reviwedByHost == true) {
+            throw BookingAlreadyReviewedException()
+        }
+        if (booking.status != StatusReservaEnum.CONCLUDED || booking.reviewStatus != StatusReservaEnum.READY_TO_REVIEW) {
+            throw BookingNotConcludedException(booking.id)
+        }
+    }
+    private fun validateBookingForGuestReview(booking: Booking) {
         if (booking.reviwedByGuest == true) {
             throw BookingAlreadyReviewedException()
         }
@@ -99,7 +131,7 @@ class GuestServiceImpl (val guestRepository : GuestRepository,
 
     }
 
-    private fun checkIfGuestExists(customer: Guest) {
+    private fun checkIfGuestAlreadyExists(customer: Guest) {
         val currentGuest = guestRepository.findById(customer.cpf)
         if (currentGuest.isPresent) {
             throw GuestAlreadyRegisteredException(customer.cpf)
@@ -115,8 +147,6 @@ class GuestServiceImpl (val guestRepository : GuestRepository,
             customer.responsible = true
         }
     }
-
-
     private fun validateCepForAddress(customer: Guest) {
         val cepValidationResult = validateCEP(customer.address.cep)
 
@@ -124,4 +154,21 @@ class GuestServiceImpl (val guestRepository : GuestRepository,
             throw CEPValidationException(cepValidationResult)
         }
     }
+
+    private fun findBookingById(idBooking: Long): Booking {
+        return try {
+            bookingRepository.findById(idBooking).get()
+        } catch (e: NoSuchElementException) {
+            throw BookingNotFoundException(idBooking.toString())
+        }
+    }
+
+    private fun findHostAccommodationsById(currentClient: Guest): HostAccommodations {
+        return try {
+            hostAccommodationsRepository.findByGuest(currentClient).get()
+        } catch (e: NoSuchElementException) {
+            throw Exception("HostAccommodations Not Found")
+        }
+    }
+
 }
