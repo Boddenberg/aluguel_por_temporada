@@ -1,11 +1,9 @@
 package juninwins.project.service.impl
 
 import juninwins.project.enums.StatusReservaEnum
-import juninwins.project.exceptions.BookingNotConcludedException
-import juninwins.project.exceptions.CEPValidationException
-import juninwins.project.exceptions.CPFNotAuthorizeToUpdateException
-import juninwins.project.exceptions.GuestAlreadyRegisteredException
+import juninwins.project.exceptions.*
 import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.booking.Booking
 import juninwins.project.model.guest.Guest
 import juninwins.project.model.review.ReviewByGuest
 import juninwins.project.repository.AccommodationRepository
@@ -47,22 +45,31 @@ class GuestServiceImpl (val guestRepository : GuestRepository,
         val currentBooking = bookingRepository.findById(idBooking).get()
         val currentAccommodation = currentHostAccommodation.get()
 
-        if (currentBooking.status == StatusReservaEnum.CONCLUDED && currentBooking.reviewStatus == StatusReservaEnum.READY_TO_REVIEW) {
+        validateBookingForReview(currentBooking)
+
             review.madeByCPF = currentGuest.cpf
             review.madeByName = currentGuest.name
+            currentBooking.reviwedByGuest = true
 
-            currentAccommodation.accommodations.forEach { accommodation ->
-                if (accommodation.id == idAccommodation) {
-                    accommodation.reviews!!.add(review)
-                    hostAccommodationsRepository.save(currentAccommodation)
-                    return accommodation
-                }
+        val accommodationToUpdate = currentAccommodation.accommodations.find { it.id == idAccommodation }
+        accommodationToUpdate?.let { accommodation ->
+            accommodation.reviews = (accommodation.reviews ?: mutableListOf()).apply {
+                add(review)
             }
-    }
-        throw BookingNotConcludedException(idBooking)
+            hostAccommodationsRepository.save(currentAccommodation)
+            return accommodation
+        }
+        throw Exception("Acomodação não encontrada")
     }
 
-
+    private fun validateBookingForReview(booking: Booking) {
+        if (booking.reviwedByGuest == true) {
+            throw BookingAlreadyReviewedException()
+        }
+        if (booking.status != StatusReservaEnum.CONCLUDED || booking.reviewStatus != StatusReservaEnum.READY_TO_REVIEW) {
+            throw BookingNotConcludedException(booking.id)
+        }
+    }
 
     override fun update(cpf: String, newCustomer: Guest): Guest {
         validateCepForAddress(newCustomer)

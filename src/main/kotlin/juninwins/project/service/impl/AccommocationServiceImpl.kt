@@ -36,9 +36,6 @@ class AccommocationServiceImpl(
         return guestAccommodationsRepository.save(guestAccommodations)
     }
 
-
-
-
     override fun findAccomodationById(id: Long): Accommodation {
         return findById(id)
     }

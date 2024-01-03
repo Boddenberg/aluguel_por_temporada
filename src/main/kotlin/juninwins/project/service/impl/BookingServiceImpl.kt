@@ -60,35 +60,32 @@ class BookingServiceImpl(
 
         val bookingDuration = BookingUtils.calculateBookingDurationDays(startDate, endDate)
         val totalPrice = BookingUtils.calculateBookingTotalPrice(currentAccommodation.basePrice, bookingDuration, currentAccommodation)
+        val dateAfter = checkIfDateIsAfterBookingDate(endDate)
+        val checkTwoWeeks = checkIfhasMoreThan14DaysPassedSinceEndDate(endDate)
 
-        if (endDate.isBefore(LocalDate.now())) {
-            val concludedBooking = Booking(
-                    accommodation = currentAccommodation,
-                    startDate = startDate,
-                    endDate = endDate,
-                    bookingDuration = bookingDuration,
-                    totalPrice = totalPrice,
-                    guest = guest,
-                    host = host,
-                    status = StatusReservaEnum.CONCLUDED,
-                    reviewStatus = StatusReservaEnum.READY_TO_REVIEW
-            )
-            return bookingRepository.save(concludedBooking)
+        val status : StatusReservaEnum
+        val reviewStatus : StatusReservaEnum
+
+        if (dateAfter && !checkTwoWeeks) {
+            status = StatusReservaEnum.CONCLUDED
+            reviewStatus = StatusReservaEnum.READY_TO_REVIEW
         } else {
-            val confirmedBooking = Booking(
-                    accommodation = currentAccommodation,
-                    startDate = startDate,
-                    endDate = endDate,
-                    bookingDuration = bookingDuration,
-                    totalPrice = totalPrice,
-                    guest = guest,
-                    host = host,
-                    status = StatusReservaEnum.CONFIRMED,
-                    reviewStatus = StatusReservaEnum.NOT_READY_TO_REVIEW
-            )
-            return bookingRepository.save(confirmedBooking)
+            status = StatusReservaEnum.CONFIRMED
+            reviewStatus = StatusReservaEnum.NOT_READY_TO_REVIEW
         }
 
+            val newBooking = Booking(
+                    accommodation = currentAccommodation,
+                    startDate = startDate,
+                    endDate = endDate,
+                    bookingDuration = bookingDuration,
+                    totalPrice = totalPrice,
+                    guest = guest,
+                    host = host,
+                    status = status,
+                    reviewStatus = reviewStatus)
+
+            return bookingRepository.save(newBooking)
     }
 
     override fun findBookingById(id: Long): Booking {
@@ -116,4 +113,13 @@ class BookingServiceImpl(
     private fun findById(id: Long): Booking {
         return bookingRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
+
+    private fun checkIfDateIsAfterBookingDate(date: LocalDate): Boolean {
+        return date.isBefore(LocalDate.now())
+    }
+
+    private fun checkIfhasMoreThan14DaysPassedSinceEndDate(date: LocalDate): Boolean {
+        return date.isBefore(LocalDate.now().minusDays(14))
+    }
+
 }

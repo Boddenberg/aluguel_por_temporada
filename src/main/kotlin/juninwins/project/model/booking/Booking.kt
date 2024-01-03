@@ -27,10 +27,10 @@ data class Booking(
         var bookingDuration: Int,
         @Column(name = "preco_total")
         val totalPrice: Double,
-        @Column(name = "reviewed_by_guest", insertable = false, updatable = false)
-        val reviwedByGuest: Boolean? = false,
-        @Column(name = "reviewed_by_host", insertable = false, updatable = false)
-        val reviwedByHost: Boolean? = false,
+        @Column(name = "reviewed_by_guest")
+        var reviwedByGuest: Boolean? = false,
+        @Column(name = "reviewed_by_host")
+        val reviwedByHost: Boolean = false,
         @OneToOne
         @JoinColumn(name = "cliente_cpf")
         val guest: Guest,
@@ -52,7 +52,7 @@ data class Booking(
             bookingDuration: Int,
             totalPrice: Double,
             reviwedByGuest: Boolean? = false,
-            reviwedByHost: Boolean? = false,
+            reviwedByHost: Boolean = false,
             guest: Guest,
             host: Guest,
             status: StatusReservaEnum,
