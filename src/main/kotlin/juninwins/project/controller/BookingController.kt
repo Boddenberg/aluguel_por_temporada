@@ -1,8 +1,7 @@
 package juninwins.project.controller
 
-import com.mysql.cj.x.protobuf.Mysqlx.Ok
 import juninwins.project.DTO.BookingRequestDTO
-import juninwins.project.exceptions.BookingNotFoundException
+import juninwins.project.exceptions.booking.BookingNotFoundException
 import juninwins.project.model.booking.Booking
 import juninwins.project.service.BookingService
 import org.springframework.http.ResponseEntity

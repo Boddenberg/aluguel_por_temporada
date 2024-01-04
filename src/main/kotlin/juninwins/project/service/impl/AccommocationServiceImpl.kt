@@ -1,7 +1,8 @@
 package juninwins.project.service.impl
 
 import juninwins.project.enums.DiscountPolicyTypeEnum
-import juninwins.project.exceptions.*
+import juninwins.project.exceptions.accommodation.*
+import juninwins.project.exceptions.guest.GuestResponsibilityException
 import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.accommodation.DiscountPolicy
 import juninwins.project.model.guest.Guest

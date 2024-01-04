@@ -19,6 +19,7 @@ class GuestController (val guestService: GuestService) {
 
     @GetMapping("/test")
     fun test() = "Hello World"
+
     @GetMapping("/search/{cpf}")
     fun findGuest(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.findGuestByCPF(cpfCustomer))
@@ -26,18 +27,18 @@ class GuestController (val guestService: GuestService) {
 
     @PostMapping("/save/review/accommodation/{hostCPF}/{guestCPF}/{idBooking}/{idAccommodation}")
     fun reviewAccommodation(@PathVariable(name = "hostCPF") hostCPF: String,
-                            @PathVariable(name = "guestCPF") guestCPF : String,
-                            @PathVariable(name = "idBooking") idBooking: Long,
-                            @PathVariable(name = "idAccommodation") idAccommodation: Long,
-                            @RequestBody review: ReviewByGuest) : ResponseEntity<Accommodation> {
+            @PathVariable(name = "guestCPF") guestCPF : String,
+            @PathVariable(name = "idBooking") idBooking: Long,
+            @PathVariable(name = "idAccommodation") idAccommodation: Long,
+            @RequestBody review: ReviewByGuest) : ResponseEntity<Accommodation> {
         return ResponseEntity.ok(guestService.reviewAccommodationByGuest(hostCPF, guestCPF, idBooking, idAccommodation, review))
     }
 
     @PostMapping("/save/review/guest/{hostCPF}/{guestCPF}/{idBooking}")
     fun reviewGuest(@PathVariable(name = "hostCPF") hostCPF: String,
-                    @PathVariable(name = "guestCPF") guestCPF : String,
-                    @PathVariable(name = "idBooking") idBooking: Long,
-                    @RequestBody review: ReviewByHost) : ResponseEntity<Guest> {
+            @PathVariable(name = "guestCPF") guestCPF : String,
+            @PathVariable(name = "idBooking") idBooking: Long,
+            @RequestBody review: ReviewByHost) : ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.reviewGuestByHost(hostCPF, guestCPF, idBooking, review))
     }
 

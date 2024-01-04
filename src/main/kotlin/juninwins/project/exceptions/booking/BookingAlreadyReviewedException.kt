@@ -1,4 +1,4 @@
-package juninwins.project.exceptions
+package juninwins.project.exceptions.booking
 
 
 

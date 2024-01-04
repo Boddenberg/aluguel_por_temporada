@@ -1,7 +1,12 @@
 package juninwins.project.service.impl
 
 import juninwins.project.enums.StatusReservaEnum
-import juninwins.project.exceptions.*
+import juninwins.project.exceptions.address.CEPValidationException
+import juninwins.project.exceptions.booking.BookingAlreadyReviewedException
+import juninwins.project.exceptions.booking.BookingNotConcludedException
+import juninwins.project.exceptions.booking.BookingNotFoundException
+import juninwins.project.exceptions.guest.CPFNotAuthorizeToUpdateException
+import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.booking.Booking
 import juninwins.project.model.guest.Guest

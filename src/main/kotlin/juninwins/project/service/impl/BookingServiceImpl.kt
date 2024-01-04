@@ -3,10 +3,10 @@ package juninwins.project.service.impl
 import BookingUtils
 import juninwins.project.DTO.BookingRequestDTO
 import juninwins.project.enums.StatusReservaEnum
-import juninwins.project.exceptions.AccommodationDateRangeException
-import juninwins.project.exceptions.AccommodationIdNotFoundException
-import juninwins.project.exceptions.SameGuestAndHostException
-import juninwins.project.exceptions.StartDatateIsEqualOrAfterEndDateException
+import juninwins.project.exceptions.accommodation.AccommodationDateRangeException
+import juninwins.project.exceptions.accommodation.AccommodationIdNotFoundException
+import juninwins.project.exceptions.guest.SameGuestAndHostException
+import juninwins.project.exceptions.booking.StartDatateIsEqualOrAfterEndDateException
 import juninwins.project.model.booking.Booking
 import juninwins.project.repository.BookingRepository
 import juninwins.project.repository.HostAccommodationsRepository

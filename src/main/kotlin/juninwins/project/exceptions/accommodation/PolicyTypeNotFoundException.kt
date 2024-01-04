@@ -1,4 +1,4 @@
-package juninwins.project.exceptions
+package juninwins.project.exceptions.accommodation
 
 import juninwins.project.enums.DiscountPolicyTypeEnum
 
