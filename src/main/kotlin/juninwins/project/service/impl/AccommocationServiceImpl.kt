@@ -1,14 +1,15 @@
 package juninwins.project.service.impl
 
 import juninwins.project.enums.DiscountPolicyTypeEnum
-import juninwins.project.exceptions.*
-import juninwins.project.model.Accommodation
-import juninwins.project.model.DiscountPolicy
-import juninwins.project.model.Guest
-import juninwins.project.model.GuestAccommodations
+import juninwins.project.exceptions.accommodation.*
+import juninwins.project.exceptions.guest.GuestResponsibilityException
+import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.accommodation.DiscountPolicy
+import juninwins.project.model.guest.Guest
+import juninwins.project.model.guest.HostAccommodations
 import juninwins.project.repository.AccommodationRepository
 import juninwins.project.repository.DiscountPolicyRepository
-import juninwins.project.repository.GuestAccommodationsRepository
+import juninwins.project.repository.HostAccommodationsRepository
 import juninwins.project.service.AccommodationService
 import juninwins.project.service.GuestService
 import org.springframework.http.ResponseEntity
@@ -19,10 +20,10 @@ class AccommocationServiceImpl(
     val accommodationRepository: AccommodationRepository,
     val discountPolicyRepository: DiscountPolicyRepository,
     val guestService: GuestService,
-    val guestAccommodationsRepository: GuestAccommodationsRepository
+    val guestAccommodationsRepository: HostAccommodationsRepository
 ) : AccommodationService {
 
-    override fun save(accommodation: Accommodation, cpf: String): GuestAccommodations {
+    override fun save(accommodation: Accommodation, cpf: String): HostAccommodations {
 
         val currentGuest = guestService.findGuestByCPF(cpf)
 
@@ -35,9 +36,6 @@ class AccommocationServiceImpl(
 
         return guestAccommodationsRepository.save(guestAccommodations)
     }
-
-
-
 
     override fun findAccomodationById(id: Long): Accommodation {
         return findById(id)
@@ -147,9 +145,9 @@ class AccommocationServiceImpl(
         }
     }
 
-    private fun getOrCreateGuestAccommodations(guest: Guest): GuestAccommodations {
+    private fun getOrCreateGuestAccommodations(guest: Guest): HostAccommodations {
         return guestAccommodationsRepository.findByGuest(guest)
-                .orElse(GuestAccommodations(null, guest, mutableListOf()))
+                .orElse(HostAccommodations(null, guest, mutableListOf()))
     }
 
 }

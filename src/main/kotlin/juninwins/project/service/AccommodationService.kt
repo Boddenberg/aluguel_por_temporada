@@ -1,13 +1,13 @@
 package juninwins.project.service
 
-import juninwins.project.model.Accommodation
-import juninwins.project.model.DiscountPolicy
-import juninwins.project.model.GuestAccommodations
+import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.accommodation.DiscountPolicy
+import juninwins.project.model.guest.HostAccommodations
 import org.springframework.http.ResponseEntity
 
 interface AccommodationService {
 
-    fun save(accommodation: Accommodation, cpf: String): GuestAccommodations
+    fun save(accommodation: Accommodation, cpf: String): HostAccommodations
 
     fun findAccomodationById(id : Long) : Accommodation
 
