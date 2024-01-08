@@ -23,7 +23,7 @@ jobs:
 
       # Build
       - name: Build and Test with Gradle
-        run: ./gradlew build
+        run:  gradle build
 
       # Configure AWS credentials
       - name: Configure AWS credentials
