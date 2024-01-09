@@ -1,4 +1,4 @@
 package juninwins.project.model.accommodation.amenities
 
-class LaundryAmenities {
+class Bedroom {
 }

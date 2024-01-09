@@ -5,7 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 
 @Entity
-data class BathroomAmenities (
+data class Bathroom (
 
         @Id
         val id: Long? = null,
