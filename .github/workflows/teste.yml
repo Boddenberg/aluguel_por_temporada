@@ -1,0 +1,18 @@
+name: Exemplo de Fluxo de Trabalho
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  exemplo-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v2
+
+      - name: Executar Ação
+        run: |
+          echo "Usando secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
