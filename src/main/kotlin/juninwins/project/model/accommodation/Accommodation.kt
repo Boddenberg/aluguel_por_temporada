@@ -1,6 +1,7 @@
 package juninwins.project.model.accommodation
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import jakarta.persistence.*
 import juninwins.project.model.review.ReviewByGuest
@@ -11,6 +12,7 @@ import juninwins.project.model.review.ReviewByHost
 @Table(name = "tb_hospedagem")
 @JsonPropertyOrder("id", "type", "localization", "capacity", "basePrice", "address", "discountPolicy", "guest")
 @JsonIgnoreProperties
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class Accommodation(
         @Id
         @Column(name = "id")
@@ -24,7 +26,7 @@ class Accommodation(
         var capacity: Int = 0, // até quantas pessoas podem se hospedar na acomodação
         @Column(name = "preco_por_noite")
         var basePrice: Double,
-        @OneToOne(cascade = [CascadeType.ALL])
+        @Embedded
         @Column(name = "comodidades")
         var amenities: Amenities?,
         @OneToMany(cascade = [CascadeType.ALL])
@@ -41,11 +43,3 @@ class Accommodation(
         _discountPolicy += discountPolicy
     }
 }
-/*
-    O que compõe o preço:
-        preço base
-        descontos
-        quantidade de hóspedes
-        quantidade de dias
-        taxas - pet, taxa de limpeza, taxa de danos
- */

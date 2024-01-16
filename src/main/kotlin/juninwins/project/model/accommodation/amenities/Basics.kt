@@ -1,28 +1,14 @@
 package juninwins.project.model.accommodation.amenities
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
 
-@Entity
+import com.fasterxml.jackson.annotation.JsonInclude
+import jakarta.persistence.Embeddable
+
+@Embeddable
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class Basics (
-
-        @Id
-        val id: Long? = null,
-
-        val centralHeating: Boolean? = false,
-
-        val airConditioning: Boolean? = false,
-
-        val kitchen: Boolean? = false,
-
-        val washingMachine: Boolean? = false,
-
-        val dryer: Boolean? = false,
-
-        val tv: Boolean? = false,
-
-        val wifi: Boolean? = false,
-
-        val hotWater: Boolean? = false,
+        val centralHeating: Boolean?,
+        val generalAirConditioning: Boolean?,
+        val dryer: Boolean?,
+        val generalWifi: Boolean?
 )
