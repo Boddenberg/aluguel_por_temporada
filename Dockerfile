@@ -1,25 +1,14 @@
-FROM gradle:7.3.3-jdk17 AS build
-
-WORKDIR /usr/src/app
-
-COPY . /usr/src/app
-
+# Build stage
+FROM gradle:latest AS build
+WORKDIR /usr/app/
+COPY . .
 RUN gradle build
 
-FROM openjdk:17-jdk-slim
-
+# Package stage
+FROM openjdk:latest
+ENV JAR_NAME=Project-0.0.1-SNAPSHOT.jar
+ENV APP_HOME=/usr/app/
+WORKDIR $APP_HOME
+COPY --from=build $APP_HOME .
 EXPOSE 8080
-ARG REGION_ARG=sa-east-1
-ARG ACCESS_ARG
-ARG SECRET_ARG
-ENV AWS_REGION=$REGION_ARG
-ENV AWS_ACCESS_KEY=$ACCESS_ARG
-ENV AWS_SECRET_KEY=$SECRET_ARG
-
-ARG JAR_FILE=Project-0.0.1-SNAPSHOT.jar
-
-WORKDIR /opt/app
-
-COPY --from=build /usr/src/app/build/libs/${JAR_FILE} /opt/app/
-
-ENTRYPOINT ["java","-jar","Project-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT exec java -jar $APP_HOME/build/libs/$JAR_NAME
