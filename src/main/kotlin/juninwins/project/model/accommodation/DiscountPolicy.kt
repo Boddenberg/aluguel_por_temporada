@@ -1,4 +1,4 @@
-package juninwins.project.model
+package juninwins.project.model.accommodation
 
 import jakarta.persistence.*
 

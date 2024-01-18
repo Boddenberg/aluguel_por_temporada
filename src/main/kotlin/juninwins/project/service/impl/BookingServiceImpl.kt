@@ -3,14 +3,13 @@ package juninwins.project.service.impl
 import BookingUtils
 import juninwins.project.DTO.BookingRequestDTO
 import juninwins.project.enums.StatusReservaEnum
-import juninwins.project.exceptions.AccommodationDateRangeException
-import juninwins.project.exceptions.AccommodationIdNotFoundException
-import juninwins.project.exceptions.SameGuestAndHostException
-import juninwins.project.exceptions.StartDatateIsEqualOrAfterEndDateException
-import juninwins.project.model.Booking
-import juninwins.project.model.GuestAccommodations
+import juninwins.project.exceptions.accommodation.AccommodationDateRangeException
+import juninwins.project.exceptions.accommodation.AccommodationIdNotFoundException
+import juninwins.project.exceptions.guest.SameGuestAndHostException
+import juninwins.project.exceptions.booking.StartDatateIsEqualOrAfterEndDateException
+import juninwins.project.model.booking.Booking
 import juninwins.project.repository.BookingRepository
-import juninwins.project.repository.GuestAccommodationsRepository
+import juninwins.project.repository.HostAccommodationsRepository
 import juninwins.project.service.AccommodationService
 import juninwins.project.service.BookingService
 import juninwins.project.service.GuestService
@@ -19,8 +18,7 @@ import org.modelmapper.ModelMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.services.sns.model.NotFoundException
-import java.util.*
+import java.time.LocalDate
 
 @Service
 class BookingServiceImpl(
@@ -28,7 +26,7 @@ class BookingServiceImpl(
     val guestService: GuestService,
     val accommodationService: AccommodationService,
     val notificationService: NotificationService,
-        val guestAccommodationsRepository: GuestAccommodationsRepository
+        val guestAccommodationsRepository: HostAccommodationsRepository
 ) : BookingService {
 
     private val modelMapper = ModelMapper()
@@ -62,22 +60,33 @@ class BookingServiceImpl(
 
         val bookingDuration = BookingUtils.calculateBookingDurationDays(startDate, endDate)
         val totalPrice = BookingUtils.calculateBookingTotalPrice(currentAccommodation.basePrice, bookingDuration, currentAccommodation)
+        val dateAfter = checkIfDateIsAfterBookingDate(endDate)
+        val checkTwoWeeks = checkIfhasMoreThan14DaysPassedSinceEndDate(endDate)
 
-        val newBooking = Booking(
-                accommodation = currentAccommodation,
-                startDate = startDate,
-                endDate = endDate,
-                bookingDuration = bookingDuration,
-                totalPrice = totalPrice,
-                guest = guest,
-                host = host,
-                status = StatusReservaEnum.CONFIRMED
-        )
+        val status : StatusReservaEnum
+        val reviewStatus : StatusReservaEnum
 
-        return bookingRepository.save(newBooking)
+        if (dateAfter && !checkTwoWeeks) {
+            status = StatusReservaEnum.CONCLUDED
+            reviewStatus = StatusReservaEnum.READY_TO_REVIEW
+        } else {
+            status = StatusReservaEnum.CONFIRMED
+            reviewStatus = StatusReservaEnum.NOT_READY_TO_REVIEW
+        }
+
+            val newBooking = Booking(
+                    accommodation = currentAccommodation,
+                    startDate = startDate,
+                    endDate = endDate,
+                    bookingDuration = bookingDuration,
+                    totalPrice = totalPrice,
+                    guest = guest,
+                    host = host,
+                    status = status,
+                    reviewStatus = reviewStatus)
+
+            return bookingRepository.save(newBooking)
     }
-
-
 
     override fun findBookingById(id: Long): Booking {
         return findById(id)
@@ -104,4 +113,13 @@ class BookingServiceImpl(
     private fun findById(id: Long): Booking {
         return bookingRepository.findById(id).orElseThrow { AccommodationIdNotFoundException(id) }
     }
+
+    private fun checkIfDateIsAfterBookingDate(date: LocalDate): Boolean {
+        return date.isBefore(LocalDate.now())
+    }
+
+    private fun checkIfhasMoreThan14DaysPassedSinceEndDate(date: LocalDate): Boolean {
+        return date.isBefore(LocalDate.now().minusDays(14))
+    }
+
 }
