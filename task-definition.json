@@ -1,23 +1,24 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:sa-east-1:374570369270:task-definition/docker-aluguel-temporada-task:1",
+    "taskDefinitionArn": "arn:aws:ecs:sa-east-1:374570369270:task-definition/docker-aluguel-temporada-task:2",
     "containerDefinitions": [
         {
-            "name": "container-aluguel-temporada",
+            "name": "ecr-container-aluguel-temporada",
             "image": "374570369270.dkr.ecr.sa-east-1.amazonaws.com/aluguel-por-temporada",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "container-aluguel-temporada-80-tcp",
+                    "name": "ecr-container-aluguel-temporada-80-tcp",
                     "containerPort": 80,
                     "hostPort": 80,
                     "protocol": "tcp",
                     "appProtocol": "http"
                 },
                 {
-                    "name": "container-aluguel-temporada-8080-tcp",
+                    "name": "porta-app",
                     "containerPort": 8080,
                     "hostPort": 8080,
-                    "protocol": "tcp"
+                    "protocol": "tcp",
+                    "appProtocol": "http"
                 }
             ],
             "essential": true,
@@ -25,37 +26,18 @@
             "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
-            "ulimits": [],
-            "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                    "awslogs-create-group": "true",
-                    "awslogs-group": "/ecs/docker-aluguel-temporada-task",
-                    "awslogs-region": "sa-east-1",
-                    "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
-            }
+            "ulimits": []
         }
     ],
     "family": "docker-aluguel-temporada-task",
     "executionRoleArn": "arn:aws:iam::374570369270:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 1,
+    "revision": 2,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
         {
-            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-        },
-        {
-            "name": "ecs.capability.execution-role-awslogs"
-        },
-        {
             "name": "com.amazonaws.ecs.capability.ecr-auth"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
         },
         {
             "name": "ecs.capability.execution-role-ecr-pull"
@@ -65,9 +47,6 @@
         },
         {
             "name": "ecs.capability.task-eni"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
         }
     ],
     "placementConstraints": [],
@@ -78,13 +57,13 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "cpu": "512",
+    "cpu": "1024",
     "memory": "3072",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-01-06T17:25:07.207Z",
+    "registeredAt": "2024-01-18T01:59:37.596Z",
     "registeredBy": "arn:aws:iam::374570369270:root",
     "tags": []
 }
