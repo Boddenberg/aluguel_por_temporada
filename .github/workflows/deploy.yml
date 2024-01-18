@@ -4,7 +4,14 @@ on:
   push:
     branches:
       - main
-
+env:
+  AWS_REGION: sa-east-1
+  ECR_REPOSITORY: aluguel-por-temporada
+  ECS_SERVICE: service-for-aluguel-temporada-container
+  ECS_CLUSTER: cluster-aluguel-por-temporada
+  ECS_TASK_DEFINITION: ./task-definition.json
+  CONTAINER_NAME: "app"
+  
 jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
@@ -31,7 +38,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: sa-east-1
+          aws-region: ${{ env.AWS_REGION }}
 
       # Login to Amazon ECR
       - name: Login to Amazon ECR
@@ -43,8 +50,8 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: aluguel-por-temporada
-          IMAGE_TAG: develop
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
