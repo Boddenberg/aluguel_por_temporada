@@ -10,7 +10,7 @@ env:
   ECS_SERVICE: service-for-aluguel-temporada-container
   ECS_CLUSTER: cluster-aluguel-por-temporada
   ECS_TASK_DEFINITION: ./task-definition.json
-  CONTAINER_NAME: "app"
+  CONTAINER_NAME: "ecr-container-aluguel-temporada"
   
 jobs:
   setup-build-publish-deploy:
