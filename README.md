@@ -54,9 +54,14 @@ sudo yum install java-17
 scp -i <diretorio-chave-ssh>/ec2keypair.pem target/pizzaweb-0.0.1-SNAPSHOT.jar <endereco-instancia-ec2>:~
 ```
 
-* showdatabases; = mostra as bases de dados que estão no mysql
+* showdatabases; = mostra as bases de dados que estão no mysql  
 * use db; = seleciona o banco de dados
 * create table; = cria uma tabela / ex: create table clientes(id int primary key, nome varchar (255));
 * show tables; = mostra as tabelas existentes
 * describe tb_name; = descreve a tabela
 * select * from tb_name; = mostra os dados que estão na tabela
+
+Documentações:
+
+- https://docs.github.com/en/actions/deployment/deploying-to-your-cloud-provider/deploying-to-amazon-elastic-container-service
+- https://github.com/aws-actions/amazon-ecs-deploy-task-definition
