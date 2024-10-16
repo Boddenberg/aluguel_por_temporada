@@ -22,7 +22,7 @@ services:
     image: 'localstack/localstack'
     container_name: 'localstack'
     environment:
-      - SERVICES=sns, s3
+      - SERVICES=sns, s3, dynamodb
       - DEFAULT_REGION=us-east-1
       - AWS_DEFAULT_REGION=us-east-1
       - DEBUG=1

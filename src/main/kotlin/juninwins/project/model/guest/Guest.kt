@@ -4,36 +4,43 @@ import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import juninwins.project.model.review.ReviewByHost
 import org.springframework.format.annotation.DateTimeFormat
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
-@Entity
-@Table(name = "tb_cliente")
+
+@DynamoDbBean()
 data class Guest(
-        @Id
-    @Column(
-        name = "cpf",
-        unique = true
-    )
-//    @field:CPF
-    var cpf: String,
-        @Column(name = "nome")
-    var name: String,
-        @Column(name = "sobrenome")
-    var lastName: String,
-        @field:Email
-    @Column(name = "email")
-    var email: String,
-        @Column(name = "telefone")
-    var phoneNumber: String,
-        @DateTimeFormat(pattern = "dd/mm/yyyy")
-    @Column(name = "data_nascimento")
-    var birthDate: String,
-        @Column(name = "responsavel")
-    var responsible: Boolean,
-        @Column(name = "anfitriao")
-    var host: Boolean,
-        @OneToMany(cascade = [CascadeType.ALL])
-    var reviews: MutableList<ReviewByHost>? = mutableListOf(),
-        @OneToOne(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
-    var address: GuestAddress
+    @get:DynamoDbPartitionKey
+    @get:DynamoDbAttribute("cpf")
+    var cpf: String = "",
+
+    @get:DynamoDbAttribute("name")
+    var name: String = "",
+
+    @get:DynamoDbAttribute("lastName")
+    var lastName: String = "",
+
+    @get:DynamoDbAttribute("email")
+//    @field:Email
+    var email: String = "",
+
+    @get:DynamoDbAttribute("phoneNumber")
+    var phoneNumber: String = "",
+
+    @get:DynamoDbAttribute("birthDate")
+//    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    var birthDate: String = "",
+
+    @get:DynamoDbAttribute("responsible")
+    var responsible: Boolean = false,
+
+    @get:DynamoDbAttribute("host")
+    var host: Boolean = false,
+
+//    @get:DynamoDbAttribute("reviews")
+//    var reviews: MutableList<ReviewByHost>? = mutableListOf(),
+//
+//    @get:DynamoDbAttribute("address")
+//    var address: GuestAddress = GuestAddress()
 )

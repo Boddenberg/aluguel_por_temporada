@@ -1,41 +1,39 @@
 package juninwins.project.model.review
 
 import jakarta.persistence.*
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import java.time.LocalDate
 
 
-@Entity
-@Table(name = "tb_guest_review")
+@DynamoDbBean
 class ReviewByHost(
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "review_id")
+
         val id: Long? = null,
 
-        @Column(name = "made_by_cpf")
+
         var madeByCPF: String?,
-        @Column(name = "made_by_name")
+
         var madeByName: String?,
-        @Column(name = "cleaning_score")
+
         val cleaningScore: Int?,
 
-        @Column(name = "cleaning_comment")
+
         val cleaningComment: String?,
 
-        @Column(name = "rules_score")
+
         val rulesScore: Int?,
 
-        @Column(name = "rules_comment")
+
         val rulesComment: String?,
 
-        @Column(name = "general_comment")
+
         val generalComment: String?,
 
-        @Column(name = "booking_date")
+
         val bookingDate : String?,
 
-        @Column(name = "submission_date")
+
         val submissionDate: LocalDate? = LocalDate.now()
 
 )

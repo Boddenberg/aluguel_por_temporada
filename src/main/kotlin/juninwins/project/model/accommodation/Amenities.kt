@@ -5,7 +5,6 @@ import jakarta.persistence.*
 import juninwins.project.model.accommodation.amenities.*
 
 
-@Embeddable
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Amenities(
         val basics: Basics?,

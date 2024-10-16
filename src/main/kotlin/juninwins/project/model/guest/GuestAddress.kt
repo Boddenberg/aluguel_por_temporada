@@ -1,13 +1,11 @@
 package juninwins.project.model.guest
 
 import jakarta.persistence.*
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 
-@Entity
-@Table(name = "tb_endereco_guest")
+@DynamoDbBean
 data class GuestAddress(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null, // Adicione um ID para o endereço
+
     val logradouro: String,
     val numero: String,
     val complemento: String?,
@@ -16,7 +14,5 @@ data class GuestAddress(
     val uf: String,
     val cep: String
 ) {
-    constructor() : this(0, "", "", null, "", "", "", "")
-
 
 }
