@@ -1,28 +1,13 @@
 package juninwins.project.service.impl
 
 import io.awspring.cloud.dynamodb.DynamoDbTemplate
-import juninwins.project.enums.StatusReservaEnum
-import juninwins.project.exceptions.address.CEPValidationException
-import juninwins.project.exceptions.booking.BookingAlreadyReviewedException
-import juninwins.project.exceptions.booking.BookingNotConcludedException
-import juninwins.project.exceptions.booking.BookingNotFoundException
-import juninwins.project.exceptions.guest.CPFNotAuthorizeToUpdateException
-import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
-import juninwins.project.model.accommodation.Accommodation
-import juninwins.project.model.booking.Booking
-import juninwins.project.model.guest.Guest
-
+import juninwins.project.model.guest.GuestComplete
+import juninwins.project.model.review.Review
 import juninwins.project.service.GuestService
-import juninwins.project.utils.validateCEP
 import org.modelmapper.ModelMapper
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.enhanced.dynamodb.Key
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter
-import java.util.Optional
+import java.util.*
 
 @Service
 class GuestServiceImpl (
@@ -35,14 +20,21 @@ class GuestServiceImpl (
 
     private val modelMapper = ModelMapper()
 
-    override fun save(customer: Guest): Guest {
 //        validateCepForAddress(customer)
 //        checkIfGuestAlreadyExists(customer)
 //        checkAndSetGuestResponsibility(customer)
+
+    override fun save(customer: GuestComplete): GuestComplete {
+
         return dynamoDbTemplate.save(customer)
     }
 
-    override fun findGuestByCPF(cpf: String) : Guest {
+    override fun saveReview(review: Review): Review {
+        return dynamoDbTemplate.save(review)
+    }
+
+
+    override fun findGuestByCPF(cpf: String) : GuestComplete {
         return findByCPF(cpf)
     }
 //
@@ -132,8 +124,8 @@ class GuestServiceImpl (
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Guest CPF not found!!")
 //    }
 
-    private fun findByCPF(cpf: String): Guest {
-        return Optional.ofNullable(dynamoDbTemplate.load(Key.builder().partitionValue(cpf).build(), Guest::class.java)).orElseThrow { Exception("Guest CPF not found!")}
+    private fun findByCPF(cpf: String): GuestComplete {
+        return Optional.ofNullable(dynamoDbTemplate.load(Key.builder().partitionValue(cpf).build(), GuestComplete::class.java)).orElseThrow { Exception("Guest CPF not found!")}
     }
 
 //    private fun checkIfGuestAlreadyExists(customer: Guest) {

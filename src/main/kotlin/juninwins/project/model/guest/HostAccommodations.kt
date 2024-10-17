@@ -9,7 +9,7 @@ data class HostAccommodations(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?,
 
-    val guest: Guest,
+    val guestComplete: GuestComplete,
 
     var accommodations: MutableList<Accommodation> = mutableListOf()
 )

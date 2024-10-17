@@ -3,10 +3,7 @@ package juninwins.project.model.accommodation
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import jakarta.persistence.*
 import juninwins.project.model.review.ReviewByGuest
-import juninwins.project.model.review.ReviewByHost
-
 
 
 @JsonPropertyOrder("id", "type", "localization", "capacity", "basePrice", "address", "discountPolicy", "guest")

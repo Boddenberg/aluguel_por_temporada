@@ -1,16 +1,13 @@
 package juninwins.project.service
 
-import juninwins.project.model.accommodation.Accommodation
-import juninwins.project.model.guest.Guest
-import juninwins.project.model.review.ReviewByGuest
-import juninwins.project.model.review.ReviewByHost
-import org.springframework.http.ResponseEntity
+import juninwins.project.model.guest.GuestComplete
+import juninwins.project.model.review.Review
 
 interface GuestService {
 
-    fun save(customer : Guest) : Guest
-
-    fun findGuestByCPF(cpf : String) : Guest
+    fun save(customer : GuestComplete) : GuestComplete
+    fun saveReview(review: Review) : Review
+    fun findGuestByCPF(cpf : String) : GuestComplete
 
 //    fun reviewAccommodationByGuest(hostCPF : String, guestCPF : String, idBooking: Long, idAccommodation : Long, review : ReviewByGuest) : Accommodation
 //
