@@ -8,6 +8,8 @@ interface GuestService {
     fun save(customer : GuestComplete) : GuestComplete
     fun saveReview(review: Review) : Review
     fun findGuestByCPF(cpf : String) : GuestComplete
+    fun findAllGuests(): List<GuestComplete>
+
 
 //    fun reviewAccommodationByGuest(hostCPF : String, guestCPF : String, idBooking: Long, idAccommodation : Long, review : ReviewByGuest) : Accommodation
 //

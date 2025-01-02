@@ -6,13 +6,18 @@ import juninwins.project.model.review.Review
 import juninwins.project.service.GuestService
 import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Service
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.Key
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema
+import software.amazon.awssdk.enhanced.dynamodb.model.ScanEnhancedRequest
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 import java.util.*
 
 @Service
 class GuestServiceImpl (
 //    val guestRepository : GuestRepository,
-        val dynamoDbTemplate: DynamoDbTemplate,
+    val dynamoDbTemplate: DynamoDbTemplate,
+    val dynamoDbEnhancedClient : DynamoDbEnhancedClient,
 //        val accommodationRepository: AccommodationRepository,
 //        val hostAccommodationsRepository: HostAccommodationsRepository,
 //        val bookingRepository: BookingRepository
@@ -37,6 +42,17 @@ class GuestServiceImpl (
     override fun findGuestByCPF(cpf: String) : GuestComplete {
         return findByCPF(cpf)
     }
+
+    override fun findAllGuests(): List<GuestComplete> {
+        val table = dynamoDbEnhancedClient.table("GuestComplete", TableSchema.fromBean(GuestComplete::class.java))
+        val scanRequest = ScanEnhancedRequest.builder()
+            .build()
+
+        val scanIterator = table.scan(scanRequest)
+
+        return scanIterator.items().toList()
+    }
+
 //
 //    override fun reviewAccommodationByGuest(hostCPF: String, guestCPF : String, idBooking: Long, idAccommodation: Long, review: ReviewByGuest): Accommodation {
 //        val currentHost = findByCPF(hostCPF)

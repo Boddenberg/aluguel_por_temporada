@@ -20,6 +20,13 @@ class GuestController (val guestService: GuestService) {
         return ResponseEntity.ok(guestService.findGuestByCPF(cpfCustomer))
     }
 
+    @GetMapping("/searchAll")
+    fun findGuest(): List<GuestComplete> {
+
+        return guestService.findAllGuests()
+    }
+
+
 //    @PostMapping("/save/review/accommodation/{hostCPF}/{guestCPF}/{idBooking}/{idAccommodation}")
 //    fun reviewAccommodation(@PathVariable(name = "hostCPF") hostCPF: String,
 //            @PathVariable(name = "guestCPF") guestCPF : String,
