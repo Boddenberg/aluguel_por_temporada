@@ -4,7 +4,7 @@ import juninwins.project.enums.StatusReservaEnum
 import java.time.LocalDate
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import juninwins.project.model.guest.GuestComplete
+import juninwins.project.model.guest.Guest
 import juninwins.project.model.accommodation.Accommodation
 
 
@@ -25,9 +25,9 @@ data class Booking(
 
         var reviwedByHost: Boolean? = false,
 
-        val guestComplete: GuestComplete,
+        val guest: Guest,
 
-        val host: GuestComplete,
+        val host: Guest,
 
         val status: StatusReservaEnum,
 
