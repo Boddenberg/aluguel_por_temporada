@@ -2,20 +2,11 @@ package juninwins.project.exceptions.handler
 
 import juninwins.project.exceptions.accommodation.*
 import juninwins.project.exceptions.address.CEPValidationException
-import juninwins.project.exceptions.booking.BookingAlreadyReviewedException
-import juninwins.project.exceptions.booking.BookingNotConcludedException
-import juninwins.project.exceptions.booking.BookingNotFoundException
-import juninwins.project.exceptions.booking.StartDatateIsEqualOrAfterEndDateException
-import juninwins.project.exceptions.guest.CPFNotAuthorizeToUpdateException
-import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
-import juninwins.project.exceptions.guest.GuestResponsibilityException
-import juninwins.project.exceptions.guest.SameGuestAndHostException
-import org.springframework.http.HttpHeaders
+import juninwins.project.exceptions.booking.*
+import juninwins.project.exceptions.guest.*
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.FieldError
-import org.springframework.validation.ObjectError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -25,207 +16,103 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-/**
- * Este manipulador segue o padrão de formatação JSON HAL conforme definido na RFC 7807 (https://www.rfc-editor.org/rfc/rfc7807).
- */
 @ControllerAdvice
 class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
 
-    val baseURL = "http://localhost:8080"
-    val patternTimeStamp = "dd/MM/yyyy HH:mm:ss"
-    /**
-     * Manipula exceções do tipo AccommodationIdNotFoundException e retorna uma resposta formatada no padrão JSON HAL.
-     *
-     * @param exception A exceção AccommodationIdNotFoundException lançada.
-     * @param request   O objeto WebRequest que representa a solicitação atual.
-     * @return Uma resposta ResponseEntity com um corpo formatado no padrão JSON HAL contendo informações sobre a exceção.
-     */
-    @ExceptionHandler(AccommodationIdNotFoundException::class)
-    fun handlingResponseForAccommodationIdNotFoundException(
-            exception: AccommodationIdNotFoundException,
-            request: WebRequest
-    ): ResponseEntity<ErrorResponse> {
-        val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
-            .withZone(ZoneId.systemDefault())
-        val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.NOT_FOUND.value()
-        val errorResponse = ErrorResponse(
-            status = httpStatus,
-            message = exception.message,
-            _links = mapOf(
-                "self" to Link("$baseURL/register/accommodation", "create accommodation", "POST")
-            ),
-            timestamp = timeStamp,
-            path = request.getDescription(false)
-        )
-        return ResponseEntity.status(httpStatus).body(errorResponse)
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val baseURL = "http://localhost:8080"
+    private val patternTimeStamp = "dd/MM/yyyy HH:mm:ss"
+
+    @ExceptionHandler(value = [
+        AccommodationIdNotFoundException::class,
+        BookingNotFoundException::class,
+        GuestNotFoundException::class
+    ])
+    fun handleNotFound(exception: RuntimeException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        return buildErrorResponse(exception, HttpStatus.NOT_FOUND, request, mapOf(
+            "self" to Link("$baseURL/register", "create resource", "POST")
+        ))
     }
 
-    @ExceptionHandler(BookingNotFoundException::class)
-    fun handlingResponseForBookingIdNotFoundException(
-            exception: BookingNotFoundException,
-            request: WebRequest
-    ): ResponseEntity<ErrorResponse> {
-        val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
-            .withZone(ZoneId.systemDefault())
-        val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.NOT_FOUND.value()
-        val errorResponse = ErrorResponse(
-            status = httpStatus,
-            message = exception.message,
-            _links = mapOf(
-                "self" to Link("$baseURL/bookings/register/booking", "create booking", "POST")
-            ),
-            timestamp = timeStamp,
-            path = request.getDescription(false)
-        )
-        return ResponseEntity.status(httpStatus).body(errorResponse)
+    @ExceptionHandler(value = [
+        PolicySizeThresholdException::class,
+        DuplicatePolicyException::class,
+        CEPValidationException::class,
+        CPFNotAuthorizeToUpdateException::class,
+        StartDatateIsEqualOrAfterEndDateException::class,
+        InvalidPhoneNumberFormatException::class
+    ])
+    fun handleBadRequest(exception: RuntimeException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, request)
     }
 
-    @ExceptionHandler(PolicySizeThresholdException::class)
-    fun handlingResponseForPolicySizeThresholdException(
-            exception: PolicySizeThresholdException,
-            request: WebRequest
-    ): ResponseEntity<ErrorResponse> {
-        val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
-            .withZone(ZoneId.systemDefault())
-        val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.BAD_REQUEST.value()
-        val errorResponse = ErrorResponse(
-            status = httpStatus,
-            message = exception.message,
-            _links = mapOf(
-                "update" to Link("$baseURL/update/policy", "update policy on accommodation", "PUT"),
-                "delete" to Link("$baseURL/delete/policy", "delete policy on accommodation", "DELETE")
-            ),
-            timestamp = timeStamp,
-            path = request.getDescription(false)
-        )
-        return ResponseEntity.status(httpStatus).body(errorResponse)
+    @ExceptionHandler(value = [
+        GuestAlreadyRegisteredException::class,
+        BookingNotConcludedException::class,
+        BookingAlreadyReviewedException::class
+    ])
+    fun handleConflict(exception: RuntimeException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        return buildErrorResponse(exception, HttpStatus.CONFLICT, request)
+    }
+
+    @ExceptionHandler(value = [
+        GuestResponsibilityException::class,
+        SameGuestAndHostException::class
+    ])
+    fun handleUnauthorized(exception: RuntimeException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        return buildErrorResponse(exception, HttpStatus.UNAUTHORIZED, request)
     }
 
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
-        headers: HttpHeaders,
-        status: HttpStatusCode,
+        headers: org.springframework.http.HttpHeaders,
+        status: org.springframework.http.HttpStatusCode,
         request: WebRequest
-    ): ResponseEntity<Any>? {
-        val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
-            .withZone(ZoneId.systemDefault())
-        val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.UNPROCESSABLE_ENTITY.value()
-
-        var errors: String = ""
-        for (error: ObjectError in ex.bindingResult.allErrors) {
-            if (error is FieldError) {
-                errors = "${error.defaultMessage}"
-            } else {
-                errors = error.defaultMessage ?: "Validation error"
+    ): ResponseEntity<Any> {
+        val errors = ex.bindingResult.allErrors.joinToString("; ") { error ->
+            when (error) {
+                is org.springframework.validation.FieldError -> "${error.field}: ${error.defaultMessage}"
+                else -> error.defaultMessage ?: "Validation error"
             }
         }
 
-        val errorResponse = ErrorResponse(
-            status = httpStatus,
-            message = errors,
-            _links = mapOf(),
-            timestamp = timeStamp,
-            path = request.getDescription(false)
-        )
-
-        return ResponseEntity.status(httpStatus).body(errorResponse)
-    }
-
-    @ExceptionHandler(
-        value = [DuplicatePolicyException::class,
-            CEPValidationException::class,
-            CPFNotAuthorizeToUpdateException::class,
-            StartDatateIsEqualOrAfterEndDateException::class,
-            PolicyTypeNotFoundException::class,
-            AccommodationDateRangeException::class]
-    )
-    fun genericExceptionHandler(
-        exception: RuntimeException,
-        request: WebRequest
-    ): ResponseEntity<ErrorResponse> {
-        val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
+        val timeStamp = DateTimeFormatter.ofPattern(patternTimeStamp)
             .withZone(ZoneId.systemDefault())
-        val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.UNPROCESSABLE_ENTITY.value()
+            .format(Instant.now())
+
         val errorResponse = ErrorResponse(
-            status = httpStatus,
-            message = exception.message,
-            _links = mapOf(),
+            status = HttpStatus.UNPROCESSABLE_ENTITY.value(),
+            message = errors,
+            _links = emptyMap(),
             timestamp = timeStamp,
             path = request.getDescription(false)
         )
-        return ResponseEntity.status(httpStatus).body(errorResponse)
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse)
     }
 
-    @ExceptionHandler(
-            value = [
-                GuestAlreadyRegisteredException::class,
-                BookingNotConcludedException::class,
-                BookingAlreadyReviewedException::class
-                ]
-    )
-    fun exceptionHandlerConflict(
-            exception: RuntimeException,
-            request: WebRequest
+
+    private fun buildErrorResponse(
+        exception: RuntimeException,
+        status: HttpStatus,
+        request: WebRequest,
+        links: Map<String, Link> = emptyMap()
     ): ResponseEntity<ErrorResponse> {
-        val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
-                .withZone(ZoneId.systemDefault())
-        val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.CONFLICT.value()
+        val timeStamp = DateTimeFormatter.ofPattern(patternTimeStamp)
+            .withZone(ZoneId.systemDefault())
+            .format(Instant.now())
+        logger.error("Exception handled: ${exception.message}", exception)
         val errorResponse = ErrorResponse(
-                status = httpStatus,
-                message = exception.message,
-                _links = mapOf(),
-                timestamp = timeStamp,
-                path = request.getDescription(false)
+            status = status.value(),
+            message = exception.message,
+            _links = links,
+            timestamp = timeStamp,
+            path = request.getDescription(false)
         )
-        return ResponseEntity.status(httpStatus).body(errorResponse)
+        return ResponseEntity.status(status).body(errorResponse)
     }
 
-    @ExceptionHandler(
-            value = [
-                GuestResponsibilityException::class,
-                SameGuestAndHostException::class]
-    )
-    fun exceptionHandlerUnauthorized(
-            exception: RuntimeException,
-            request: WebRequest
-    ): ResponseEntity<ErrorResponse> {
-        val instant = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
-                .withZone(ZoneId.systemDefault())
-        val timeStamp = formatter.format(instant)
-        val httpStatus = HttpStatus.UNAUTHORIZED.value()
-        val errorResponse = ErrorResponse(
-                status = httpStatus,
-                message = exception.message,
-                _links = mapOf(),
-                timestamp = timeStamp,
-                path = request.getDescription(false)
-        )
-        return ResponseEntity.status(httpStatus).body(errorResponse)
-    }
-
-
-    /**
-     * Data class para representar uma resposta de erro formatada no padrão JSON HAL.
-     *
-     * @param status    O código de status HTTP da resposta.
-     * @param message   A mensagem de erro.
-     * @param _links    Um mapa de links relevantes.
-     * @param timestamp A data e hora da resposta.
-     * @param path      O caminho da solicitação que causou o erro.
-     */
     data class ErrorResponse(
         val status: Int,
         val message: String?,
@@ -234,13 +121,5 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         val path: String?
     )
 
-    /**
-     * Data class para representar um link em uma resposta JSON HAL.
-     *
-     * @param href        A URL do link.
-     * @param description A descrição do link.
-     * @param method      O método HTTP associado ao link.
-     */
     data class Link(val href: String, val description: String?, val method: String?)
-
 }

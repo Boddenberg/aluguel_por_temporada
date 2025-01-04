@@ -33,6 +33,8 @@ repositories {
 }
 
 dependencies {
+	//lib validação docs brasileiros
+	implementation("com.googlecode.libphonenumber:libphonenumber:8.13.14")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	// dependencias AWS
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-sns:3.1.0")
