@@ -4,84 +4,50 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.exceptions.guest.GuestNotFoundException
+import juninwins.project.model.address.Address
 import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import software.amazon.awssdk.services.dynamodb.model.*
 
 @Service
 class GuestServiceImpl(
     private val dynamoDbClient: DynamoDbClient
 ) : GuestService {
 
+    private val mapper: ObjectMapper = jacksonObjectMapper()
+
     override fun save(customer: Guest): Guest {
         if (isCPFRegistered(customer.cpf)) {
             throw GuestAlreadyRegisteredException(customer.cpf)
         }
-
-        val mapper: ObjectMapper = jacksonObjectMapper()
-        val itemMap = mapper.convertValue(customer, Map::class.java) as Map<String, Any>
-        val attributeValueMap = itemMap.mapValues { entry ->
-            when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
-                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
-                else -> AttributeValue.builder().s(entry.value.toString()).build()
-            }
-        }
-
-        val putItemRequest = PutItemRequest.builder()
-            .tableName(Guest::class.simpleName)
-            .item(attributeValueMap)
-            .build()
-
-        dynamoDbClient.putItem(putItemRequest)
+        dynamoDbClient.putItem(createPutItemRequest(customer))
         return customer
     }
 
     override fun findGuestByCPF(cpf: String): Guest {
-        return findByCPF(cpf)
+        return findByCPF(cpf) ?: throw GuestNotFoundException(cpf)
     }
 
     override fun findAllGuests(): List<Guest> {
-        val scanRequest = software.amazon.awssdk.services.dynamodb.model.ScanRequest.builder()
+        val scanRequest = ScanRequest.builder()
             .tableName(Guest::class.simpleName)
             .build()
 
         val scanResponse = dynamoDbClient.scan(scanRequest)
-        val mapper: ObjectMapper = jacksonObjectMapper()
-
         return scanResponse.items().map { item ->
-            val guestMap = item.mapValues { it.value.toAttributeValue() }
-            mapper.convertValue(guestMap, Guest::class.java)
+            mapper.convertValue(item.mapValues { it.value.toAttributeValue() }, Guest::class.java)
         }
     }
 
     override fun updateGuest(guest: Guest): Guest {
-        if (!isCPFRegistered(guest.cpf)) {
-            throw GuestNotFoundException(guest.cpf)
-        }
+        val existingGuest = findByCPF(guest.cpf) ?: throw GuestNotFoundException(guest.cpf)
 
-        val mapper: ObjectMapper = jacksonObjectMapper()
-        val itemMap = mapper.convertValue(guest, Map::class.java) as Map<String, Any>
-        val attributeValueMap = itemMap.mapValues { entry ->
-            when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
-                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
-                else -> AttributeValue.builder().s(entry.value.toString()).build()
-            }
-        }
+        val updatedGuest = mergeGuest(existingGuest, guest)
 
-        val putItemRequest = PutItemRequest.builder()
-            .tableName(Guest::class.simpleName)
-            .item(attributeValueMap)
-            .build()
-
-        dynamoDbClient.putItem(putItemRequest)
-        return guest
+        dynamoDbClient.putItem(createPutItemRequest(updatedGuest))
+        return updatedGuest
     }
 
     override fun deleteGuestByCPF(cpf: String) {
@@ -98,26 +64,65 @@ class GuestServiceImpl(
         dynamoDbClient.deleteItem(deleteItemRequest)
     }
 
-    private fun findByCPF(cpf: String): Guest {
+    private fun findByCPF(cpf: String): Guest? {
         val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
-        val getItemRequest = GetItemRequest.builder().tableName("Guest").key(getKey).build()
+        val getItemRequest = GetItemRequest.builder().tableName(Guest::class.simpleName).key(getKey).build()
         val response = dynamoDbClient.getItem(getItemRequest)
 
-        if (!response.hasItem()) {
-            throw GuestNotFoundException(cpf)
-        }
-
-        val itemMap = response.item().mapValues { it.value.toAttributeValue() }
-        val mapper: ObjectMapper = jacksonObjectMapper()
-        return mapper.convertValue(itemMap, Guest::class.java)
+        return if (response.hasItem()) {
+            mapper.convertValue(response.item().mapValues { it.value.toAttributeValue() }, Guest::class.java)
+        } else null
     }
-
 
     private fun isCPFRegistered(cpf: String): Boolean {
         val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
         val getItemRequest = GetItemRequest.builder().tableName(Guest::class.simpleName).key(getKey).build()
         val response = dynamoDbClient.getItem(getItemRequest)
         return response.hasItem()
+    }
+
+    private fun mergeGuest(existingGuest: Guest, newGuest: Guest): Guest {
+        return existingGuest.copy(
+            name = newGuest.name.takeIf { it.isNotBlank() } ?: existingGuest.name,
+            lastName = newGuest.lastName.takeIf { it.isNotBlank() } ?: existingGuest.lastName,
+            email = newGuest.email.takeIf { it.isNotBlank() } ?: existingGuest.email,
+            phoneNumber = newGuest.phoneNumber.takeIf { it.isNotBlank() } ?: existingGuest.phoneNumber,
+            birthDate = newGuest.birthDate.takeIf { it.isNotBlank() } ?: existingGuest.birthDate,
+            responsible = newGuest.responsible ?: existingGuest.responsible,
+            host = newGuest.host ?: existingGuest.host,
+            address = mergeAddress(existingGuest.address, newGuest.address)
+        )
+    }
+
+    private fun mergeAddress(existingAddress: Address?, newAddress: Address?): Address? {
+        if (existingAddress == null) return newAddress
+        if (newAddress == null) return existingAddress
+
+        return existingAddress.copy(
+            logradouro = newAddress.logradouro?.takeIf { it.isNotBlank() } ?: existingAddress.logradouro,
+            numero = newAddress.numero?.takeIf { it.isNotBlank() } ?: existingAddress.numero,
+            complemento = newAddress.complemento?.takeIf { it.isNotBlank() } ?: existingAddress.complemento,
+            bairro = newAddress.bairro?.takeIf { it.isNotBlank() } ?: existingAddress.bairro,
+            localidade = newAddress.localidade?.takeIf { it.isNotBlank() } ?: existingAddress.localidade,
+            uf = newAddress.uf?.takeIf { it.isNotBlank() } ?: existingAddress.uf,
+            cep = newAddress.cep?.takeIf { it.isNotBlank() } ?: existingAddress.cep
+        )
+    }
+
+    private fun createPutItemRequest(guest: Guest): PutItemRequest {
+        val itemMap = mapper.convertValue(guest, Map::class.java) as Map<String, Any>
+        val attributeValueMap = itemMap.mapValues { entry ->
+            when (entry.value) {
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
+                else -> AttributeValue.builder().s(entry.value.toString()).build()
+            }
+        }
+
+        return PutItemRequest.builder()
+            .tableName(Guest::class.simpleName)
+            .item(attributeValueMap)
+            .build()
     }
 
     private fun Map<String, *>.toAttributeValueMap(): Map<String, AttributeValue> {
