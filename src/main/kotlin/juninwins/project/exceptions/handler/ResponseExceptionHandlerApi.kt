@@ -1,6 +1,15 @@
 package juninwins.project.exceptions.handler
 
-import juninwins.project.exceptions.*
+import juninwins.project.exceptions.accommodation.*
+import juninwins.project.exceptions.address.CEPValidationException
+import juninwins.project.exceptions.booking.BookingAlreadyReviewedException
+import juninwins.project.exceptions.booking.BookingNotConcludedException
+import juninwins.project.exceptions.booking.BookingNotFoundException
+import juninwins.project.exceptions.booking.StartDatateIsEqualOrAfterEndDateException
+import juninwins.project.exceptions.guest.CPFNotAuthorizeToUpdateException
+import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
+import juninwins.project.exceptions.guest.GuestResponsibilityException
+import juninwins.project.exceptions.guest.SameGuestAndHostException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -33,8 +42,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
      */
     @ExceptionHandler(AccommodationIdNotFoundException::class)
     fun handlingResponseForAccommodationIdNotFoundException(
-        exception: AccommodationIdNotFoundException,
-        request: WebRequest
+            exception: AccommodationIdNotFoundException,
+            request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         val instant = Instant.now()
         val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
@@ -55,8 +64,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(BookingNotFoundException::class)
     fun handlingResponseForBookingIdNotFoundException(
-        exception: BookingNotFoundException,
-        request: WebRequest
+            exception: BookingNotFoundException,
+            request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         val instant = Instant.now()
         val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
@@ -77,8 +86,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(PolicySizeThresholdException::class)
     fun handlingResponseForPolicySizeThresholdException(
-        exception: PolicySizeThresholdException,
-        request: WebRequest
+            exception: PolicySizeThresholdException,
+            request: WebRequest
     ): ResponseEntity<ErrorResponse> {
         val instant = Instant.now()
         val formatter = DateTimeFormatter.ofPattern(patternTimeStamp)
@@ -159,7 +168,9 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(
             value = [
-                GuestAlreadyRegisteredException::class
+                GuestAlreadyRegisteredException::class,
+                BookingNotConcludedException::class,
+                BookingAlreadyReviewedException::class
                 ]
     )
     fun exceptionHandlerConflict(

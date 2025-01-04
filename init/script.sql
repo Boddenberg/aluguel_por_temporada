@@ -1,4 +1,4 @@
-CREATE TABLE tb_endereco (
+CREATE TABLE tb_endereco_guest (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     logradouro VARCHAR(255) NOT NULL,
     numero VARCHAR(255) NOT NULL,
@@ -7,6 +7,17 @@ CREATE TABLE tb_endereco (
     localidade VARCHAR(255) NOT NULL,
     uf VARCHAR(255) NOT NULL,
     cep VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE tb_endereco_accommodation (
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   logradouro VARCHAR(255) NOT NULL,
+   numero VARCHAR(255) NOT NULL,
+   complemento VARCHAR(255),
+   bairro VARCHAR(255) NOT NULL,
+   localidade VARCHAR(255) NOT NULL,
+   uf VARCHAR(255) NOT NULL,
+   cep VARCHAR(10) NOT NULL
 );
 
 CREATE TABLE tb_cliente (
@@ -19,7 +30,7 @@ CREATE TABLE tb_cliente (
     responsavel BOOLEAN,
     anfitriao BOOLEAN,
     endereco_id BIGINT,
-    FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
+    FOREIGN KEY (endereco_id) REFERENCES tb_endereco_guest(id)
 );
 
 CREATE TABLE tb_politica_desconto (
@@ -37,7 +48,7 @@ CREATE TABLE tb_hospedagem (
     preco_por_noite DECIMAL(10, 2) NOT NULL,
     endereco_id BIGINT,
     politica_desconto_id INT,
-    FOREIGN KEY (endereco_id) REFERENCES tb_endereco(id)
+    FOREIGN KEY (endereco_id) REFERENCES tb_endereco_accommodation(id)
 );
 
 CREATE TABLE tb_hospedagem__discount_policy (

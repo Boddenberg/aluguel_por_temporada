@@ -1,86 +1,117 @@
 package juninwins.project.service.impl
 
-import juninwins.project.exceptions.CEPValidationException
-import juninwins.project.exceptions.CPFNotAuthorizeToUpdateException
-import juninwins.project.exceptions.GuestAlreadyRegisteredException
-import juninwins.project.model.Guest
-import juninwins.project.repository.GuestRepository
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
-import juninwins.project.utils.validateCEP
-import org.modelmapper.ModelMapper
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 
 @Service
-class GuestServiceImpl (val guestRepository : GuestRepository) : GuestService {
-
-    private val modelMapper = ModelMapper()
+class GuestServiceImpl(
+    private val dynamoDbEnhancedClient: DynamoDbEnhancedClient,
+    private val dynamoDbClient: DynamoDbClient
+) : GuestService {
 
     override fun save(customer: Guest): Guest {
-        validateCepForAddress(customer)
-        checkIfGuestExists(customer)
-        checkAndSetGuestResponsibility(customer)
-        return guestRepository.save(customer)
+        val mapper: ObjectMapper = jacksonObjectMapper()
+        val itemMap = mapper.convertValue(customer, Map::class.java) as Map<String, Any>
+        val attributeValueMap = itemMap.mapValues { entry ->
+            when (entry.value) {
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
+                else -> AttributeValue.builder().s(entry.value.toString()).build()
+            }
+        }
+
+        val putItemRequest = PutItemRequest.builder()
+            .tableName("Guest")
+            .item(attributeValueMap)
+            .build()
+
+        dynamoDbClient.putItem(putItemRequest)
+        return customer
     }
-    override fun findGuestByCPF(cpf: String) : Guest {
+
+    override fun findGuestByCPF(cpf: String): Guest {
         return findByCPF(cpf)
     }
 
-    override fun update(cpf: String, newCustomer: Guest): Guest {
-        validateCepForAddress(newCustomer)
-        val currentGuest = findByCPF(cpf)
+    override fun findAllGuests(): List<Guest> {
+        val scanRequest = software.amazon.awssdk.services.dynamodb.model.ScanRequest.builder()
+            .tableName("Guest")
+            .build()
 
-        if(currentGuest.cpf != newCustomer.cpf) {
-            throw CPFNotAuthorizeToUpdateException(currentGuest.cpf)
+        val scanResponse = dynamoDbClient.scan(scanRequest)
+        val mapper: ObjectMapper = jacksonObjectMapper()
+
+        return scanResponse.items().map { item ->
+            val guestMap = item.mapValues { it.value.toAttributeValue() }
+            mapper.convertValue(guestMap, Guest::class.java)
         }
-
-        modelMapper.map(newCustomer, currentGuest)
-
-        return guestRepository.save(currentGuest)
     }
 
-    override fun deleteById(cpf: String): ResponseEntity<String> {
-        val guest = guestRepository.findById(cpf)
+    override fun deleteGuestByCPF(cpf: String) {
+        val deleteKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
+        val deleteItemRequest = DeleteItemRequest.builder()
+            .tableName("Guest")
+            .key(deleteKey)
+            .build()
 
-        if (guest.isPresent) {
-            guestRepository.deleteById(cpf)
-            return ResponseEntity.ok("Guest deleted with success!")
+        dynamoDbClient.deleteItem(deleteItemRequest)
+    }
+
+
+    override fun updateGuest(guest: Guest): Guest {
+        val mapper: ObjectMapper = jacksonObjectMapper()
+        val itemMap = mapper.convertValue(guest, Map::class.java) as Map<String, Any>
+        val attributeValueMap = itemMap.mapValues { entry ->
+            when (entry.value) {
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
+                else -> AttributeValue.builder().s(entry.value.toString()).build()
+            }
         }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Guest CPF not found!!")
+
+        val putItemRequest = PutItemRequest.builder()
+            .tableName("Guest")
+            .item(attributeValueMap)
+            .build()
+
+        dynamoDbClient.putItem(putItemRequest)
+        return guest
     }
 
     private fun findByCPF(cpf: String): Guest {
-        return guestRepository.findById(cpf).orElseThrow { Exception("Guest CPF not found!")}
-
+        val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
+        val getItemRequest = GetItemRequest.builder().tableName("Guest").key(getKey).build()
+        val response = dynamoDbClient.getItem(getItemRequest)
+        val itemMap = response.item().mapValues { it.value.toAttributeValue() }
+        val mapper: ObjectMapper = jacksonObjectMapper()
+        return mapper.convertValue(itemMap, Guest::class.java)
     }
 
-    private fun checkIfGuestExists(customer: Guest) {
-        val currentGuest = guestRepository.findById(customer.cpf)
-        if (currentGuest.isPresent) {
-            throw GuestAlreadyRegisteredException(customer.cpf)
+    private fun Map<String, *>.toAttributeValueMap(): Map<String, AttributeValue> {
+        return this.mapValues { entry ->
+            when (entry.value) {
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
+                else -> AttributeValue.builder().s(entry.value.toString()).build()
+            }
         }
     }
 
-    private fun checkAndSetGuestResponsibility(customer: Guest) {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        val birthdate = LocalDate.parse(customer.birthDate, formatter)
-        val today = LocalDate.now()
-        val age = Period.between(birthdate, today).years
-        if (age >= 18) {
-            customer.responsible = true
-        }
-    }
-
-
-    private fun validateCepForAddress(customer: Guest) {
-        val cepValidationResult = validateCEP(customer.address.cep)
-
-        if (cepValidationResult != null) {
-            throw CEPValidationException(cepValidationResult)
+    private fun AttributeValue.toAttributeValue(): Any {
+        return when {
+            this.s() != null -> this.s()
+            this.bool() != null -> this.bool()
+            this.m() != null -> this.m().mapValues { it.value.toAttributeValue() }
+            else -> throw IllegalArgumentException("Tipo de atributo não suportado: $this")
         }
     }
 }

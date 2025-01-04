@@ -33,6 +33,7 @@ repositories {
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	// dependencias AWS
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-sns:3.1.0")
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.0")
@@ -48,6 +49,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	//dependencias de banco de dados
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("io.awspring.cloud:spring-cloud-aws-starter-dynamodb:3.1.0")
 //	implementation("org.springframework.boot:spring-boot-docker-compose")
 	implementation ("com.mysql:mysql-connector-j:8.1.0")
 	//dependencias de comunicação
@@ -60,7 +62,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	compileOnly("org.projectlombok:lombok")
 	implementation("org.hibernate:hibernate-validator:8.0.0.Final")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
+//	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

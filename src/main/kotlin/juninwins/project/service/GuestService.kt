@@ -1,16 +1,13 @@
 package juninwins.project.service
 
-import juninwins.project.model.Guest
-import org.springframework.http.ResponseEntity
+import juninwins.project.model.guest.Guest
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
 
 interface GuestService {
 
     fun save(customer : Guest) : Guest
-
     fun findGuestByCPF(cpf : String) : Guest
-
-    fun update(cpf : String, newCustomer : Guest) : Guest
-
-    fun deleteById(cpf : String) : ResponseEntity<String>
-
+    fun findAllGuests(): List<Guest>
+    fun updateGuest(guest: Guest) : Guest
+    fun deleteGuestByCPF(cpf: String)
 }
