@@ -21,21 +21,18 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 @Validated
 class GuestController(val guestService: GuestService) {
 
-    //PROCURAR UM CLIENTE PELO CPF
     @GetMapping("/search/{cpf}")
     @Operation(summary = "Find a guest")
     fun findGuest(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.findGuestByCPF(cpfCustomer))
     }
 
-    //PROCURAR TODOS OS CLIENTES [SOMENTE BACK]
     @GetMapping("/searchAll")
     @Operation(summary = "Find all guests")
     fun findAllGuests(): List<Guest> {
         return guestService.findAllGuests()
     }
 
-    //CRIAR UM CLIENTE
     @PostMapping("/register/guest")
     @Operation(summary = "Register a guest")
     fun saveGuest(@RequestBody @Valid cliente: Guest): ResponseEntity<Void> {
@@ -43,21 +40,18 @@ class GuestController(val guestService: GuestService) {
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    //CRIAR UM CLIENTE E RETORNA OBJETO
     @PostMapping("/register/guest/return")
     @Operation(summary = "Register a guest")
     fun saveGuests(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.save(cliente))
     }
 
-    //ATUALIZA UM CLIENTE
     @PutMapping("/update/guest")
     @Operation(summary = "Update a guest")
     fun updateGuest(@RequestBody @Valid client: Guest): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.updateGuest(client))
     }
 
-    //DELETA UM CLIENTE
     @DeleteMapping("/delete/guest/{cpf}")
     @Operation(summary = "Delete a guest")
     fun deleteGuest(@PathVariable(name = "cpf") cpf: String): ResponseEntity<Void> {

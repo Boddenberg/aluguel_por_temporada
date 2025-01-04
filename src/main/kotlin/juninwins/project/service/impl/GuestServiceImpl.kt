@@ -2,10 +2,11 @@ package juninwins.project.service.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
+import juninwins.project.exceptions.guest.GuestNotFoundException
 import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
@@ -14,11 +15,14 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 
 @Service
 class GuestServiceImpl(
-    private val dynamoDbEnhancedClient: DynamoDbEnhancedClient,
     private val dynamoDbClient: DynamoDbClient
 ) : GuestService {
 
     override fun save(customer: Guest): Guest {
+        if (isCPFRegistered(customer.cpf)) {
+            throw GuestAlreadyRegisteredException(customer.cpf)
+        }
+
         val mapper: ObjectMapper = jacksonObjectMapper()
         val itemMap = mapper.convertValue(customer, Map::class.java) as Map<String, Any>
         val attributeValueMap = itemMap.mapValues { entry ->
@@ -30,7 +34,7 @@ class GuestServiceImpl(
         }
 
         val putItemRequest = PutItemRequest.builder()
-            .tableName("Guest")
+            .tableName(Guest::class.simpleName)
             .item(attributeValueMap)
             .build()
 
@@ -44,7 +48,7 @@ class GuestServiceImpl(
 
     override fun findAllGuests(): List<Guest> {
         val scanRequest = software.amazon.awssdk.services.dynamodb.model.ScanRequest.builder()
-            .tableName("Guest")
+            .tableName(Guest::class.simpleName)
             .build()
 
         val scanResponse = dynamoDbClient.scan(scanRequest)
@@ -56,18 +60,11 @@ class GuestServiceImpl(
         }
     }
 
-    override fun deleteGuestByCPF(cpf: String) {
-        val deleteKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
-        val deleteItemRequest = DeleteItemRequest.builder()
-            .tableName("Guest")
-            .key(deleteKey)
-            .build()
-
-        dynamoDbClient.deleteItem(deleteItemRequest)
-    }
-
-
     override fun updateGuest(guest: Guest): Guest {
+        if (!isCPFRegistered(guest.cpf)) {
+            throw GuestNotFoundException(guest.cpf)
+        }
+
         val mapper: ObjectMapper = jacksonObjectMapper()
         val itemMap = mapper.convertValue(guest, Map::class.java) as Map<String, Any>
         val attributeValueMap = itemMap.mapValues { entry ->
@@ -79,7 +76,7 @@ class GuestServiceImpl(
         }
 
         val putItemRequest = PutItemRequest.builder()
-            .tableName("Guest")
+            .tableName(Guest::class.simpleName)
             .item(attributeValueMap)
             .build()
 
@@ -87,13 +84,40 @@ class GuestServiceImpl(
         return guest
     }
 
+    override fun deleteGuestByCPF(cpf: String) {
+        if (!isCPFRegistered(cpf)) {
+            throw GuestNotFoundException(cpf)
+        }
+
+        val deleteKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
+        val deleteItemRequest = DeleteItemRequest.builder()
+            .tableName(Guest::class.simpleName)
+            .key(deleteKey)
+            .build()
+
+        dynamoDbClient.deleteItem(deleteItemRequest)
+    }
+
     private fun findByCPF(cpf: String): Guest {
         val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
         val getItemRequest = GetItemRequest.builder().tableName("Guest").key(getKey).build()
         val response = dynamoDbClient.getItem(getItemRequest)
+
+        if (!response.hasItem()) {
+            throw GuestNotFoundException(cpf)
+        }
+
         val itemMap = response.item().mapValues { it.value.toAttributeValue() }
         val mapper: ObjectMapper = jacksonObjectMapper()
         return mapper.convertValue(itemMap, Guest::class.java)
+    }
+
+
+    private fun isCPFRegistered(cpf: String): Boolean {
+        val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
+        val getItemRequest = GetItemRequest.builder().tableName(Guest::class.simpleName).key(getKey).build()
+        val response = dynamoDbClient.getItem(getItemRequest)
+        return response.hasItem()
     }
 
     private fun Map<String, *>.toAttributeValueMap(): Map<String, AttributeValue> {
