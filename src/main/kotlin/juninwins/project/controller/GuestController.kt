@@ -4,17 +4,10 @@ import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
-import juninwins.project.model.review.Review
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
-import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable
-import software.amazon.awssdk.enhanced.dynamodb.TableSchema
-import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 @RestController
 @RequestMapping("customers")
@@ -35,8 +28,8 @@ class GuestController(val guestService: GuestService) {
 
     @PostMapping("/register/guest")
     @Operation(summary = "Register a guest")
-    fun saveGuest(@RequestBody @Valid cliente: Guest): ResponseEntity<Void> {
-        guestService.save(cliente)
+    fun saveGuest(@RequestBody @Valid client: Guest): ResponseEntity<Void> {
+        guestService.save(client)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 

@@ -7,6 +7,7 @@ import juninwins.project.exceptions.guest.GuestNotFoundException
 import juninwins.project.model.address.Address
 import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
+import juninwins.project.utils.validateAndFormatPhoneNumber
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
@@ -22,6 +23,9 @@ class GuestServiceImpl(
         if (isCPFRegistered(customer.cpf)) {
             throw GuestAlreadyRegisteredException(customer.cpf)
         }
+
+        customer.phoneNumber = validateAndFormatPhoneNumber(customer.phoneNumber)
+
         dynamoDbClient.putItem(createPutItemRequest(customer))
         return customer
     }
@@ -43,6 +47,7 @@ class GuestServiceImpl(
 
     override fun updateGuest(guest: Guest): Guest {
         val existingGuest = findByCPF(guest.cpf) ?: throw GuestNotFoundException(guest.cpf)
+        validateAndFormatPhoneNumber(guest.phoneNumber)
 
         val updatedGuest = mergeGuest(existingGuest, guest)
 
