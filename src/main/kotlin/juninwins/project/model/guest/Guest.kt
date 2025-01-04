@@ -1,7 +1,6 @@
 package juninwins.project.model.guest
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import jakarta.persistence.Entity
 import jakarta.validation.constraints.Email
 import juninwins.project.model.address.Address
 import org.springframework.format.annotation.DateTimeFormat

@@ -19,37 +19,49 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 @RestController
 @RequestMapping("customers")
 @Validated
-class GuestController (val guestService: GuestService) {
+class GuestController(val guestService: GuestService) {
 
+    //PROCURAR UM CLIENTE PELO CPF
     @GetMapping("/search/{cpf}")
+    @Operation(summary = "Find a guest")
     fun findGuest(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.findGuestByCPF(cpfCustomer))
     }
 
+    //PROCURAR TODOS OS CLIENTES [SOMENTE BACK]
     @GetMapping("/searchAll")
-    fun findGuest(): List<Guest> {
+    @Operation(summary = "Find all guests")
+    fun findAllGuests(): List<Guest> {
         return guestService.findAllGuests()
     }
 
+    //CRIAR UM CLIENTE
     @PostMapping("/register/guest")
     @Operation(summary = "Register a guest")
-    fun saveGuests(@RequestBody @Valid cliente: Guest): ResponseEntity<Void> {
+    fun saveGuest(@RequestBody @Valid cliente: Guest): ResponseEntity<Void> {
         guestService.save(cliente)
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    fun getDynamoDbTable(client: DynamoDbClient): DynamoDbTable<Guest> {
-        val enhancedClient = DynamoDbEnhancedClient.builder()
-            .dynamoDbClient(client)
-            .build()
-
-        return enhancedClient.table("Guest", TableSchema.fromBean(Guest::class.java))
+    //CRIAR UM CLIENTE E RETORNA OBJETO
+    @PostMapping("/register/guest/return")
+    @Operation(summary = "Register a guest")
+    fun saveGuests(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.save(cliente))
     }
 
-    fun createDynamoDbClient(): DynamoDbClient {
-        return DynamoDbClient.builder()
-            .region(Region.US_EAST_1)
-            .build()
+    //ATUALIZA UM CLIENTE
+    @PutMapping("/update/guest")
+    @Operation(summary = "Update a guest")
+    fun updateGuest(@RequestBody @Valid client: Guest): ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.updateGuest(client))
     }
 
+    //DELETA UM CLIENTE
+    @DeleteMapping("/delete/guest")
+    @Operation(summary = "Delete a guest")
+    fun deleteGuest(@PathVariable(name = "cpf") cpf: String): ResponseEntity<Void> {
+        guestService.deleteGuestByCPF(cpf)
+        return ResponseEntity.ok().build()
+    }
 }
