@@ -58,7 +58,7 @@ class GuestController(val guestService: GuestService) {
     }
 
     //DELETA UM CLIENTE
-    @DeleteMapping("/delete/guest")
+    @DeleteMapping("/delete/guest/{cpf}")
     @Operation(summary = "Delete a guest")
     fun deleteGuest(@PathVariable(name = "cpf") cpf: String): ResponseEntity<Void> {
         guestService.deleteGuestByCPF(cpf)
