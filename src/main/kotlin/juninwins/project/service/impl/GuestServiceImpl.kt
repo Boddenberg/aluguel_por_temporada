@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.exceptions.guest.GuestNotFoundException
 import juninwins.project.model.address.Address
+import juninwins.project.model.guest.DTO.UpdateGuestDTO
 import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import juninwins.project.utils.validateAndFormatPhoneNumber
@@ -45,11 +46,12 @@ class GuestServiceImpl(
         }
     }
 
-    override fun updateGuest(guest: Guest): Guest {
-        val existingGuest = findByCPF(guest.cpf) ?: throw GuestNotFoundException(guest.cpf)
-        validateAndFormatPhoneNumber(guest.phoneNumber)
+    override fun updateGuest(guestDTO: UpdateGuestDTO): Guest {
+        val existingGuest = findByCPF(guestDTO.cpf) ?: throw GuestNotFoundException(guestDTO.cpf)
 
-        val updatedGuest = mergeGuest(existingGuest, guest)
+        guestDTO.phoneNumber?.let { validateAndFormatPhoneNumber(it) }
+
+        val updatedGuest = mergeGuest(existingGuest, guestDTO)
 
         dynamoDbClient.putItem(createPutItemRequest(updatedGuest))
         return updatedGuest
@@ -86,16 +88,16 @@ class GuestServiceImpl(
         return response.hasItem()
     }
 
-    private fun mergeGuest(existingGuest: Guest, newGuest: Guest): Guest {
+    private fun mergeGuest(existingGuest: Guest, guestDTO: UpdateGuestDTO): Guest {
         return existingGuest.copy(
-            name = newGuest.name.takeIf { it.isNotBlank() } ?: existingGuest.name,
-            lastName = newGuest.lastName.takeIf { it.isNotBlank() } ?: existingGuest.lastName,
-            email = newGuest.email.takeIf { it.isNotBlank() } ?: existingGuest.email,
-            phoneNumber = newGuest.phoneNumber.takeIf { it.isNotBlank() } ?: existingGuest.phoneNumber,
-            birthDate = newGuest.birthDate.takeIf { it.isNotBlank() } ?: existingGuest.birthDate,
-            responsible = newGuest.responsible ?: existingGuest.responsible,
-            host = newGuest.host ?: existingGuest.host,
-            address = mergeAddress(existingGuest.address, newGuest.address)
+            name = guestDTO.name ?: existingGuest.name,
+            lastName = guestDTO.lastName ?: existingGuest.lastName,
+            email = guestDTO.email ?: existingGuest.email,
+            phoneNumber = guestDTO.phoneNumber ?: existingGuest.phoneNumber,
+            birthDate = guestDTO.birthDate ?: existingGuest.birthDate,
+            responsible = guestDTO.responsible ?: existingGuest.responsible,
+            host = guestDTO.host ?: existingGuest.host,
+            address = mergeAddress(existingGuest.address, guestDTO.address)
         )
     }
 
@@ -104,13 +106,13 @@ class GuestServiceImpl(
         if (newAddress == null) return existingAddress
 
         return existingAddress.copy(
-            logradouro = newAddress.logradouro?.takeIf { it.isNotBlank() } ?: existingAddress.logradouro,
-            numero = newAddress.numero?.takeIf { it.isNotBlank() } ?: existingAddress.numero,
-            complemento = newAddress.complemento?.takeIf { it.isNotBlank() } ?: existingAddress.complemento,
-            bairro = newAddress.bairro?.takeIf { it.isNotBlank() } ?: existingAddress.bairro,
-            localidade = newAddress.localidade?.takeIf { it.isNotBlank() } ?: existingAddress.localidade,
-            uf = newAddress.uf?.takeIf { it.isNotBlank() } ?: existingAddress.uf,
-            cep = newAddress.cep?.takeIf { it.isNotBlank() } ?: existingAddress.cep
+            logradouro = newAddress.logradouro ?: existingAddress.logradouro,
+            numero = newAddress.numero ?: existingAddress.numero,
+            complemento = newAddress.complemento ?: existingAddress.complemento,
+            bairro = newAddress.bairro ?: existingAddress.bairro,
+            localidade = newAddress.localidade ?: existingAddress.localidade,
+            uf = newAddress.uf ?: existingAddress.uf,
+            cep = newAddress.cep ?: existingAddress.cep
         )
     }
 

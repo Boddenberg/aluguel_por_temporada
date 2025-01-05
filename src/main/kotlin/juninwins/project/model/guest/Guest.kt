@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import juninwins.project.model.address.Address
 import org.hibernate.validator.constraints.br.CPF
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
@@ -21,10 +22,12 @@ data class Guest(
     var cpf: String = "",
 
     @get:DynamoDbAttribute("name")
+    @field:Size(min = 2, max = 50, message = "O nome deve ter entre 2 e 50 caracteres")
     @field:NotBlank(message = "Nome é obrigatório")
     var name: String = "",
 
     @get:DynamoDbAttribute("lastName")
+    @field:Size(min = 2, max = 50, message = "O sobrenome deve ter entre 2 e 50 caracteres")
     @field:NotBlank(message = "Sobrenome é obrigatório")
     var lastName: String = "",
 
