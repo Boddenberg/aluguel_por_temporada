@@ -1,6 +1,6 @@
 package juninwins.project.controller
 
-import juninwins.project.mocks.GuestMocks
+import juninwins.project.mocks.guest.GuestMocks
 import juninwins.project.model.guest.DTO.UpdateGuestDTO
 import juninwins.project.service.GuestService
 import org.junit.jupiter.api.Test

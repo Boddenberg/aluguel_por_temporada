@@ -1,4 +1,4 @@
-package juninwins.project.mocks
+package juninwins.project.mocks.guest
 
 import juninwins.project.model.address.Address
 import juninwins.project.model.guest.Guest
