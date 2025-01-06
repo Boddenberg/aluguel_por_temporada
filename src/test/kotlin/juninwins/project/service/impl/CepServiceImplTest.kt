@@ -1,8 +1,7 @@
 package juninwins.project.service.impl
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
@@ -23,28 +22,29 @@ class CepServiceImplTest {
             "cep" to "07190-220"
         )
 
-        Mockito.`when`(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(Map::class.java)))
+        Mockito.`when`(restTemplate.getForEntity("https://viacep.com.br/ws/$cep/json/", Map::class.java))
             .thenReturn(ResponseEntity.ok(mockResponse))
 
         val address = cepService.getAddressByCep(cep)
 
-        assertEquals("Rua Vitória da Conquista", address.logradouro)
-        assertEquals("SP", address.uf)
-        assertEquals("07190-220", address.cep)
+        assertNotNull(address)
+        assertEquals("Rua Vitória da Conquista", address?.logradouro)
+        assertEquals("Guarulhos", address?.localidade)
+        assertEquals("SP", address?.uf)
+        assertEquals("07190-220", address?.cep)
     }
 
     @Test
-    fun `should throw exception when CEP is not found`() {
+    fun `should return null when CEP is not found`() {
         val cep = "00000000"
         val mockResponse = mapOf("erro" to true)
 
-        Mockito.`when`(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(Map::class.java)))
+        Mockito.`when`(restTemplate.getForEntity("https://viacep.com.br/ws/$cep/json/", Map::class.java))
             .thenReturn(ResponseEntity.ok(mockResponse))
 
-        val exception = assertThrows<RuntimeException> {
-            cepService.getAddressByCep(cep)
-        }
-        assertEquals("CEP não encontrado.", exception.message)
+        val address = cepService.getAddressByCep(cep)
+
+        assertNull(address, "CEP não encontrado deve retornar null")
     }
 
 }
