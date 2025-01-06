@@ -4,6 +4,7 @@ import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
+import juninwins.project.model.guest.DTO.UpdateGuestDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -35,13 +36,13 @@ class GuestController(val guestService: GuestService) {
 
     @PostMapping("/register/guest/return")
     @Operation(summary = "Register a guest")
-    fun saveGuests(@RequestBody @Valid cliente: Guest): ResponseEntity<Guest> {
-        return ResponseEntity.ok(guestService.save(cliente))
+    fun saveGuests(@RequestBody @Valid client: Guest): ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.save(client))
     }
 
     @PutMapping("/update/guest")
     @Operation(summary = "Update a guest")
-    fun updateGuest(@RequestBody @Valid client: Guest): ResponseEntity<Guest> {
+    fun updateGuest(@RequestBody @Valid client: UpdateGuestDTO): ResponseEntity<Guest> {
         return ResponseEntity.ok(guestService.updateGuest(client))
     }
 
