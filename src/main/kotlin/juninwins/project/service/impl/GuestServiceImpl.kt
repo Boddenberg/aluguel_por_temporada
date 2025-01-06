@@ -88,7 +88,7 @@ class GuestServiceImpl(
         return response.hasItem()
     }
 
-    private fun mergeGuest(existingGuest: Guest, guestDTO: UpdateGuestDTO): Guest {
+    fun mergeGuest(existingGuest: Guest, guestDTO: UpdateGuestDTO): Guest {
         return existingGuest.copy(
             name = guestDTO.name ?: existingGuest.name,
             lastName = guestDTO.lastName ?: existingGuest.lastName,
@@ -101,7 +101,7 @@ class GuestServiceImpl(
         )
     }
 
-    private fun mergeAddress(existingAddress: Address?, newAddress: Address?): Address? {
+    fun mergeAddress(existingAddress: Address?, newAddress: Address?): Address? {
         if (existingAddress == null) return newAddress
         if (newAddress == null) return existingAddress
 
