@@ -12,7 +12,7 @@ env:
   ECR_REPOSITORY: aluguel-por-temporada
   ECS_SERVICE: aluguel-por-temporada-service
   ECS_CLUSTER: cluster-aluguel-por-temporada-projeto
-  CONTAINER_NAME: "ecr-container-aluguel-temporada"
+  CONTAINER_NAME: "aluguel-por-temporada-container"
   
 jobs:
   deploy:
@@ -50,7 +50,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: my-container
+          container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
         
       - name: Download task definition
