@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: role-ecs-github-access
           aws-region: ${{ env.AWS_REGION }}
