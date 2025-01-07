@@ -3,10 +3,10 @@ name: Build and Deploy to AWS
 on:
   push:
     branches:
-    - main
+      - main
 permissions:
-    id-token: write
-    contents: read
+  id-token: write
+  contents: read
 env:
   AWS_REGION: sa-east-1
   ECR_REPOSITORY: aluguel-por-temporada
@@ -20,9 +20,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Baixa o código do repositório
       - name: Checkout repository
         uses: actions/checkout@v3
         
+      # Configura as credenciais da AWS
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -30,10 +32,12 @@ jobs:
           role-to-assume: arn:aws:iam::257394470489:role/role-ecs-github-access
           aws-region: ${{ env.AWS_REGION }}
 
+      # Faz login no Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
           
+      # Compila e faz upload da imagem Docker para o Amazon ECR
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -45,22 +49,25 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+      # Baixa a definição mais recente da task
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition task-definition-family-aluguel-por-temporada --query taskDefinition > task-definition.json
+
+      # Atualiza a definição da task com a nova imagem Docker
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: aluguel-por-temporada-container
+          container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
         
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition task-definition-family-aluguel-por-temporada --query taskDefinition > task-definition.json
-
+      # Implanta a nova definição da task no cluster ECS
       - name: Amazon ECS Deploy
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: task-definition.json
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
