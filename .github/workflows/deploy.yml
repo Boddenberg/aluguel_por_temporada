@@ -26,7 +26,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: role-ecs-github-access
+          role-to-assume: arn:aws:iam::257394470489:role/role-ecs-github-access
           aws-region: ${{ env.AWS_REGION }}
           
       - name: Download task definition
