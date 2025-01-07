@@ -3,8 +3,10 @@ name: Build and Deploy to AWS
 on:
   push:
     branches:
-      - main
-
+    - main
+permissions:
+    id-token: write
+    contents: read
 env:
   AWS_REGION: sa-east-1
   ECR_REPOSITORY: aluguel-por-temporada
