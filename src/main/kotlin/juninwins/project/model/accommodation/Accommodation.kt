@@ -2,18 +2,15 @@ package juninwins.project.model.accommodation
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import jakarta.validation.constraints.NotBlank
 import juninwins.project.model.address.Address
 import juninwins.project.model.review.ReviewByGuest
-import org.hibernate.validator.constraints.br.CPF
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
 
-//@JsonPropertyOrder("id", "type", "localization", "capacity", "basePrice", "address", "guest")
-//@JsonIgnoreProperties
+@JsonIgnoreProperties
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @DynamoDbBean()
 data class Accommodation(
@@ -33,11 +30,11 @@ data class Accommodation(
         @get:DynamoDbAttribute("basePrice")
         var basePrice: Double? = null,
 
-     /*   @get:DynamoDbAttribute("amenities")
+        @get:DynamoDbAttribute("amenities")
         var amenities: Amenities? = null,
 
         @get:DynamoDbAttribute("reviews")
-        var reviews: MutableList<ReviewByGuest>? = mutableListOf(),*/
+        var reviews: MutableList<ReviewByGuest>? = null,
 
         @get:DynamoDbAttribute("address")
         var address: Address? = null
