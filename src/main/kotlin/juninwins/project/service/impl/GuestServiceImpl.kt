@@ -23,8 +23,6 @@ class GuestServiceImpl(
     private val dynamoDbClient: DynamoDbTemplate
 ) : GuestService {
 
-    private val mapper: ObjectMapper = jacksonObjectMapper()
-
     override fun saveGuest(customer: Guest): Guest {
         if (isCPFRegistered(customer.cpf)) {
             throw GuestAlreadyRegisteredException(customer.cpf)
@@ -37,7 +35,7 @@ class GuestServiceImpl(
     }
 
     override fun findGuestByCPF(cpf: String): Guest {
-        return findByCPF(cpf) ?: throw GuestNotFoundException(cpf)
+        return findByCPF(cpf)
     }
 
     override fun findAllGuests(): List<Guest> {
@@ -45,7 +43,7 @@ class GuestServiceImpl(
     }
 
     override fun updateGuest(guestDTO: UpdateGuestDTO): Guest {
-        val existingGuest = findByCPF(guestDTO.cpf) ?: throw GuestNotFoundException(guestDTO.cpf)
+        val existingGuest = findByCPF(guestDTO.cpf)
 
         guestDTO.phoneNumber?.let { validateAndFormatPhoneNumber(it) }
 
@@ -69,7 +67,7 @@ class GuestServiceImpl(
         dynamoDbClient.delete(deleteItemRequest)
     }
 
-    private fun findByCPF(cpf: String): Guest? {
+    private fun findByCPF(cpf: String): Guest {
         val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
             QueryConditional.keyEqualTo(
                 Key.builder().partitionValue(cpf).build()
@@ -115,40 +113,5 @@ class GuestServiceImpl(
             uf = newAddress.uf ?: existingAddress.uf,
             cep = newAddress.cep ?: existingAddress.cep
         )
-    }
-
-    private fun createPutItemRequest(guest: Guest): PutItemRequest {
-        val itemMap = mapper.convertValue(guest, Map::class.java) as Map<String, Any>
-        val attributeValueMap = itemMap.mapValues { entry ->
-            when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
-                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
-                else -> AttributeValue.builder().s(entry.value.toString()).build()
-            }
-        }
-
-        return PutItemRequest.builder()
-            .tableName(Guest::class.simpleName)
-            .item(attributeValueMap)
-            .build()
-    }
-
-    private fun Map<String, *>.toAttributeValueMap(): Map<String, AttributeValue> {
-        return this.mapValues { entry ->
-            when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
-                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
-                else -> AttributeValue.builder().s(entry.value.toString()).build()
-            }
-        }
-    }
-
-    private fun AttributeValue.toAttributeValue(): Any {
-        return when {
-            this.s() != null -> this.s()
-            this.bool() != null -> this.bool()
-            this.m() != null -> this.m().mapValues { it.value.toAttributeValue() }
-            else -> throw IllegalArgumentException("Tipo de atributo não suportado: $this")
-        }
     }
 }
