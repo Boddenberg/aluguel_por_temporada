@@ -5,7 +5,7 @@ import juninwins.project.model.guest.Guest
 
 interface GuestService {
 
-    fun save(customer : Guest) : Guest
+    fun saveGuest(customer : Guest) : Guest
     fun findGuestByCPF(cpf : String) : Guest
     fun findAllGuests(): List<Guest>
     fun updateGuest(guestDTO: UpdateGuestDTO) : Guest

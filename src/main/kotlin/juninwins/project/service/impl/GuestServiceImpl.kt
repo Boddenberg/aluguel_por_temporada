@@ -20,7 +20,7 @@ class GuestServiceImpl(
 
     private val mapper: ObjectMapper = jacksonObjectMapper()
 
-    override fun save(customer: Guest): Guest {
+    override fun saveGuest(customer: Guest): Guest {
         if (isCPFRegistered(customer.cpf)) {
             throw GuestAlreadyRegisteredException(customer.cpf)
         }

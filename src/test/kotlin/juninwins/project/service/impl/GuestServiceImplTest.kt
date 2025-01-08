@@ -27,7 +27,7 @@ class GuestServiceImplTest {
         `when`(dynamoDbClient.putItem(any(PutItemRequest::class.java)))
             .thenReturn(PutItemResponse.builder().build())
 
-        val result = guestService.save(guest)
+        val result = guestService.saveGuest(guest)
 
         assertEquals(guest, result)
         verify(dynamoDbClient, times(1)).putItem(any(PutItemRequest::class.java))
@@ -41,7 +41,7 @@ class GuestServiceImplTest {
             .thenReturn(GetItemResponse.builder().item(mapOf("cpf" to AttributeValue.builder().s(guest.cpf).build())).build())
 
         assertThrows<GuestAlreadyRegisteredException> {
-            guestService.save(guest)
+            guestService.saveGuest(guest)
         }
 
         verify(dynamoDbClient, never()).putItem(any(PutItemRequest::class.java))

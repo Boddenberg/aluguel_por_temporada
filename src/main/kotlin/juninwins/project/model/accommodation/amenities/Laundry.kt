@@ -1,10 +1,10 @@
 package juninwins.project.model.accommodation.amenities
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import jakarta.persistence.Embeddable
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
 
-@Embeddable
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Laundry(
+        @get:DynamoDbAttribute("washingMachine")
         var washingMachine: Boolean?
 )

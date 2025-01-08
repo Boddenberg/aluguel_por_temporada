@@ -40,7 +40,7 @@ class GuestControllerTest {
 
     @Test
     fun `should register a guest`() {
-        Mockito.`when`(guestService.save(guest)).thenReturn(guest)
+        Mockito.`when`(guestService.saveGuest(guest)).thenReturn(guest)
 
         val response = guestController.saveGuest(guest)
 
@@ -49,7 +49,7 @@ class GuestControllerTest {
 
     @Test
     fun `should register a guest and return it`() {
-        Mockito.`when`(guestService.save(guest)).thenReturn(guest)
+        Mockito.`when`(guestService.saveGuest(guest)).thenReturn(guest)
 
         val response = guestController.saveGuests(guest)
 
