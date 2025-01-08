@@ -1,5 +1,6 @@
 package juninwins.project.configuration
 
+import juninwins.project.model.accommodation.Accommodation
 import juninwins.project.model.guest.Guest
 import juninwins.project.model.review.Review
 import org.springframework.context.annotation.Bean
@@ -13,6 +14,8 @@ class DynamoDBLocalConfiguration {
     @Bean
     fun createLocalDynamoDbTables(dynamoDbEnhancedClient : DynamoDbEnhancedClient) : Boolean {
         try {
+            dynamoDbEnhancedClient.table(Accommodation::class.java.simpleName, TableSchema.fromClass(Accommodation::class.java)).createTable()
+            println("Criando tabela: ${Accommodation::class.java.simpleName}")
             dynamoDbEnhancedClient.table(Guest::class.java.simpleName, TableSchema.fromClass(Guest::class.java)).createTable()
             println("Criando tabela: ${Guest::class.java.simpleName}")
         } catch (ex: Exception) {
