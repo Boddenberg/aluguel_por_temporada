@@ -2,6 +2,7 @@ package juninwins.project.service.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.awspring.cloud.dynamodb.DynamoDbTemplate
 import juninwins.project.exceptions.accommodation.AccommodationAlreadyRegisteredException
 import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.model.accommodation.Accommodation
@@ -18,7 +19,8 @@ import java.util.UUID
 
 @Service
 class AccommodationServiceImpl(
-    private val dynamoDbClient: DynamoDbClient
+    private val dynamoDbClient: DynamoDbClient,
+    private val dynamoDbTemplate: DynamoDbTemplate
 ) : AccommodationService {
 
     private val mapper: ObjectMapper = jacksonObjectMapper()
@@ -31,7 +33,9 @@ class AccommodationServiceImpl(
             throw AccommodationAlreadyRegisteredException(accommodationKey)
         }
         accommodation.id = accommodationKey
-        dynamoDbClient.putItem(createPutItemRequest(accommodation))
+
+        dynamoDbTemplate.save(accommodation)
+      //  dynamoDbClient.putItem(createPutItemRequest(accommodation))
         return accommodation
     }
 
