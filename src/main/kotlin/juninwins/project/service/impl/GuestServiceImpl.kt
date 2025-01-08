@@ -2,6 +2,7 @@ package juninwins.project.service.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.awspring.cloud.dynamodb.DynamoDbTemplate
 import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.exceptions.guest.GuestNotFoundException
 import juninwins.project.model.address.Address
@@ -9,12 +10,16 @@ import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import juninwins.project.utils.validateAndFormatPhoneNumber
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.*
+import software.amazon.awssdk.enhanced.dynamodb.Key
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 
 @Service
 class GuestServiceImpl(
-    private val dynamoDbClient: DynamoDbClient
+    private val dynamoDbClient: DynamoDbTemplate
 ) : GuestService {
 
     private val mapper: ObjectMapper = jacksonObjectMapper()
@@ -26,7 +31,7 @@ class GuestServiceImpl(
 
         customer.phoneNumber = validateAndFormatPhoneNumber(customer.phoneNumber)
 
-        dynamoDbClient.putItem(createPutItemRequest(customer))
+        dynamoDbClient.save(customer)
         return customer
     }
 
@@ -35,14 +40,7 @@ class GuestServiceImpl(
     }
 
     override fun findAllGuests(): List<Guest> {
-        val scanRequest = ScanRequest.builder()
-            .tableName(Guest::class.simpleName)
-            .build()
-
-        val scanResponse = dynamoDbClient.scan(scanRequest)
-        return scanResponse.items().map { item ->
-            mapper.convertValue(item.mapValues { it.value.toAttributeValue() }, Guest::class.java)
-        }
+        return dynamoDbClient.scanAll(Guest::class.java).items().stream().toList()
     }
 
     override fun updateGuest(guest: Guest): Guest {
@@ -51,7 +49,7 @@ class GuestServiceImpl(
 
         val updatedGuest = mergeGuest(existingGuest, guest)
 
-        dynamoDbClient.putItem(createPutItemRequest(updatedGuest))
+        dynamoDbClient.update(updatedGuest)
         return updatedGuest
     }
 
@@ -66,24 +64,27 @@ class GuestServiceImpl(
             .key(deleteKey)
             .build()
 
-        dynamoDbClient.deleteItem(deleteItemRequest)
+        dynamoDbClient.delete(deleteItemRequest)
     }
 
     private fun findByCPF(cpf: String): Guest? {
-        val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
-        val getItemRequest = GetItemRequest.builder().tableName(Guest::class.simpleName).key(getKey).build()
-        val response = dynamoDbClient.getItem(getItemRequest)
-
-        return if (response.hasItem()) {
-            mapper.convertValue(response.item().mapValues { it.value.toAttributeValue() }, Guest::class.java)
-        } else null
+        val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
+            QueryConditional.keyEqualTo(
+                Key.builder().partitionValue(cpf).build()
+            )
+        ).build()
+        return dynamoDbClient.query(queryEnhancedRequest, Guest::class.java).items().stream().findFirst().get()
     }
 
     private fun isCPFRegistered(cpf: String): Boolean {
-        val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
-        val getItemRequest = GetItemRequest.builder().tableName(Guest::class.simpleName).key(getKey).build()
-        val response = dynamoDbClient.getItem(getItemRequest)
-        return response.hasItem()
+        val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
+            QueryConditional.keyEqualTo(
+                Key.builder().partitionValue(cpf).build()
+            )
+        ).build()
+
+        val response = dynamoDbClient.query(queryEnhancedRequest, Guest::class.java)
+        return response.items().stream().findFirst().isPresent
     }
 
     private fun mergeGuest(existingGuest: Guest, newGuest: Guest): Guest {
