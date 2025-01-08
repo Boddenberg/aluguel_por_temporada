@@ -52,8 +52,8 @@ dependencies {
 	//dependencias de banco de dados
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("io.awspring.cloud:spring-cloud-aws-starter-dynamodb:3.1.0")
+	runtimeOnly("com.h2database:h2")
 //	implementation("org.springframework.boot:spring-boot-docker-compose")
-	implementation ("com.mysql:mysql-connector-j:8.1.0")
 	//dependencias de comunicação
 	implementation ("com.squareup.retrofit2:retrofit:2.9.0")
 	implementation ("com.squareup.retrofit2:converter-gson:2.9.0")

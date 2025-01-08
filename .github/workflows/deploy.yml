@@ -12,9 +12,10 @@ permissions:
 env:
   AWS_REGION: sa-east-1
   ECR_REPOSITORY: aluguel-por-temporada
-  ECS_SERVICE: aluguel-por-temporada-service
+  ECS_SERVICE: aluguel-por-temporada-service-2
   ECS_CLUSTER: cluster-aluguel-por-temporada-projeto
   CONTAINER_NAME: "aluguel-por-temporada-container"
+  ROLE: arn:aws:iam::257394470489:role/role-ecs-github-access
 
 jobs:
   build:
@@ -66,7 +67,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          role-to-assume: arn:aws:iam::257394470489:role/role-ecs-github-access
+          role-to-assume: ${{ env.ROLE }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
