@@ -6,26 +6,26 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Bedroom(
         @get:DynamoDbAttribute("blackoutCurtains")
-        var blackoutCurtains: Boolean?,
+        var blackoutCurtains: Boolean? = null,
 
         @get:DynamoDbAttribute("extraBlanketsAndPillows")
-        var extraBlanketsAndPillows: Boolean?,
+        var extraBlanketsAndPillows: Boolean? = null,
 
         @get:DynamoDbAttribute("iron")
-        var iron: Boolean?,
+        var iron: Boolean? = null,
 
         @get:DynamoDbAttribute("clothesStorage")
-        var clothesStorage: Boolean?,
+        var clothesStorage: Boolean? = null,
 
         @get:DynamoDbAttribute("bedLinen")
-        var bedLinen: Boolean?,
+        var bedLinen: Boolean? = null,
 
         @get:DynamoDbAttribute("mosquitoNet")
-        var mosquitoNet: Boolean?,
+        var mosquitoNet: Boolean? = null,
 
         @get:DynamoDbAttribute("clothesDryingRack")
-        var clothesDryingRack: Boolean?,
+        var clothesDryingRack: Boolean? = null,
 
         @get:DynamoDbAttribute("safe")
-        var safe: Boolean?
+        var safe: Boolean? = null
 )

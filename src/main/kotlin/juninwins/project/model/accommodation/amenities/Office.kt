@@ -6,14 +6,14 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Office(
         @get:DynamoDbAttribute("dedicatedWorkspace")
-        var dedicatedWorkspace: Boolean?,
+        var dedicatedWorkspace: Boolean? = null,
 
         @get:DynamoDbAttribute("wifi")
-        var wifi: Boolean?,
+        var wifi: Boolean? = null,
 
         @get:DynamoDbAttribute("portableWifi")
-        var portableWifi: Boolean?,
+        var portableWifi: Boolean? = null,
 
         @get:DynamoDbAttribute("printer")
-        var printer: Boolean?
+        var printer: Boolean? = null
 )

@@ -1,63 +1,61 @@
 package juninwins.project.model.accommodation.amenities
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import jakarta.persistence.Embeddable
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
-
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Family(
         @get:DynamoDbAttribute("babyMonitor")
-        var babyMonitor: Boolean?,
+        var babyMonitor: Boolean? = null,
 
         @get:DynamoDbAttribute("babyBath")
-        var babyBath: Boolean?,
+        var babyBath: Boolean? = null,
 
         @get:DynamoDbAttribute("crib")
-        var crib: Boolean?,
+        var crib: Boolean? = null,
 
         @get:DynamoDbAttribute("childrensBicycles")
-        var childrensBicycles: Boolean?,
+        var childrensBicycles: Boolean? = null,
 
         @get:DynamoDbAttribute("highChair")
-        var highChair: Boolean?,
+        var highChair: Boolean? = null,
 
         @get:DynamoDbAttribute("playpenPortableCrib")
-        var playpenPortableCrib: Boolean?,
+        var playpenPortableCrib: Boolean? = null,
 
         @get:DynamoDbAttribute("boardGames")
-        var boardGames: Boolean?,
+        var boardGames: Boolean? = null,
 
         @get:DynamoDbAttribute("childrensBooksAndToys")
-        var childrensBooksAndToys: Boolean?,
+        var childrensBooksAndToys: Boolean? = null,
 
         @get:DynamoDbAttribute("outdoorPlayground")
-        var outdoorPlayground: Boolean?,
+        var outdoorPlayground: Boolean? = null,
 
         @get:DynamoDbAttribute("babySafetyGates")
-        var babySafetyGates: Boolean?,
+        var babySafetyGates: Boolean? = null,
 
         @get:DynamoDbAttribute("childrensDishesAndUtensils")
-        var childrensDishesAndUtensils: Boolean?,
+        var childrensDishesAndUtensils: Boolean? = null,
 
         @get:DynamoDbAttribute("tableCornerGuards")
-        var tableCornerGuards: Boolean?,
+        var tableCornerGuards: Boolean? = null,
 
         @get:DynamoDbAttribute("fireplaceGuards")
-        var fireplaceGuards: Boolean?,
+        var fireplaceGuards: Boolean? = null,
 
         @get:DynamoDbAttribute("outletCovers")
-        var outletCovers: Boolean?,
+        var outletCovers: Boolean? = null,
 
         @get:DynamoDbAttribute("babysitterRecommendations")
-        var babysitterRecommendations: Boolean?,
+        var babysitterRecommendations: Boolean? = null,
 
         @get:DynamoDbAttribute("windowGuardRails")
-        var windowGuardRails: Boolean?,
+        var windowGuardRails: Boolean? = null,
 
         @get:DynamoDbAttribute("childrensPlayroom")
-        var childrensPlayroom: Boolean?,
+        var childrensPlayroom: Boolean? = null,
 
         @get:DynamoDbAttribute("changingTable")
-        var changingTable: Boolean?
+        var changingTable: Boolean? = null
 )

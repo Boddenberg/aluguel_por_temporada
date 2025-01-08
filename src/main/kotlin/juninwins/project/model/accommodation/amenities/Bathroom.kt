@@ -6,33 +6,32 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Bathroom(
         @get:DynamoDbAttribute("bathtub")
-        val bathtub: Boolean?,
+        val bathtub: Boolean? = null,
 
         @get:DynamoDbAttribute("bidet")
-        val bidet: Boolean?,
+        val bidet: Boolean? = null,
 
         @get:DynamoDbAttribute("outdoorShower")
-        val outdoorShower: Boolean?,
+        val outdoorShower: Boolean? = null,
 
         @get:DynamoDbAttribute("conditioner")
-        val conditioner: Boolean?,
+        val conditioner: Boolean? = null,
 
         @get:DynamoDbAttribute("showerGel")
-        val showerGel: Boolean?,
+        val showerGel: Boolean? = null,
 
         @get:DynamoDbAttribute("cleaningProducts")
-        val cleaningProducts: Boolean?,
+        val cleaningProducts: Boolean? = null,
 
         @get:DynamoDbAttribute("bodySoap")
-        val bodySoap: Boolean?,
+        val bodySoap: Boolean? = null,
 
         @get:DynamoDbAttribute("hairDryer")
-        val hairDryer: Boolean?,
+        val hairDryer: Boolean? = null,
 
         @get:DynamoDbAttribute("shampoo")
-        val shampoo: Boolean?,
+        val shampoo: Boolean? = null,
 
         @get:DynamoDbAttribute("hotWater")
-        val hotWater: Boolean?
+        val hotWater: Boolean? = null
 )
-

@@ -6,5 +6,5 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Laundry(
         @get:DynamoDbAttribute("washingMachine")
-        var washingMachine: Boolean?
+        var washingMachine: Boolean? = null
 )

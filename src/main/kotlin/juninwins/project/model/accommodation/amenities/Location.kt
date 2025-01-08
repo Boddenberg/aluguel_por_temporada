@@ -6,23 +6,23 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Location(
         @get:DynamoDbAttribute("lakeAccess")
-        var lakeAccess: Boolean?,
+        var lakeAccess: Boolean? = null,
 
         @get:DynamoDbAttribute("resortAccess")
-        var resortAccess: Boolean?,
+        var resortAccess: Boolean? = null,
 
         @get:DynamoDbAttribute("beachAccess")
-        var beachAccess: Boolean?,
+        var beachAccess: Boolean? = null,
 
         @get:DynamoDbAttribute("privateEntrance")
-        var privateEntrance: Boolean?,
+        var privateEntrance: Boolean? = null,
 
         @get:DynamoDbAttribute("skiInOutAccess")
-        var skiInOutAccess: Boolean?,
+        var skiInOutAccess: Boolean? = null,
 
         @get:DynamoDbAttribute("nearbyLaundry")
-        var nearbyLaundry: Boolean?,
+        var nearbyLaundry: Boolean? = null,
 
         @get:DynamoDbAttribute("waterView")
-        var waterView: Boolean?
+        var waterView: Boolean? = null
 )

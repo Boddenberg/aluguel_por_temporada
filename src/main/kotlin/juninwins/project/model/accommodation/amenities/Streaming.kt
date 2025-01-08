@@ -6,29 +6,29 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Streaming(
         @get:DynamoDbAttribute("primeVideo")
-        var primeVideo: Boolean?,
+        var primeVideo: Boolean? = null,
 
         @get:DynamoDbAttribute("netflix")
-        var netflix: Boolean?,
+        var netflix: Boolean? = null,
 
         @get:DynamoDbAttribute("hbo")
-        var hbo: Boolean?,
+        var hbo: Boolean? = null,
 
         @get:DynamoDbAttribute("disneyPlus")
-        var disneyPlus: Boolean?,
+        var disneyPlus: Boolean? = null,
 
         @get:DynamoDbAttribute("globoplay")
-        var globoplay: Boolean?,
+        var globoplay: Boolean? = null,
 
         @get:DynamoDbAttribute("appleTvPlus")
-        var appleTvPlus: Boolean?,
+        var appleTvPlus: Boolean? = null,
 
         @get:DynamoDbAttribute("paramountPlus")
-        var paramountPlus: Boolean?,
+        var paramountPlus: Boolean? = null,
 
         @get:DynamoDbAttribute("starPlus")
-        var starPlus: Boolean?,
+        var starPlus: Boolean? = null,
 
         @get:DynamoDbAttribute("crunchyroll")
-        var crunchyroll: Boolean?
+        var crunchyroll: Boolean? = null
 )

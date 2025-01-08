@@ -6,14 +6,14 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Services(
         @get:DynamoDbAttribute("breakfast")
-        var breakfast: Boolean?,
+        var breakfast: Boolean? = null,
 
         @get:DynamoDbAttribute("longTermStaysAllowed")
-        var longTermStaysAllowed: Boolean?,
+        var longTermStaysAllowed: Boolean? = null,
 
         @get:DynamoDbAttribute("cleaningDuringStay")
-        var cleaningDuringStay: Boolean?,
+        var cleaningDuringStay: Boolean? = null,
 
         @get:DynamoDbAttribute("luggageDropoffAllowed")
-        var luggageDropoffAllowed: Boolean?
+        var luggageDropoffAllowed: Boolean? = null
 )

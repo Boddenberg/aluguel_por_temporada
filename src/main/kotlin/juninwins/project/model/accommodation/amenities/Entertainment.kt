@@ -6,62 +6,62 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Entertainment(
         @get:DynamoDbAttribute("cinema")
-        var cinema: Boolean?,
+        var cinema: Boolean? = null,
 
         @get:DynamoDbAttribute("ethernetConnection")
-        var ethernetConnection: Boolean?,
+        var ethernetConnection: Boolean? = null,
 
         @get:DynamoDbAttribute("videoGameConsole")
-        var videoGameConsole: Boolean?,
+        var videoGameConsole: Boolean? = null,
 
         @get:DynamoDbAttribute("gymEquipment")
-        var gymEquipment: Boolean?,
+        var gymEquipment: Boolean? = null,
 
         @get:DynamoDbAttribute("arcade")
-        var arcade: Boolean?,
+        var arcade: Boolean? = null,
 
         @get:DynamoDbAttribute("baseballTrainingCage")
-        var baseballTrainingCage: Boolean?,
+        var baseballTrainingCage: Boolean? = null,
 
         @get:DynamoDbAttribute("lifeSizeGames")
-        var lifeSizeGames: Boolean?,
+        var lifeSizeGames: Boolean? = null,
 
         @get:DynamoDbAttribute("laserTag")
-        var laserTag: Boolean?,
+        var laserTag: Boolean? = null,
 
         @get:DynamoDbAttribute("booksAndReadingMaterial")
-        var booksAndReadingMaterial: Boolean?,
+        var booksAndReadingMaterial: Boolean? = null,
 
         @get:DynamoDbAttribute("poolTable")
-        var poolTable: Boolean?,
+        var poolTable: Boolean? = null,
 
         @get:DynamoDbAttribute("pingPongTable")
-        var pingPongTable: Boolean?,
+        var pingPongTable: Boolean? = null,
 
         @get:DynamoDbAttribute("miniGolf")
-        var miniGolf: Boolean?,
+        var miniGolf: Boolean? = null,
 
         @get:DynamoDbAttribute("climbingWall")
-        var climbingWall: Boolean?,
+        var climbingWall: Boolean? = null,
 
         @get:DynamoDbAttribute("piano")
-        var piano: Boolean?,
+        var piano: Boolean? = null,
 
         @get:DynamoDbAttribute("bowlingAlley")
-        var bowlingAlley: Boolean?,
+        var bowlingAlley: Boolean? = null,
 
         @get:DynamoDbAttribute("skateRamp")
-        var skateRamp: Boolean?,
+        var skateRamp: Boolean? = null,
 
         @get:DynamoDbAttribute("themedRoom")
-        var themedRoom: Boolean?,
+        var themedRoom: Boolean? = null,
 
         @get:DynamoDbAttribute("soundSystem")
-        var soundSystem: Boolean?,
+        var soundSystem: Boolean? = null,
 
         @get:DynamoDbAttribute("turntable")
-        var turntable: Boolean?,
+        var turntable: Boolean? = null,
 
         @get:DynamoDbAttribute("tv")
-        var tv: Boolean?
+        var tv: Boolean? = null
 )

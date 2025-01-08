@@ -4,45 +4,44 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import juninwins.project.model.accommodation.amenities.*
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
 
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Amenities(
         @get:DynamoDbAttribute("basics")
-        val basics: Basics?,
+        val basics: Basics? = null,
 
         @get:DynamoDbAttribute("bathroom")
-        val bathroom: Bathroom?,
+        val bathroom: Bathroom? = null,
 
         @get:DynamoDbAttribute("bedroom")
-        val bedroom: Bedroom?,
+        val bedroom: Bedroom? = null,
 
         @get:DynamoDbAttribute("entertainment")
-        val entertainment: Entertainment?,
+        val entertainment: Entertainment? = null,
 
         @get:DynamoDbAttribute("family")
-        val family: Family?,
+        val family: Family? = null,
 
         @get:DynamoDbAttribute("diningRoom")
-        val diningRoom: Kitchen?,
+        val diningRoom: Kitchen? = null,
 
         @get:DynamoDbAttribute("laundry")
-        val laundry: Laundry?,
+        val laundry: Laundry? = null,
 
         @get:DynamoDbAttribute("location")
-        val location: Location?,
+        val location: Location? = null,
 
         @get:DynamoDbAttribute("office")
-        val office: Office?,
+        val office: Office? = null,
 
         @get:DynamoDbAttribute("parking")
-        val parking: Parking?,
+        val parking: Parking? = null,
 
         @get:DynamoDbAttribute("security")
-        val security: Security?,
+        val security: Security? = null,
 
         @get:DynamoDbAttribute("services")
-        val services: Services?,
+        val services: Services? = null,
 
         @get:DynamoDbAttribute("streaming")
-        val streaming: Streaming?
+        val streaming: Streaming? = null
 )
