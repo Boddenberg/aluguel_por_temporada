@@ -14,7 +14,7 @@ env:
   ECR_REPOSITORY: aluguel-por-temporada
   ECS_SERVICE: aluguel-por-temporada-service-2
   ECS_CLUSTER: cluster-aluguel-por-temporada-projeto
-  CONTAINER_NAME: "aluguel-por-temporada-container"
+  CONTAINER_NAME: "container-aluguel-temporada-ecs"
   ROLE: arn:aws:iam::257394470489:role/role-ecs-github-access
 
 jobs:
