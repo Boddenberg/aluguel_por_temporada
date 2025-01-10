@@ -1,22 +1,34 @@
 # Build stage
-FROM gradle:latest AS build
-WORKDIR /usr/app/
-COPY . .
-RUN gradle build
+FROM amazoncorretto:17 AS build
+WORKDIR /app
+
+# Instalar dependências
+RUN yum install -y bash unzip dos2unix
+
+# Copiar arquivos necessários do projeto
+COPY ./gradlew ./gradlew
+COPY ./gradle /app/gradle
+COPY ./build.gradle.kts ./settings.gradle.kts /app/
+COPY ./src /app/src
+
+# Converter para formato UNIX e garantir permissões
+RUN dos2unix gradlew && chmod +x gradlew
+
+# Construir aplicação Kotlin com Spring Boot
+RUN ./gradlew build -x test
 
 # Package stage
-FROM openjdk:latest
-ENV JAR_NAME=Project-0.0.1-SNAPSHOT.jar
-ENV APP_HOME=/usr/app/
+FROM amazoncorretto:17
+WORKDIR /app
 
-ARG REGION_ARG=sa-east-1
-ARG ACCESS_ARG
-ARG SECRET_ARG
-ENV AWS_REGION=$REGION_ARG
-ENV AWS_ACCESS_KEY=$ACCESS_ARG
-ENV AWS_SECRET_KEY=$SECRET_ARG
+# Definir variáveis de ambiente
+ENV JAR_NAME=app.jar
 
-WORKDIR $APP_HOME
-COPY --from=build $APP_HOME .
+# Copiar JAR gerado
+COPY --from=build /app/build/libs/*.jar $JAR_NAME
+
+# Expor a porta usada pela aplicação
 EXPOSE 8080
-ENTRYPOINT exec java -jar $APP_HOME/build/libs/$JAR_NAME
+
+# Comando de execução
+ENTRYPOINT ["java", "-jar", "app.jar"]
