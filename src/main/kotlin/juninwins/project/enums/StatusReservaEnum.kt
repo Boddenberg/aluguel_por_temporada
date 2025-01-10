@@ -7,12 +7,5 @@ enum class StatusReservaEnum(val descricao: String) {
     CANCELED("Reserva cancelada"),
     CONCLUDED("Reserva concluída"),
     READY_TO_REVIEW("Pronta para avaliação"),
-    NOT_READY_TO_REVIEW("Pronta para avaliação");
-
-    companion object {
-        fun fromDescricao(descricao: String): StatusReservaEnum? =
-                values().find { it.descricao == descricao }
-    }
-
-    override fun toString(): String = descricao
+    NOT_READY_TO_REVIEW("Pronta para avaliação")
 }

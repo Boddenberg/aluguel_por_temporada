@@ -6,10 +6,4 @@ enum class DiscountPolicyTypeEnum (val descricao: String) {
     BIWEEKLY("quinzenal"),
     MONTHLY("mensal"),
     CUSTOMIZED("customizada");
-
-    companion object {
-        fun fromDescricao(descricao: String): DiscountPolicyTypeEnum? =
-            DiscountPolicyTypeEnum.values().find { it.descricao == descricao }
-    }
-    override fun toString(): String = descricao
 }
