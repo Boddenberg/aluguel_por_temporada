@@ -68,11 +68,16 @@ class GuestServiceImpl(
     }
 
     private fun findByCPF(cpf: String): Guest {
+        if (!isCPFRegistered(cpf)) {
+            throw GuestNotFoundException(cpf)
+        }
+
         val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
             QueryConditional.keyEqualTo(
                 Key.builder().partitionValue(cpf).build()
             )
         ).build()
+
         return dynamoDbClient.query(queryEnhancedRequest, Guest::class.java).items().stream().findFirst().get()
     }
 
