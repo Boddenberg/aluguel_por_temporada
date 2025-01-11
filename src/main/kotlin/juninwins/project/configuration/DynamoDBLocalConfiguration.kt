@@ -4,10 +4,12 @@ import juninwins.project.model.guest.Guest
 import juninwins.project.model.review.Review
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 
 @Configuration
+@Profile(value = ["local"])
 class DynamoDBLocalConfiguration {
 
     @Bean
