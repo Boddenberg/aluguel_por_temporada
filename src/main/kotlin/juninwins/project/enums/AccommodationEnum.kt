@@ -7,10 +7,4 @@ enum class AccommodationEnum (val descricao: String) {
     HOTEL("Hotel"),
     FAZEND_HOTEL("Hotel Fazenda");
 
-    companion object {
-        fun fromDescricao(descricao: String): AccommodationEnum? =
-            AccommodationEnum.values().find { it.descricao == descricao }
-    }
-
-    override fun toString(): String = descricao
 }
