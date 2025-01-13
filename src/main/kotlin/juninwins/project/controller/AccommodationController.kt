@@ -14,40 +14,34 @@ import org.springframework.web.bind.annotation.*
 @Validated
 class AccommodationController(val accommodationService: AccommodationService) {
 
-   /* @GetMapping("/search/{cpf}")
-    @Operation(summary = "Find a guest")
-    fun findGuest(@PathVariable(name = "cpf") cpfCustomer: String): ResponseEntity<Guest> {
-        return ResponseEntity.ok(accommodationService.findGuestByCPF(cpfCustomer))
-    }
-
-    @GetMapping("/searchAll")
-    @Operation(summary = "Find all guests")
-    fun findAllGuests(): List<Guest> {
-        return accommodationService.findAllGuests()
-    }*/
-
-    @PostMapping("/register/accommodation")
-    @Operation(summary = "Register a accommodation")
-    fun saveGuest(@RequestBody @Valid accommodation: Accommodation): ResponseEntity<Accommodation> {
+    @PostMapping("/register")
+    @Operation(summary = "Register an accommodation")
+    fun saveAccommodation(@RequestBody @Valid accommodation: Accommodation): ResponseEntity<Accommodation> {
         return ResponseEntity.ok(accommodationService.saveAccommodation(accommodation))
     }
 
-  /*  @PostMapping("/register/guest/return")
-    @Operation(summary = "Register a guest")
-    fun saveGuests(@RequestBody @Valid client: Guest): ResponseEntity<Guest> {
-        return ResponseEntity.ok(accommodationService.save(client))
+    @GetMapping("/search/{id}")
+    @Operation(summary = "Find an accommodation by ID")
+    fun findAccommodationById(@PathVariable(name = "id") accommodationId: String): ResponseEntity<Accommodation> {
+        return ResponseEntity.ok(accommodationService.findAccommodationById(accommodationId))
     }
 
-    @PutMapping("/update/guest")
-    @Operation(summary = "Update a guest")
-    fun updateGuest(@RequestBody @Valid client: UpdateGuestDTO): ResponseEntity<Guest> {
-        return ResponseEntity.ok(accommodationService.updateGuest(client))
+    @GetMapping("/searchAll")
+    @Operation(summary = "Find all accommodations")
+    fun findAllAccommodations(): List<Accommodation> {
+        return accommodationService.findAllAccommodations()
     }
 
-    @DeleteMapping("/delete/guest/{cpf}")
-    @Operation(summary = "Delete a guest")
-    fun deleteGuest(@PathVariable(name = "cpf") cpf: String): ResponseEntity<Void> {
-        accommodationService.deleteGuestByCPF(cpf)
+    @PutMapping("/update")
+    @Operation(summary = "Update an accommodation")
+    fun updateAccommodation(@RequestBody @Valid accommodation: Accommodation): ResponseEntity<Accommodation> {
+        return ResponseEntity.ok(accommodationService.updateAccommodation(accommodation))
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Delete an accommodation")
+    fun deleteAccommodation(@PathVariable(name = "id") accommodationId: String): ResponseEntity<Void> {
+        accommodationService.deleteAccommodationById(accommodationId)
         return ResponseEntity.ok().build()
-    }*/
+    }
 }
