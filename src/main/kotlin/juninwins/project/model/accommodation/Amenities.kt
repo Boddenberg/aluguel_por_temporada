@@ -3,8 +3,10 @@ package juninwins.project.model.accommodation
 import com.fasterxml.jackson.annotation.JsonInclude
 import juninwins.project.model.accommodation.amenities.*
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@DynamoDbBean
 data class Amenities(
         @get:DynamoDbAttribute("basics")
         val basics: Basics? = null,
