@@ -3,6 +3,7 @@ package juninwins.project.controller
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.accommodation.DTO.AccommodationDTO
 import juninwins.project.service.AccommodationService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -34,7 +35,7 @@ class AccommodationController(val accommodationService: AccommodationService) {
 
     @PutMapping("/update")
     @Operation(summary = "Update an accommodation")
-    fun updateAccommodation(@RequestBody @Valid accommodation: Accommodation): ResponseEntity<Accommodation> {
+    fun updateAccommodation(@RequestBody @Valid accommodation: AccommodationDTO): ResponseEntity<Accommodation> {
         return ResponseEntity.ok(accommodationService.updateAccommodation(accommodation))
     }
 

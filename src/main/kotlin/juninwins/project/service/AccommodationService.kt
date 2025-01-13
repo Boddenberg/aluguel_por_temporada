@@ -1,6 +1,7 @@
 package juninwins.project.service
 
 import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.accommodation.DTO.AccommodationDTO
 import juninwins.project.model.guest.DTO.UpdateGuestDTO
 
 interface AccommodationService {
@@ -9,6 +10,6 @@ interface AccommodationService {
     fun findAccommodationById(id : String) : Accommodation
     fun findAccommodationByCPF(cpf : String) : List<Accommodation>
     fun findAllAccommodations(): List<Accommodation>
-    fun updateAccommodation(guestDTO: UpdateGuestDTO) : Accommodation
-    fun deleteAccommodationByCPF(cpf: String)
+    fun updateAccommodation(accommodationDTO: AccommodationDTO) : Accommodation
+    fun deleteAccommodationById(id: String)
 }

@@ -1,109 +1,106 @@
 package juninwins.project.service.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.awspring.cloud.dynamodb.DynamoDbTemplate
 import juninwins.project.exceptions.accommodation.AccommodationAlreadyRegisteredException
-import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
+import juninwins.project.exceptions.accommodation.AccommodationIdNotFoundException
 import juninwins.project.model.accommodation.Accommodation
-import juninwins.project.model.guest.DTO.UpdateGuestDTO
-import juninwins.project.model.guest.Guest
+import juninwins.project.model.accommodation.DTO.AccommodationDTO
 import juninwins.project.service.AccommodationService
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.enhanced.dynamodb.Key
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
-import java.util.UUID
-
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 
 @Service
 class AccommodationServiceImpl(
-    private val dynamoDbClient: DynamoDbClient,
-    private val dynamoDbTemplate: DynamoDbTemplate
+    private val dynamoDbClient: DynamoDbTemplate
 ) : AccommodationService {
 
-    private val mapper: ObjectMapper = jacksonObjectMapper()
-
     override fun saveAccommodation(accommodation: Accommodation): Accommodation {
-
-        val accommodationKey = generateAccommodationKey(accommodation.id)
-
-        if (isAccommodationKeyRegistered(accommodationKey)) {
-            throw AccommodationAlreadyRegisteredException(accommodationKey)
+        if (isIdRegistered(accommodation.id)) {
+            throw AccommodationAlreadyRegisteredException(accommodation.id)
         }
-        accommodation.id = accommodationKey
 
-        dynamoDbTemplate.save(accommodation)
-      //  dynamoDbClient.putItem(createPutItemRequest(accommodation))
+        dynamoDbClient.save(accommodation)
         return accommodation
     }
 
     override fun findAccommodationById(id: String): Accommodation {
-        TODO("Not yet implemented")
+        return findById(id)
     }
 
     override fun findAccommodationByCPF(cpf: String): List<Accommodation> {
-        TODO("Not yet implemented")
+        val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
+            QueryConditional.keyEqualTo(
+                Key.builder().partitionValue(cpf).build()
+            )
+        ).build()
+
+        return dynamoDbClient.query(queryEnhancedRequest, Accommodation::class.java).items().stream().toList()
     }
 
     override fun findAllAccommodations(): List<Accommodation> {
-        TODO("Not yet implemented")
+        return dynamoDbClient.scanAll(Accommodation::class.java).items().stream().toList()
     }
 
-    override fun updateAccommodation(guestDTO: UpdateGuestDTO): Accommodation {
-        TODO("Not yet implemented")
+    override fun updateAccommodation(accommodationDTO: AccommodationDTO): Accommodation {
+        val existingAccommodation = findById(accommodationDTO.id)
+
+        val updatedAccommodation = mergeAccommodation(existingAccommodation, accommodationDTO)
+
+        dynamoDbClient.update(updatedAccommodation)
+        return updatedAccommodation
     }
 
-    override fun deleteAccommodationByCPF(cpf: String) {
-        TODO("Not yet implemented")
-    }
-
-    private fun generateAccommodationKey(cpf: String): String {
-        return  cpf + "#" + UUID.randomUUID();
-    }
-
-    private fun isAccommodationKeyRegistered(key: String): Boolean {
-        val getKey = mapOf("id" to AttributeValue.builder().s(key).build())
-        val getItemRequest = GetItemRequest.builder().tableName(Accommodation::class.simpleName).key(getKey).build()
-        val response = dynamoDbClient.getItem(getItemRequest)
-        return response.hasItem()
-    }
-
-    private fun createPutItemRequest(accommodation: Accommodation): PutItemRequest {
-        val itemMap = mapper.convertValue(accommodation, Map::class.java) as Map<String, Any>
-        val attributeValueMap = itemMap.mapValues { entry ->
-            when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
-                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
-                else -> AttributeValue.builder().s(entry.value.toString()).build()
-            }
+    override fun deleteAccommodationById(id: String) {
+        if (!isIdRegistered(id)) {
+            throw AccommodationIdNotFoundException(id)
         }
 
-        return PutItemRequest.builder()
-            .tableName(Guest::class.simpleName)
-            .item(attributeValueMap)
+        val deleteKey = mapOf("id" to AttributeValue.builder().s(id).build())
+        val deleteItemRequest = DeleteItemRequest.builder()
+            .tableName(Accommodation::class.simpleName)
+            .key(deleteKey)
             .build()
+
+        dynamoDbClient.delete(deleteItemRequest)
     }
 
-    private fun Map<String, *>.toAttributeValueMap(): Map<String, AttributeValue> {
-        return this.mapValues { entry ->
-            when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
-                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
-                else -> AttributeValue.builder().s(entry.value.toString()).build()
-            }
+    private fun findById(id: String): Accommodation {
+        if (!isIdRegistered(id)) {
+            throw AccommodationIdNotFoundException(id)
         }
+
+        val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
+            QueryConditional.keyEqualTo(
+                Key.builder().partitionValue(id).build()
+            )
+        ).build()
+
+        return dynamoDbClient.query(queryEnhancedRequest, Accommodation::class.java).items().stream().findFirst().get()
     }
 
-    private fun AttributeValue.toAttributeValue(): Any {
-        return when {
-            this.s() != null -> this.s()
-            this.bool() != null -> this.bool()
-            this.m() != null -> this.m().mapValues { it.value.toAttributeValue() }
-            else -> throw IllegalArgumentException("Tipo de atributo não suportado: $this")
-        }
+    private fun isIdRegistered(id: String): Boolean {
+        val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
+            QueryConditional.keyEqualTo(
+                Key.builder().partitionValue(id).build()
+            )
+        ).build()
+
+        val response = dynamoDbClient.query(queryEnhancedRequest, Accommodation::class.java)
+        return response.items().stream().findFirst().isPresent
     }
 
-
+    private fun mergeAccommodation(existingAccommodation: Accommodation, accommodationDTO: AccommodationDTO): Accommodation {
+        return existingAccommodation.copy(
+            type = accommodationDTO.type,
+            capacity = accommodationDTO.capacity,
+            basePrice = accommodationDTO.basePrice ?: existingAccommodation.basePrice,
+            amenities = accommodationDTO.amenities ?: existingAccommodation.amenities,
+            reviews = accommodationDTO.reviews ?: existingAccommodation.reviews,
+            address = accommodationDTO.address ?: existingAccommodation.address
+        )
+    }
 }
