@@ -27,11 +27,9 @@ class GuestServiceImpl(
         if (isCPFRegistered(customer.cpf)) {
             throw GuestAlreadyRegisteredException(customer.cpf)
         }
-
         customer.phoneNumber = validateAndFormatPhoneNumber(customer.phoneNumber)
 
-        dynamoDbClient.save(customer)
-        return customer
+        return dynamoDbClient.save(customer)
     }
 
     override fun findGuestByCPF(cpf: String): Guest {
@@ -57,14 +55,9 @@ class GuestServiceImpl(
         if (!isCPFRegistered(cpf)) {
             throw GuestNotFoundException(cpf)
         }
+        val key = Key.builder().partitionValue(cpf).build()
 
-        val deleteKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
-        val deleteItemRequest = DeleteItemRequest.builder()
-            .tableName(Guest::class.simpleName)
-            .key(deleteKey)
-            .build()
-
-        dynamoDbClient.delete(deleteItemRequest)
+        dynamoDbClient.delete(key, Guest::class.java)
     }
 
     private fun findByCPF(cpf: String): Guest {

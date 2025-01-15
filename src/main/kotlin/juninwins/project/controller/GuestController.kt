@@ -29,9 +29,8 @@ class GuestController(val guestService: GuestService) {
 
     @PostMapping("/register/guest")
     @Operation(summary = "Register a guest")
-    fun saveGuest(@RequestBody @Valid client: Guest): ResponseEntity<Void> {
-        guestService.saveGuest(client)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+    fun saveGuest(@RequestBody @Valid client: Guest): ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.saveGuest(client))
     }
 
     @PostMapping("/register/guest/return")
