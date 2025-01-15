@@ -13,7 +13,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbFlatt
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@DynamoDbBean
+@DynamoDbBean()
 data class Guest(
 
     @get:DynamoDbPartitionKey

@@ -2,7 +2,6 @@ package juninwins.project.service.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.awspring.cloud.dynamodb.DynamoDbTemplate
 import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.exceptions.guest.GuestNotFoundException
 import juninwins.project.model.address.Address
@@ -11,43 +10,50 @@ import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import juninwins.project.utils.validateAndFormatPhoneNumber
 import org.springframework.stereotype.Service
-import software.amazon.awssdk.enhanced.dynamodb.Key
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import software.amazon.awssdk.services.dynamodb.model.*
 
 @Service
 class GuestServiceImpl(
-    private val dynamoDbClient: DynamoDbTemplate
+    private val dynamoDbClient: DynamoDbClient
 ) : GuestService {
+
+    private val mapper: ObjectMapper = jacksonObjectMapper()
 
     override fun saveGuest(customer: Guest): Guest {
         if (isCPFRegistered(customer.cpf)) {
             throw GuestAlreadyRegisteredException(customer.cpf)
         }
+
         customer.phoneNumber = validateAndFormatPhoneNumber(customer.phoneNumber)
 
-        return dynamoDbClient.save(customer)
+        dynamoDbClient.putItem(createPutItemRequest(customer))
+        return customer
     }
 
     override fun findGuestByCPF(cpf: String): Guest {
-        return findByCPF(cpf)
+        return findByCPF(cpf) ?: throw GuestNotFoundException(cpf)
     }
 
     override fun findAllGuests(): List<Guest> {
-        return dynamoDbClient.scanAll(Guest::class.java).items().stream().toList()
+        val scanRequest = ScanRequest.builder()
+            .tableName(Guest::class.simpleName)
+            .build()
+
+        val scanResponse = dynamoDbClient.scan(scanRequest)
+        return scanResponse.items().map { item ->
+            mapper.convertValue(item.mapValues { it.value.toAttributeValue() }, Guest::class.java)
+        }
     }
 
     override fun updateGuest(guestDTO: UpdateGuestDTO): Guest {
-        val existingGuest = findByCPF(guestDTO.cpf)
+        val existingGuest = findByCPF(guestDTO.cpf) ?: throw GuestNotFoundException(guestDTO.cpf)
+        if (!guestDTO.phoneNumber.isNullOrEmpty()) {
+            validateAndFormatPhoneNumber(guestDTO.phoneNumber)
+        }
+        val updatedGuest = mergeGuestDTO(existingGuest, guestDTO)
 
-        guestDTO.phoneNumber?.let { validateAndFormatPhoneNumber(it) }
-
-        val updatedGuest = mergeGuest(existingGuest, guestDTO)
-
-        dynamoDbClient.update(updatedGuest)
+        dynamoDbClient.putItem(createPutItemRequest(updatedGuest))
         return updatedGuest
     }
 
@@ -55,61 +61,106 @@ class GuestServiceImpl(
         if (!isCPFRegistered(cpf)) {
             throw GuestNotFoundException(cpf)
         }
-        val key = Key.builder().partitionValue(cpf).build()
 
-        dynamoDbClient.delete(key, Guest::class.java)
+        val deleteKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
+        val deleteItemRequest = DeleteItemRequest.builder()
+            .tableName(Guest::class.simpleName)
+            .key(deleteKey)
+            .build()
+
+        dynamoDbClient.deleteItem(deleteItemRequest)
     }
 
-    private fun findByCPF(cpf: String): Guest {
-        if (!isCPFRegistered(cpf)) {
-            throw GuestNotFoundException(cpf)
-        }
+    private fun findByCPF(cpf: String): Guest? {
+        val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
+        val getItemRequest = GetItemRequest.builder().tableName(Guest::class.simpleName).key(getKey).build()
+        val response = dynamoDbClient.getItem(getItemRequest)
 
-        val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
-            QueryConditional.keyEqualTo(
-                Key.builder().partitionValue(cpf).build()
-            )
-        ).build()
-
-        return dynamoDbClient.query(queryEnhancedRequest, Guest::class.java).items().stream().findFirst().get()
+        return if (response.hasItem()) {
+            mapper.convertValue(response.item().mapValues { it.value.toAttributeValue() }, Guest::class.java)
+        } else null
     }
 
     private fun isCPFRegistered(cpf: String): Boolean {
-        val queryEnhancedRequest = QueryEnhancedRequest.builder().queryConditional(
-            QueryConditional.keyEqualTo(
-                Key.builder().partitionValue(cpf).build()
-            )
-        ).build()
-
-        val response = dynamoDbClient.query(queryEnhancedRequest, Guest::class.java)
-        return response.items().stream().findFirst().isPresent
+        val getKey = mapOf("cpf" to AttributeValue.builder().s(cpf).build())
+        val getItemRequest = GetItemRequest.builder().tableName(Guest::class.simpleName).key(getKey).build()
+        val response = dynamoDbClient.getItem(getItemRequest)
+        return response.hasItem()
     }
 
-    fun mergeGuest(existingGuest: Guest, guestDTO: UpdateGuestDTO): Guest {
+    private fun mergeGuestDTO(existingGuest: Guest, newGuest: UpdateGuestDTO): Guest {
         return existingGuest.copy(
-            name = guestDTO.name ?: existingGuest.name,
-            lastName = guestDTO.lastName ?: existingGuest.lastName,
-            email = guestDTO.email ?: existingGuest.email,
-            phoneNumber = guestDTO.phoneNumber ?: existingGuest.phoneNumber,
-            birthDate = guestDTO.birthDate ?: existingGuest.birthDate,
-            responsible = guestDTO.responsible ?: existingGuest.responsible,
-            host = guestDTO.host ?: existingGuest.host,
-            address = mergeAddress(existingGuest.address, guestDTO.address)
+            name = newGuest.name?.takeIf { it.isNotBlank() } ?: existingGuest.name,
+            lastName = newGuest.lastName?.takeIf { it.isNotBlank() } ?: existingGuest.lastName,
+            email = newGuest.email?.takeIf { it.isNotBlank() } ?: existingGuest.email,
+            phoneNumber = newGuest.phoneNumber?.takeIf { it.isNotBlank() } ?: existingGuest.phoneNumber,
+            birthDate = newGuest.birthDate?.takeIf { it.isNotBlank() } ?: existingGuest.birthDate,
+            responsible = newGuest.responsible ?: existingGuest.responsible,
+            host = newGuest.host ?: existingGuest.host,
+            address = newGuest.address ?: existingGuest.address
         )
     }
 
-    fun mergeAddress(existingAddress: Address?, newAddress: Address?): Address? {
+    private fun mergeGuest(existingGuest: Guest, newGuest: Guest): Guest {
+        return existingGuest.copy(
+            name = newGuest.name.takeIf { it.isNotBlank() } ?: existingGuest.name,
+            lastName = newGuest.lastName.takeIf { it.isNotBlank() } ?: existingGuest.lastName,
+            email = newGuest.email.takeIf { it.isNotBlank() } ?: existingGuest.email,
+            phoneNumber = newGuest.phoneNumber.takeIf { it.isNotBlank() } ?: existingGuest.phoneNumber,
+            birthDate = newGuest.birthDate.takeIf { it.isNotBlank() } ?: existingGuest.birthDate,
+            responsible = newGuest.responsible ?: existingGuest.responsible,
+            host = newGuest.host ?: existingGuest.host,
+            address = mergeAddress(existingGuest.address, newGuest.address)
+        )
+    }
+
+    private fun mergeAddress(existingAddress: Address?, newAddress: Address?): Address? {
         if (existingAddress == null) return newAddress
         if (newAddress == null) return existingAddress
 
         return existingAddress.copy(
-            logradouro = newAddress.logradouro ?: existingAddress.logradouro,
-            numero = newAddress.numero ?: existingAddress.numero,
-            complemento = newAddress.complemento ?: existingAddress.complemento,
-            bairro = newAddress.bairro ?: existingAddress.bairro,
-            localidade = newAddress.localidade ?: existingAddress.localidade,
-            uf = newAddress.uf ?: existingAddress.uf,
-            cep = newAddress.cep ?: existingAddress.cep
+            logradouro = newAddress.logradouro?.takeIf { it.isNotBlank() } ?: existingAddress.logradouro,
+            numero = newAddress.numero?.takeIf { it.isNotBlank() } ?: existingAddress.numero,
+            complemento = newAddress.complemento?.takeIf { it.isNotBlank() } ?: existingAddress.complemento,
+            bairro = newAddress.bairro?.takeIf { it.isNotBlank() } ?: existingAddress.bairro,
+            localidade = newAddress.localidade?.takeIf { it.isNotBlank() } ?: existingAddress.localidade,
+            uf = newAddress.uf?.takeIf { it.isNotBlank() } ?: existingAddress.uf,
+            cep = newAddress.cep?.takeIf { it.isNotBlank() } ?: existingAddress.cep
         )
+    }
+
+    private fun createPutItemRequest(guest: Guest): PutItemRequest {
+        val itemMap = mapper.convertValue(guest, Map::class.java) as Map<String, Any>
+        val attributeValueMap = itemMap.mapValues { entry ->
+            when (entry.value) {
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
+                else -> AttributeValue.builder().s(entry.value.toString()).build()
+            }
+        }
+
+        return PutItemRequest.builder()
+            .tableName(Guest::class.simpleName)
+            .item(attributeValueMap)
+            .build()
+    }
+
+    private fun Map<String, *>.toAttributeValueMap(): Map<String, AttributeValue> {
+        return this.mapValues { entry ->
+            when (entry.value) {
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
+                else -> AttributeValue.builder().s(entry.value.toString()).build()
+            }
+        }
+    }
+
+    private fun AttributeValue.toAttributeValue(): Any {
+        return when {
+            this.s() != null -> this.s()
+            this.bool() != null -> this.bool()
+            this.m() != null -> this.m().mapValues { it.value.toAttributeValue() }
+            else -> throw IllegalArgumentException("Tipo de atributo não suportado: $this")
+        }
     }
 }

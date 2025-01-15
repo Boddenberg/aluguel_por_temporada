@@ -1,4 +1,4 @@
-
+version: '3.3'
 services:
   db:
     image: mysql:5.7
@@ -24,7 +24,7 @@ services:
     environment:
       - SERVICES=sns, s3, dynamodb
       - DEFAULT_REGION=us-east-1
-      - AWS_DEFAULT_REGION=sa-east-1
+      - AWS_DEFAULT_REGION=us-east-1
       - DEBUG=1
     ports:
       - '4566:4566'
