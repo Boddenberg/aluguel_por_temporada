@@ -1,11 +1,10 @@
 package juninwins.project.controller
 
-import juninwins.project.model.guest.Guest
-import juninwins.project.service.GuestService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import juninwins.project.model.guest.DTO.UpdateGuestDTO
-import org.springframework.http.HttpStatus
+import juninwins.project.model.guest.Guest
+import juninwins.project.service.GuestService
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
