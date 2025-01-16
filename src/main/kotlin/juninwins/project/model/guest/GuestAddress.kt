@@ -1,6 +1,5 @@
 package juninwins.project.model.guest
 
-import jakarta.persistence.*
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
 
 @DynamoDbBean

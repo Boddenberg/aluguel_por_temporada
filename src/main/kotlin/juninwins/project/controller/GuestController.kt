@@ -1,11 +1,10 @@
 package juninwins.project.controller
 
-import juninwins.project.model.guest.Guest
-import juninwins.project.service.GuestService
 import io.swagger.v3.oas.annotations.Operation
 import jakarta.validation.Valid
 import juninwins.project.model.guest.DTO.UpdateGuestDTO
-import org.springframework.http.HttpStatus
+import juninwins.project.model.guest.Guest
+import juninwins.project.service.GuestService
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -29,9 +28,8 @@ class GuestController(val guestService: GuestService) {
 
     @PostMapping("/register/guest")
     @Operation(summary = "Register a guest")
-    fun saveGuest(@RequestBody @Valid client: Guest): ResponseEntity<Void> {
-        guestService.saveGuest(client)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+    fun saveGuest(@RequestBody @Valid client: Guest): ResponseEntity<Guest> {
+        return ResponseEntity.ok(guestService.saveGuest(client))
     }
 
     @PostMapping("/register/guest/return")

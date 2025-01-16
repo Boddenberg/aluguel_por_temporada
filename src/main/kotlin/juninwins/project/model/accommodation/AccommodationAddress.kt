@@ -1,7 +1,4 @@
 package juninwins.project.model.accommodation
-import jakarta.persistence.*
-
-import jakarta.persistence.*
 
 
 data class AccommodationAddress(

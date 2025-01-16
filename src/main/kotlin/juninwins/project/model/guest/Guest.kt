@@ -9,10 +9,11 @@ import juninwins.project.model.address.Address
 import org.hibernate.validator.constraints.br.CPF
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbFlatten
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@DynamoDbBean
+@DynamoDbBean()
 data class Guest(
 
     @get:DynamoDbPartitionKey
@@ -50,7 +51,5 @@ data class Guest(
     @get:DynamoDbAttribute("host")
     var host: Boolean? = false,
 
-    @get:DynamoDbAttribute("address")
-    @field:Valid
     var address: Address? = null
 )
