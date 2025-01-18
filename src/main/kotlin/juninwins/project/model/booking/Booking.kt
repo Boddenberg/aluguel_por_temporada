@@ -14,7 +14,6 @@ import java.time.LocalDate
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @DynamoDbBean
-@JsonPropertyOrder("id", "startDate", "endDate", "status", "bookingDuration", "totalPrice", "reviewStatus", "reviwedByGuest", "reviwedByHost", "guest", "host", "accommodation")
 data class Booking(
 
         @get:DynamoDbPartitionKey
