@@ -1,4 +1,4 @@
-# aluguel_por_temporada 🏠
+# aluguel por temporada 🏠
 
 ## Tecnologias aplicadas
 
