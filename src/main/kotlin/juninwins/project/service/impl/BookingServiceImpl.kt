@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import juninwins.project.exceptions.booking.BookingNotFoundException
 import juninwins.project.model.booking.Booking
+import juninwins.project.model.booking.DTO.UpdateBookingDTO
 import juninwins.project.service.BookingService
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
@@ -17,6 +18,10 @@ class BookingServiceImpl(
     private val mapper: ObjectMapper = jacksonObjectMapper()
 
     override fun saveBooking(booking: Booking): Booking {
+        if (isBookingRegistered(booking.id)) {
+            throw BookingNotFoundException(booking.id)
+        }
+
         dynamoDbClient.putItem(createPutItemRequest(booking))
         return booking
     }
@@ -36,15 +41,16 @@ class BookingServiceImpl(
         }
     }
 
-    override fun updateBooking(id: String, updatedBooking: Booking): Booking {
-        val existingBooking = findById(id) ?: throw BookingNotFoundException(id)
+    override fun updateBooking(updatedBooking: UpdateBookingDTO): Booking {
+        val existingBooking = findById(updatedBooking.id) ?: throw BookingNotFoundException(updatedBooking.id)
         val mergedBooking = mergeBooking(existingBooking, updatedBooking)
+
         dynamoDbClient.putItem(createPutItemRequest(mergedBooking))
         return mergedBooking
     }
 
     override fun deleteBookingById(id: String) {
-        if (findById(id) == null) {
+        if (!isBookingRegistered(id)) {
             throw BookingNotFoundException(id)
         }
 
@@ -67,19 +73,26 @@ class BookingServiceImpl(
         } else null
     }
 
-    private fun mergeBooking(existingBooking: Booking, updatedBooking: Booking): Booking {
+    private fun isBookingRegistered(id: String): Boolean {
+        val getKey = mapOf("id" to AttributeValue.builder().s(id).build())
+        val getItemRequest = GetItemRequest.builder().tableName(Booking::class.simpleName).key(getKey).build()
+        val response = dynamoDbClient.getItem(getItemRequest)
+        return response.hasItem()
+    }
+
+    private fun mergeBooking(existingBooking: Booking, updatedBookingDTO: UpdateBookingDTO): Booking {
         return existingBooking.copy(
-            accommodation = updatedBooking.accommodation ?: existingBooking.accommodation,
-            startDate = updatedBooking.startDate ?: existingBooking.startDate,
-            endDate = updatedBooking.endDate ?: existingBooking.endDate,
-            bookingDuration = updatedBooking.bookingDuration.takeIf { it > 0 } ?: existingBooking.bookingDuration,
-            totalPrice = updatedBooking.totalPrice.takeIf { it > 0 } ?: existingBooking.totalPrice,
-            reviwedByGuest = updatedBooking.reviwedByGuest ?: existingBooking.reviwedByGuest,
-            reviwedByHost = updatedBooking.reviwedByHost ?: existingBooking.reviwedByHost,
-            guest = updatedBooking.guest ?: existingBooking.guest,
-            host = updatedBooking.host ?: existingBooking.host,
-            status = updatedBooking.status ?: existingBooking.status,
-            reviewStatus = updatedBooking.reviewStatus ?: existingBooking.reviewStatus
+            accommodation = updatedBookingDTO.accommodation ?: existingBooking.accommodation,
+            startDate = updatedBookingDTO.startDate ?: existingBooking.startDate,
+            endDate = updatedBookingDTO.endDate ?: existingBooking.endDate,
+            bookingDuration = updatedBookingDTO.bookingDuration ?: existingBooking.bookingDuration,
+            totalPrice = updatedBookingDTO.totalPrice ?: existingBooking.totalPrice,
+            reviwedByGuest = updatedBookingDTO.reviwedByGuest ?: existingBooking.reviwedByGuest,
+            reviwedByHost = updatedBookingDTO.reviwedByHost ?: existingBooking.reviwedByHost,
+            guest = updatedBookingDTO.guest ?: existingBooking.guest,
+            host = updatedBookingDTO.host ?: existingBooking.host,
+            status = updatedBookingDTO.status ?: existingBooking.status,
+            reviewStatus = updatedBookingDTO.reviewStatus ?: existingBooking.reviewStatus
         )
     }
 
