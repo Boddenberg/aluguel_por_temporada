@@ -44,7 +44,7 @@ class GuestControllerTest {
 
         val response = guestController.saveGuest(guest)
 
-        assertEquals(HttpStatus.CREATED, response.statusCode)
+        assertEquals(HttpStatus.OK, response.statusCode)
     }
 
     @Test
