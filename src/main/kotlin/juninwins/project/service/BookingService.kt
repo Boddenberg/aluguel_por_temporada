@@ -1,6 +1,7 @@
 package juninwins.project.service
 
 import juninwins.project.model.booking.Booking
+import juninwins.project.model.booking.DTO.UpdateBookingDTO
 
 interface BookingService {
 
@@ -10,7 +11,7 @@ interface BookingService {
 
     fun findAllBookings(): List<Booking>
 
-    fun updateBooking(id: String, updatedBooking: Booking): Booking
+    fun updateBooking(updatedBooking: UpdateBookingDTO): Booking
 
     fun deleteBookingById(id: String)
 }
