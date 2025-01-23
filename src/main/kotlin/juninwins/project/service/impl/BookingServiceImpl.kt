@@ -14,7 +14,9 @@ import software.amazon.awssdk.services.dynamodb.model.*
 class BookingServiceImpl(
     private val dynamoDbClient: DynamoDbClient
 ) : BookingService {
-
+//TODO: APLICAR REGRAS DE DATAS DE RESERVAS
+//TODO: APLICAR REGRAS DE PREÇO
+//TODO: APLICAR POLITICAS DE DESCONTO
     private val mapper: ObjectMapper = jacksonObjectMapper()
 
     override fun saveBooking(booking: Booking): Booking {
