@@ -9,4 +9,3 @@ class TechiTubersApplication
 fun main(args: Array<String>) {
 	runApplication<TechiTubersApplication>(*args)
 }
-

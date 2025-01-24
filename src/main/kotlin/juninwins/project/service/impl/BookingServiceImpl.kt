@@ -23,7 +23,6 @@ class BookingServiceImpl(
         if (isBookingRegistered(booking.id)) {
             throw BookingNotFoundException(booking.id)
         }
-
         dynamoDbClient.putItem(createPutItemRequest(booking))
         return booking
     }
