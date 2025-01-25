@@ -1,7 +1,6 @@
 package juninwins.project.model.guest
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -9,7 +8,6 @@ import juninwins.project.model.address.Address
 import org.hibernate.validator.constraints.br.CPF
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbFlatten
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

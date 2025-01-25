@@ -133,7 +133,9 @@ class GuestServiceImpl(
         val itemMap = mapper.convertValue(guest, Map::class.java) as Map<String, Any>
         val attributeValueMap = itemMap.mapValues { entry ->
             when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap())
+                    .build()
+
                 is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
                 else -> AttributeValue.builder().s(entry.value.toString()).build()
             }
@@ -148,7 +150,9 @@ class GuestServiceImpl(
     private fun Map<String, *>.toAttributeValueMap(): Map<String, AttributeValue> {
         return this.mapValues { entry ->
             when (entry.value) {
-                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap()).build()
+                is Map<*, *> -> AttributeValue.builder().m((entry.value as Map<String, *>).toAttributeValueMap())
+                    .build()
+
                 is Boolean -> AttributeValue.builder().bool(entry.value as Boolean).build()
                 else -> AttributeValue.builder().s(entry.value.toString()).build()
             }
