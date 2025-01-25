@@ -1,6 +1,7 @@
 package juninwins.project.configuration
 
 import juninwins.project.model.accommodation.Accommodation
+import juninwins.project.model.booking.Booking
 import juninwins.project.model.guest.Guest
 import juninwins.project.model.review.Review
 import org.springframework.context.annotation.Bean
@@ -14,16 +15,29 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema
 class DynamoDBLocalConfiguration {
 
     @Bean
-    fun createLocalDynamoDbTables(dynamoDbEnhancedClient : DynamoDbEnhancedClient) : Boolean {
-        try {
-            dynamoDbEnhancedClient.table(Accommodation::class.java.simpleName, TableSchema.fromClass(Accommodation::class.java)).createTable()
-            println("Criando tabela: ${Accommodation::class.java.simpleName}")
-            dynamoDbEnhancedClient.table(Guest::class.java.simpleName, TableSchema.fromClass(Guest::class.java)).createTable()
-            println("Criando tabela: ${Guest::class.java.simpleName}")
-        } catch (ex: Exception) {
-            println(ex.message)
-            println("Tabela ${Guest::class.java.simpleName} já criada")
+    fun createLocalDynamoDbTables(dynamoDbEnhancedClient: DynamoDbEnhancedClient): Boolean {
+        val tables = listOf(
+            Accommodation::class.java,
+            Guest::class.java,
+            Booking::class.java
+        )
+
+        println("===== Iniciando criação de tabelas DynamoDB =====")
+
+        tables.forEach { tableClass ->
+            val tableName = tableClass.simpleName
+            try {
+                println("Tentando criar a tabela: $tableName...")
+                val table = dynamoDbEnhancedClient.table(tableName, TableSchema.fromClass(tableClass))
+                table.createTable()
+                println("✅ Tabela '$tableName' criada com sucesso.")
+            } catch (ex: Exception) {
+                println("⚠️ Erro ao criar a tabela '$tableName': ${ex.message}")
+                println("ℹ️ Verifique se a tabela '$tableName' já existe ou se há problemas de configuração.")
+            }
         }
+
+        println("===== Processo de criação de tabelas concluído =====")
         return true
     }
 }
