@@ -12,7 +12,8 @@ permissions:
 env:
   AWS_REGION: sa-east-1
   ECR_REPOSITORY: aluguel-por-temporada
-  ECS_SERVICE: service-app-load-balance-ec2
+  ECS_SERVICE: service-aluguel-por-temporada-ec2
+  TASK_DEFINITION_NAME: task-definition-family-aluguel-por-temporada-instances
   ECS_CLUSTER: cluster-ecs-instance-ec2
   CONTAINER_NAME: container-app-ecs-ec2
   ROLE: arn:aws:iam::257394470489:role/role-ecs-github-access
@@ -87,7 +88,7 @@ jobs:
 
       - name: Download task definition
         run: |
-          aws ecs describe-task-definition --task-definition task-definition-family-aluguel-por-temporada-instances --query taskDefinition > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINITION_NAME }} --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
