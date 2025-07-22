@@ -41,7 +41,8 @@ class ResponseExceptionHandlerApi : ResponseEntityExceptionHandler() {
         CEPValidationException::class,
         CPFNotAuthorizeToUpdateException::class,
         StartDatateIsEqualOrAfterEndDateException::class,
-        InvalidPhoneNumberFormatException::class
+        InvalidPhoneNumberFormatException::class,
+        GuestUpdateLimitDateException::class
     ])
     fun handleBadRequest(exception: RuntimeException, request: WebRequest): ResponseEntity<ErrorResponse> {
         return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, request)

@@ -33,6 +33,8 @@ repositories {
 }
 
 dependencies {
+	implementation("org.jeasy:easy-rules-core:4.1.0")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 	//lib validação docs brasileiros
 	implementation("com.googlecode.libphonenumber:libphonenumber:8.13.14")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

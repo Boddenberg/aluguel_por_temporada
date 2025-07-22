@@ -1,11 +1,15 @@
 package juninwins.project.model.guest.DTO
 
 import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import juninwins.project.model.address.Address
+import org.hibernate.validator.constraints.br.CPF
 
 data class UpdateGuestDTO(
-    val cpf: String,
+    @field:NotBlank(message = "CPF é obrigatório")
+    @field:CPF(message = "CPF inválido")
+    val cpf: String = "",
     @field:Size(min = 2, max = 50, message = "O nome deve ter entre 2 e 50 caracteres")
     val name: String? = null,
     @field:Size(min = 2, max = 50, message = "O sobrenome deve ter entre 2 e 50 caracteres")

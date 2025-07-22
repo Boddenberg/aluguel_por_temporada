@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.exceptions.guest.GuestNotFoundException
+import juninwins.project.exceptions.guest.GuestUpdateLimitDateException
 import juninwins.project.model.address.Address
 import juninwins.project.model.guest.DTO.UpdateGuestDTO
 import juninwins.project.model.guest.Guest
@@ -12,6 +13,9 @@ import juninwins.project.utils.validateAndFormatPhoneNumber
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Service
 class GuestServiceImpl(
@@ -48,13 +52,42 @@ class GuestServiceImpl(
 
     override fun updateGuest(guestDTO: UpdateGuestDTO): Guest {
         val existingGuest = findByCPF(guestDTO.cpf) ?: throw GuestNotFoundException(guestDTO.cpf)
+
+        val daysRemaining = daysUntilCanUpdate(existingGuest)
+        if (daysRemaining > 0) {
+            throw GuestUpdateLimitDateException(existingGuest, daysRemaining)
+        }
+
         if (!guestDTO.phoneNumber.isNullOrEmpty()) {
             validateAndFormatPhoneNumber(guestDTO.phoneNumber)
         }
+
         val updatedGuest = mergeGuestDTO(existingGuest, guestDTO)
+
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        updatedGuest.lastUpdatedAt = LocalDate.now().format(formatter)
 
         dynamoDbClient.putItem(createPutItemRequest(updatedGuest))
         return updatedGuest
+    }
+
+    private fun daysUntilCanUpdate(guest: Guest): Long {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val lastUpdateString = guest.lastUpdatedAt ?: return 0
+
+        return try {
+            val lastUpdate = LocalDate.parse(lastUpdateString, formatter)
+            val nextAllowedUpdate = lastUpdate.plusDays(30)
+            val today = LocalDate.now()
+
+            if (today.isBefore(nextAllowedUpdate)) {
+                ChronoUnit.DAYS.between(today, nextAllowedUpdate)
+            } else {
+                0
+            }
+        } catch (e: Exception) {
+            0
+        }
     }
 
     override fun deleteGuestByCPF(cpf: String) {
