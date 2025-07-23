@@ -1,0 +1,26 @@
+package rules
+
+import juninwins.project.model.guest.Guest;
+import juninwins.project.exceptions.guest.GuestUpdateLimitDateException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+
+rule "Bloquear atualização de cadastro antes de 30 dias"
+    when
+        $guest: Guest(getLastUpdatedAt() != null && !getLastUpdatedAt().trim().isEmpty())
+        eval(
+            ChronoUnit.DAYS.between(
+                LocalDate.now(),
+                LocalDate.parse($guest.getLastUpdatedAt(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    .plusDays(30)
+            ) > 0
+        )
+    then
+        long daysRemaining = ChronoUnit.DAYS.between(
+            LocalDate.now(),
+            LocalDate.parse($guest.getLastUpdatedAt(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                .plusDays(30)
+        );
+        throw new GuestUpdateLimitDateException($guest, daysRemaining);
+end

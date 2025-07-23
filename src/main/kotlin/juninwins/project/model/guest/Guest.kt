@@ -21,7 +21,7 @@ data class Guest(
     var cpf: String = "",
 
     @get:DynamoDbAttribute("lastUpdatedAt")
-    var lastUpdatedAt: String? = null,
+    var lastUpdatedAt: String? = "",
 
     @get:DynamoDbAttribute("name")
     @field:Size(min = 2, max = 50, message = "O nome deve ter entre 2 e 50 caracteres")

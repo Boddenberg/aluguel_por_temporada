@@ -34,6 +34,10 @@ repositories {
 
 dependencies {
 	implementation("org.jeasy:easy-rules-core:4.1.0")
+	implementation("org.kie:kie-api:8.44.0.Final")
+	implementation("org.drools:drools-core:8.44.0.Final")
+	implementation("org.drools:drools-compiler:8.44.0.Final")
+	implementation("org.kie:kie-ci:8.44.0.Final")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 	//lib validação docs brasileiros
 	implementation("com.googlecode.libphonenumber:libphonenumber:8.13.14")

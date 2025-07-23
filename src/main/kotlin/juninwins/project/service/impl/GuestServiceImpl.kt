@@ -4,18 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import juninwins.project.exceptions.guest.GuestAlreadyRegisteredException
 import juninwins.project.exceptions.guest.GuestNotFoundException
-import juninwins.project.exceptions.guest.GuestUpdateLimitDateException
 import juninwins.project.model.address.Address
 import juninwins.project.model.guest.DTO.UpdateGuestDTO
 import juninwins.project.model.guest.Guest
 import juninwins.project.service.GuestService
 import juninwins.project.utils.validateAndFormatPhoneNumber
+import org.kie.api.io.ResourceType
+import org.kie.internal.utils.KieHelper
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
+import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 @Service
 class GuestServiceImpl(
@@ -52,41 +53,34 @@ class GuestServiceImpl(
 
     override fun updateGuest(guestDTO: UpdateGuestDTO): Guest {
         val existingGuest = findByCPF(guestDTO.cpf) ?: throw GuestNotFoundException(guestDTO.cpf)
+        runGuestCooldownRules(existingGuest)
 
-        val daysRemaining = daysUntilCanUpdate(existingGuest)
-        if (daysRemaining > 0) {
-            throw GuestUpdateLimitDateException(existingGuest, daysRemaining)
+        guestDTO.phoneNumber?.let {
+            validateAndFormatPhoneNumber(it)
         }
 
-        if (!guestDTO.phoneNumber.isNullOrEmpty()) {
-            validateAndFormatPhoneNumber(guestDTO.phoneNumber)
+        val updatedGuest = mergeGuestDTO(existingGuest, guestDTO).apply {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            lastUpdatedAt = LocalDate.now().format(formatter)
         }
-
-        val updatedGuest = mergeGuestDTO(existingGuest, guestDTO)
-
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        updatedGuest.lastUpdatedAt = LocalDate.now().format(formatter)
 
         dynamoDbClient.putItem(createPutItemRequest(updatedGuest))
         return updatedGuest
     }
 
-    private fun daysUntilCanUpdate(guest: Guest): Long {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val lastUpdateString = guest.lastUpdatedAt ?: return 0
+    private fun runGuestCooldownRules(guest: Guest) {
+        val ruleText = File("guestCooldownRule.drl").readText()
 
-        return try {
-            val lastUpdate = LocalDate.parse(lastUpdateString, formatter)
-            val nextAllowedUpdate = lastUpdate.plusDays(30)
-            val today = LocalDate.now()
+        val kieHelper = KieHelper()
+        kieHelper.addContent(ruleText, ResourceType.DRL)
 
-            if (today.isBefore(nextAllowedUpdate)) {
-                ChronoUnit.DAYS.between(today, nextAllowedUpdate)
-            } else {
-                0
-            }
-        } catch (e: Exception) {
-            0
+        val kieSession = kieHelper.build().newKieSession()
+        kieSession.insert(guest)
+
+        try {
+            kieSession.fireAllRules()
+        } finally {
+            kieSession.dispose()
         }
     }
 
