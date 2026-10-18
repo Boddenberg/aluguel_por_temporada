@@ -9,12 +9,13 @@
       "Write",
       "Glob",
       "Grep",
-      "NotebookEdit",
       "WebFetch",
       "WebSearch",
-      "Agent",
-      "Skill",
-      "mcp__*"
+      "mcp__Railway__*",
+      "mcp__github__*",
+      "mcp__claude-code-remote__*",
+      "mcp__Supabase__*",
+      "mcp__pixellab__*"
     ]
   }
 }
