@@ -64,3 +64,6 @@ O objetivo é economizar contexto sem perder qualidade. Contexto pequeno = respo
 - Sprites e GIFs: escreva um script que gere os arquivos; olhe só o resultado final, não cada frame.
 - Testar interface: prefira ler texto/DOM da página a tirar screenshot a cada passo. Prints só no QA final.
 - Logs, listas e saídas de teste: filtre com `grep`, `tail`, `head`. Nunca despeje tudo no contexto.
+
+## Coautoria nos commits
+- Todo commit (em qualquer repo) termina com o dono como coautor, além da linha do Claude: `Co-Authored-By: Filipe Boddenberg <filipeboddenberg@yahoo.com.br>`. Ao criar o CLAUDE.md de outro repo, leve esta regra junto.
